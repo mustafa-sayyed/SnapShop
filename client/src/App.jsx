@@ -41,7 +41,7 @@ function App() {
             setAuthStatus(true);
           }
         } else {
-          navigate("/login");
+          navigate("/");
         }
       } catch (error) {
         if (error.response) {

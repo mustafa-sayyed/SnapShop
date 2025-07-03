@@ -1,6 +1,3 @@
-import connectDB from "../db/index.js";
-import connectCloudinary from "./cloudinary.js";
-import fs from "fs";
 import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 import { fileURLToPath } from "url";
