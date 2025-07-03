@@ -149,4 +149,6 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+
+
 export { loginUser, signupUser, loginAdmin, getCurrentUser };

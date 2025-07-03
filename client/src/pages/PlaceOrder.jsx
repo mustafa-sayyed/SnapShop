@@ -23,12 +23,48 @@ function PlaceOrder() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
   const { products, cartItems, deliveryFee, getCartAmount, setCartItems } = useShop();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const updateFormData = (name, value) => {
     const data = { ...formData };
     data[name] = value;
     setFormData(data);
+  };
+
+  const initPay = (order) => {
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "Order Payment",
+      description: "pay for your order",
+      order_id: order.id,
+      receipt: order.receipt,
+      handler: async (response) => {
+
+        const { data } = await axios.post(
+          `${backendUrl}/orders/razorpay/verify`,
+          {
+            razorpay_order_id: response.razorpay_order_id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (data.success) {
+          toast.success(data.message);
+          setCartItems({});
+          navigate("/orders");
+        } else {
+          toast.error(data.message);
+        }
+      },
+    };
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
   };
 
   const handleCheckout = async (e) => {
@@ -43,7 +79,7 @@ function PlaceOrder() {
       for (const item in cartItems[product]) {
         if (cartItems[product][item] > 0) {
           const productInfo = structuredClone(products.find((p) => p._id === product));
-          
+
           if (productInfo) {
             productInfo.size = item;
             productInfo.quantity = cartItems[product][item];
@@ -53,23 +89,53 @@ function PlaceOrder() {
       }
     }
 
-    
-
     try {
-      const response = await axios.post(`${backendUrl}/orders`, {
-        address: formData,
-        items: orderItems,
-        amount: getCartAmount() + deliveryFee
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      switch (paymentMethod) {
+        case "cod":
+          const response = await axios.post(
+            `${backendUrl}/orders`,
+            {
+              address: formData,
+              items: orderItems,
+              amount: getCartAmount() + deliveryFee,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
 
-      if (response.data.success) {
-        toast.success(response.data.message);
-        setCartItems({});
-        navigate("/orders")
+          if (response.data.success) {
+            toast.success(response.data.message);
+            setCartItems({});
+            navigate("/orders");
+          }
+
+          break;
+        case "razorpay":
+          const responseRazorpay = await axios.post(
+            `${backendUrl}/orders/razorpay`,
+            {
+              address: formData,
+              items: orderItems,
+              amount: getCartAmount() + deliveryFee,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (responseRazorpay.data.success) {
+            initPay(responseRazorpay.data.order);
+          } else {
+            console.log(error);
+            toast.error(responseRazorpay.data.message);
+          }
+
+          break;
       }
     } catch (error) {
       if (error.response) {
@@ -79,7 +145,6 @@ function PlaceOrder() {
       }
     }
   };
-
 
   return (
     <form
