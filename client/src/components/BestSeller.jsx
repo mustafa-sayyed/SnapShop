@@ -8,8 +8,9 @@ function BestSeller() {
 
   useEffect(() => {
     setBestSellerProducts(
-      products.filter((product) => product.bestseller === true).slice(0, 5)
+      products.filter((product) => product.bestSeller === true).slice(0, 5)
     );
+    
   }, [products]);
 
   return (

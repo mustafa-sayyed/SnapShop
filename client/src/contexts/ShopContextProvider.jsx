@@ -74,6 +74,8 @@ function ShopContextProvider({ children }) {
           toast.error(error.message);
         }
       }
+    } else {
+      toast.success("Added to Cart")
     }
   };
 

@@ -14,7 +14,6 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(authStatus, user);
 
     const token = localStorage.getItem("token");
 
@@ -32,6 +31,7 @@ function App() {
           login({ name: user.name, email: user.email, role: user.role });
         })
         .catch((error) => {
+          localStorage.removeItem("token")
           toast("Error, Login Again.", {
             type: "warning",
           });

@@ -41,6 +41,7 @@ function App() {
             setAuthStatus(true);
           }
         } else {
+          localStorage.removeItem("token")
           navigate("/");
         }
       } catch (error) {
