@@ -175,7 +175,7 @@ function Collection() {
           <Title children1={"All"} children2={"Collection"} />
         </div>
 
-        {filteredProducts.length && (
+        {filteredProducts.length ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 gap-y-6">
             {filteredProducts.map((product) => (
               <ProductItem
@@ -187,9 +187,9 @@ function Collection() {
               />
             ))}
           </div>
-        )}
+        ): null}
 
-        {!filteredProducts.length && category.length && subCategory.length && (
+        {!!filteredProducts.length && category.length && subCategory.length && (
           <div className=" w-full text-xl text-red-500 text-center ">
             No Products related to this Search or Filter is Found
           </div>

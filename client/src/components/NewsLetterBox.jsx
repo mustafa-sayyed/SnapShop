@@ -6,7 +6,7 @@ function NewsLetterBox() {
   };
 
   return (
-    <div className="text-center p-2">
+    <div className="text-center p-2 py-32">
       <p className="sm:text-2xl text-xl text-gray-800 font-medium">
         Subscribe now and get 20% off
       </p>

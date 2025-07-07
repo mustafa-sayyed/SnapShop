@@ -21,7 +21,7 @@ import { useShop } from "./contexts/ShopContext";
 
 function App() {
   const { setUserData, setAuthStatus } = useAuth();
-  const {setCartItems} = useShop();
+  const { setCartItems } = useShop();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,11 +37,11 @@ function App() {
 
           if (response.data.success) {
             setUserData(response.data.user);
-            setCartItems(response.data.user.cartData)
+            setCartItems(response.data.user.cartData);
             setAuthStatus(true);
           }
         } else {
-          localStorage.removeItem("token")
+          localStorage.removeItem("token");
           navigate("/");
         }
       } catch (error) {

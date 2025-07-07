@@ -54,7 +54,7 @@ function Orders() {
       </div>
 
       <div>
-        {orderItems ? (
+        {orderItems.length ? (
           orderItems.map((product, index) => (
             <div
               key={index}
@@ -92,8 +92,9 @@ function Orders() {
             </div>
           ))
         ) : (
-          <div className="min-h-[60vh] flex items-center justify-center">
-            <div className="text-center text-3xl ">No Orders Found</div>
+          <div className="min-h-[60vh] flex flex-col gap-4 items-center justify-center">
+            <div className="text-center text-3xl ">No Orders Yet</div>
+            <button className="btn btn-neutral">Continue Shopping</button>
           </div>
         )}
       </div>

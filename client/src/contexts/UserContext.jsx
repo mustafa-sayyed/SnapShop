@@ -9,7 +9,7 @@ const UserContext = createContext({
 });
 
 function UserContextProvider({ children }) {
-  const [authStatus, setAuthStatus] = useState(false);
+  const [authStatus, setAuthStatus] = useState(null);
   const [userData, setUserData] = useState({});
 
   const navigate = useNavigate();

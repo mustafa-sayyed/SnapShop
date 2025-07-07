@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { assets } from "../assets/frontend_assets";
 import { useShop } from "../contexts/ShopContext";
 import { RelatedProducts } from "../components";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 function Product() {
   const { productId } = useParams();
@@ -15,17 +15,26 @@ function Product() {
   const [size, setSize] = useState(null);
 
   useEffect(() => {
-    setTimeout(() => {
+    setLoading(true)
+    if (products.length) {
       try {
         setLoading(false);
         const currentProduct = products.find((p) => p._id === productId);
+        console.log(currentProduct);
+
         setProduct(currentProduct);
         setCurrentImg(currentProduct.image[0]);
       } catch (error) {
+        console.log("Error in Product: ", error);
+
+        setLoading(false);
         setError("Product Not Found");
       }
-    }, 1000);
-  }, []);
+    }
+  }, [products, productId]);
+
+    window.scrollTo(0, 0);
+
 
   if (loading) {
     return (

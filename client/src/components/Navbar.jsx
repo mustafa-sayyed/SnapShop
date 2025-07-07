@@ -20,7 +20,7 @@ function Navbar() {
   return (
     <div className="flex justify-between items-center py-5 font-medium ">
       <Link to={"/"}>
-        <img src={assets.logo} alt="Logo" className="w-36" />
+        <h2 className="text-3xl italic ">Snap<span className="text-red-500">Shop</span></h2>
       </Link>
 
       <ul className="hidden sm:flex gap-5 text-gray-700">
@@ -54,15 +54,14 @@ function Navbar() {
           onClick={() => setShowSearch((prev) => !prev)}
         />
         <div className="group relative">
-          {authStatus ? (
+          {authStatus === null ? (
+            <div className="skeleton bg-gray-100 w-10 h-7">
+            </div>
+          ) : authStatus ? (
             <img src={assets.profile_icon} alt="profile" className="w-5 cursor-pointer" />
           ) : (
-            <Link to={"/login"}>
-              <img
-                src={assets.profile_icon}
-                alt="profile"
-                className="w-5 cursor-pointer"
-              />
+            <Link to={"/login"} className="btn btn-neutral rounded-full">
+              Login
             </Link>
           )}
           <div className={` ${authStatus ? "group-hover:block" : "" } hidden absolute right-0 pt-4`}>
