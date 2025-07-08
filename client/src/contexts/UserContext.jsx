@@ -11,6 +11,8 @@ const UserContext = createContext({
 function UserContextProvider({ children }) {
   const [authStatus, setAuthStatus] = useState(null);
   const [userData, setUserData] = useState({});
+  const [address, setAddress] = useState([]);
+  
 
   const navigate = useNavigate();
 
@@ -29,7 +31,7 @@ function UserContextProvider({ children }) {
 
   return (
     <UserContext.Provider
-      value={{ authStatus, userData, login, logout, setUserData, setAuthStatus }}>
+      value={{ authStatus, userData, login, logout, setUserData, setAuthStatus, address, setAddress }}>
       {children}
     </UserContext.Provider>
   );

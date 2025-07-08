@@ -10,6 +10,7 @@ import NewsLetterBox from "./NewsLetterBox";
 import SearchBar from "./SearchBar";
 import RelatedProducts from "./RelatedProducts";
 import CartTotal from "./CartTotal";
+import Profile from "./Profile";
 
 export {
   Hero,
@@ -24,4 +25,5 @@ export {
   SearchBar,
   RelatedProducts,
   CartTotal,
+  Profile,
 };

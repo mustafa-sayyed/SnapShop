@@ -107,7 +107,7 @@ function Cart() {
           </div>
         </div>
       ) : (
-        <div className="h-[80vh] flex items-center justify-center sm:flex-col">
+        <div className="h-[90vh] flex items-center justify-center sm:flex-col">
           <div className="flex flex-col gap-8 items-center justify-center sm:flex-row">
             <div>
               <FaCartPlus className="w-20 h-20" />

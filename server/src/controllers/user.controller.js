@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import { Address } from "../models/address.model.js";
 
 const loginUser = async (req, res) => {
   try {
@@ -140,9 +141,12 @@ const getCurrentUser = async (req, res) => {
       return res.status(404).json({ success: false, message: "User does not exist" });
     }
 
+    const address = await Address.find({userId: id});
+
     res.status(200).json({
       success: true,
       user: { name: user.name, email: user.email, role: user.role, cartData: user.cartData },
+      address,
     });
   } catch (error) {
     res.status(500).json({ message: `Internal Server error: ${error.message}` });

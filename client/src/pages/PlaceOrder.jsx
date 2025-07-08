@@ -5,31 +5,17 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useShop } from "../contexts/ShopContext";
+import { useAuth } from "../contexts/UserContext";
+import { useEffect } from "react";
 
 function PlaceOrder() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    street: "",
-    pincode: "",
-    city: "",
-    state: "",
-    country: "",
-    phone: "",
-  });
-
+  const { address } = useAuth();
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
   const { products, cartItems, deliveryFee, getCartAmount, setCartItems } = useShop();
   const navigate = useNavigate();
-
-  const updateFormData = (name, value) => {
-    const data = { ...formData };
-    data[name] = value;
-    setFormData(data);
-  };
 
   const initPay = (order) => {
     const options = {
@@ -41,7 +27,6 @@ function PlaceOrder() {
       order_id: order.id,
       receipt: order.receipt,
       handler: async (response) => {
-
         const { data } = await axios.post(
           `${backendUrl}/orders/razorpay/verify`,
           {
@@ -69,8 +54,9 @@ function PlaceOrder() {
 
   const handleCheckout = async (e) => {
     e.preventDefault();
-    for (const keys in formData) {
-      if (!formData[keys]) return toast.error("All Delivery Information is required.");
+
+    if (!selectedAddress) {
+      return toast.error("Please, Select an Address.");
     }
 
     const orderItems = [];
@@ -95,7 +81,7 @@ function PlaceOrder() {
           const response = await axios.post(
             `${backendUrl}/orders`,
             {
-              address: formData,
+              address: selectedAddress,
               items: orderItems,
               amount: getCartAmount() + deliveryFee,
             },
@@ -117,7 +103,7 @@ function PlaceOrder() {
           const responseRazorpay = await axios.post(
             `${backendUrl}/orders/razorpay`,
             {
-              address: formData,
+              address: selectedAddress,
               items: orderItems,
               amount: getCartAmount() + deliveryFee,
             },
@@ -149,83 +135,44 @@ function PlaceOrder() {
   return (
     <form
       onSubmit={handleCheckout}
-      className="flex flex-col sm:flex-row gap-4 justify-between pt-5 sm:pt-14 min-h-[80vh] border-t">
+      className="flex flex-col sm:flex-row gap-4 justify-between pt-5 sm:pt-14 min-h-[90vh] border-t">
       {/* left Side */}
-      <div
-        onSubmit={handleCheckout}
-        className="flex flex-col gap-4 w-full sm:max-w-[480px]">
-        <div className="text-xl sm:text-2xl my-3">
-          <Title children1={"Delivery"} children2={"Information"} />
+      <div className="flex flex-col">
+        <button
+          className="self-start underline cursor-pointer"
+          type="button"
+          onClick={() => navigate("/profile?add=true")}>
+          + Add Address
+        </button>
+        <div className="flex flex-wrap sm:flex-row item-center content-center justify-start gap-4 mt-2">
+          {address && address.length ? (
+            address.map((addr) => (
+              <div
+                onClick={() => setSelectedAddress(addr)}
+                key={addr._id}
+                className={` ${
+                  selectedAddress && selectedAddress._id === addr._id ? "border" : ""
+                } h-fit cursor-pointer bg-slate-200 px-6 sm:px-8 py-4 flex flex-col gap-[2px] rounded-md text-xs sm:text-sm`}>
+                <p>
+                  {addr.firstName} {addr.lastName}
+                </p>
+                <p>{addr.email}</p>
+                <p>{addr.address}</p>
+                <p>
+                  {addr.city}- {addr.pincode}
+                </p>
+                <p>
+                  {addr.state}, {addr.country}.
+                </p>
+                <p>{addr.phone}</p>
+              </div>
+            ))
+          ) : (
+            <div>
+              <div>No Address Found</div>
+            </div>
+          )}
         </div>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="First Name"
-            className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-            onChange={(e) => updateFormData("firstName", e.target.value)}
-            value={formData.firstName}
-          />
-          <input
-            type="text"
-            placeholder="Last Name"
-            className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-            onChange={(e) => updateFormData("lastName", e.target.value)}
-            value={formData.lastName}
-          />
-        </div>
-        <input
-          type="email"
-          placeholder="Email Address"
-          className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-          onChange={(e) => updateFormData("email", e.target.value)}
-          value={formData.email}
-        />
-        <input
-          type="text"
-          placeholder="Street"
-          className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-          onChange={(e) => updateFormData("street", e.target.value)}
-          value={formData.street}
-        />
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="Country"
-            className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-            onChange={(e) => updateFormData("country", e.target.value)}
-            value={formData.country}
-          />
-          <input
-            type="text"
-            placeholder="State"
-            className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-            onChange={(e) => updateFormData("state", e.target.value)}
-            value={formData.state}
-          />
-        </div>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="City"
-            className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-            onChange={(e) => updateFormData("city", e.target.value)}
-            value={formData.city}
-          />
-          <input
-            type="number"
-            placeholder="Zip Code"
-            className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-            onChange={(e) => updateFormData("pincode", e.target.value)}
-            value={formData.pincode}
-          />
-        </div>
-        <input
-          type="number"
-          placeholder="Phone no"
-          className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-          onChange={(e) => updateFormData("phone", e.target.value)}
-          value={formData.phone}
-        />
       </div>
 
       {/* Right Side */}

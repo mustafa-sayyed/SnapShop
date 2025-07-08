@@ -3,12 +3,14 @@ import { useShop } from "../contexts/ShopContext";
 import { Title } from "../components";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {useNavigate} from "react-router-dom"
 
 function Orders() {
   const { products, currency } = useShop();
   const [orderItems, setOrderItems] = useState([]);
   const [orders, setOrders] = useState([]);
 
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -92,9 +94,9 @@ function Orders() {
             </div>
           ))
         ) : (
-          <div className="min-h-[60vh] flex flex-col gap-4 items-center justify-center">
+          <div className="min-h-[70vh] flex flex-col gap-4 items-center justify-center">
             <div className="text-center text-3xl ">No Orders Yet</div>
-            <button className="btn btn-neutral">Continue Shopping</button>
+            <button className="btn btn-neutral" onClick={() => navigate("/collection")}>Continue Shopping</button>
           </div>
         )}
       </div>

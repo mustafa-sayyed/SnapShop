@@ -5,6 +5,25 @@
   themes: light --default;
 }
 
+.mymodal {
+  position: fixed;
+  z-index: 1000;
+  margin: auto;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.mymodal-content {
+  margin: 10% auto;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+}
+
 .prata {
   font-family: "Prata", serif;
   font-weight: 400;

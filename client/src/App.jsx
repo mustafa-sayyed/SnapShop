@@ -12,7 +12,7 @@ import {
   Product,
   Signup,
 } from "./pages";
-import { Footer, Navbar, SearchBar } from "./components";
+import { Footer, Navbar, Profile, SearchBar } from "./components";
 import { toast, ToastContainer } from "react-toastify";
 import { useEffect } from "react";
 import axios from "axios";
@@ -20,7 +20,7 @@ import { useAuth } from "./contexts/UserContext";
 import { useShop } from "./contexts/ShopContext";
 
 function App() {
-  const { setUserData, setAuthStatus } = useAuth();
+  const { setUserData, setAuthStatus, setAddress } = useAuth();
   const { setCartItems } = useShop();
   const navigate = useNavigate();
 
@@ -38,6 +38,7 @@ function App() {
           if (response.data.success) {
             setUserData(response.data.user);
             setCartItems(response.data.user.cartData);
+            setAddress(response.data.address || [])
             setAuthStatus(true);
           }
         } else {
@@ -63,6 +64,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/place-order" element={<PlaceOrder />} />
