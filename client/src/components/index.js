@@ -11,6 +11,7 @@ import SearchBar from "./SearchBar";
 import RelatedProducts from "./RelatedProducts";
 import CartTotal from "./CartTotal";
 import Profile from "./Profile";
+import AuthLayout from "./AuthLayout";
 
 export {
   Hero,
@@ -26,4 +27,5 @@ export {
   RelatedProducts,
   CartTotal,
   Profile,
+  AuthLayout
 };

@@ -7,6 +7,7 @@ import { FaCartPlus } from "react-icons/fa6";
 
 function Cart() {
   const { products, currency, cartItems, updateCart } = useShop();
+
   const [cartData, setCartData] = useState([]);
 
   const navigate = useNavigate();
@@ -111,10 +112,12 @@ function Cart() {
           <div className="flex flex-col gap-8 items-center justify-center sm:flex-row">
             <div>
               <FaCartPlus className="w-20 h-20" />
-            </div>  
+            </div>
             <div className="flex flex-col gap-4">
               <p className="text-3xl">Your Cart is Empty!!</p>
-              <button className="btn btn-neutral" onClick={() => navigate("/collection")}>Continue Shopping</button>
+              <button className="btn btn-neutral" onClick={() => navigate("/collection")}>
+                Continue Shopping
+              </button>
             </div>
           </div>
         </div>

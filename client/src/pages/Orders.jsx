@@ -3,12 +3,12 @@ import { useShop } from "../contexts/ShopContext";
 import { Title } from "../components";
 import axios from "axios";
 import { toast } from "react-toastify";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 function Orders() {
   const { products, currency } = useShop();
   const [orderItems, setOrderItems] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -16,38 +16,48 @@ function Orders() {
 
   useEffect(() => {
     (async () => {
-      try {
-        const response = await axios.get(`${backendUrl}/orders/myorders`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.data.success) {
-          let allOrderItems = [];
-          for (const orders of response.data.orders) {
-            orders.items.map((item) => {
-              console.log(item);
-              item.status = orders.status;
-              item.payment = orders.paymen;
-              item.paymentMethod = orders.paymentMethod;
-              item.date = orders.createdAt;
-              allOrderItems.push(item)
-            });
+      if (token) {
+        try {
+          const response = await axios.get(`${backendUrl}/orders/myorders`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.data.success) {
+            let allOrderItems = [];
+            for (const orders of response.data.orders) {
+              orders.items.map((item) => {
+                item.status = orders.status;
+                item.payment = orders.paymen;
+                item.paymentMethod = orders.paymentMethod;
+                item.date = orders.createdAt;
+                allOrderItems.push(item);
+              });
+            }
+
+            setOrderItems(allOrderItems.reverse());
           }
-
-          setOrderItems(allOrderItems.reverse());
-        }
-      } catch (error) {
-        if (error.response) {
-          toast.error(error.response.data.message);
-        } else {
+        } catch (error) {
           console.log(error);
-
-          toast.error(`Server Error: ${error.message}`);
+          if (error.response) {
+            toast.error(error.response.data.message);
+          } else {
+            toast.error(`Internal Server Error`);
+          }
+        } finally {
+          setLoading(false);
         }
       }
     })();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[85vh]">
+        <div className="loading loading-spinner w-10 h-10"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="border-t pt-16">
@@ -74,10 +84,14 @@ function Orders() {
                     <p>Size: {product.size}</p>
                   </div>
                   <p className="mt-2">
-                    Date: <span className="text-gray-400">{new Date(product.createdAt).toLocaleString()}</span>
+                    Date:{" "}
+                    <span className="text-gray-400">
+                      {new Date(product.createdAt).toLocaleString()}
+                    </span>
                   </p>
                   <p className="mt-2">
-                    Payment: <span className="text-gray-400">{product.paymentMethod}</span>
+                    Payment:{" "}
+                    <span className="text-gray-400">{product.paymentMethod}</span>
                   </p>
                 </div>
               </div>
@@ -96,7 +110,9 @@ function Orders() {
         ) : (
           <div className="min-h-[70vh] flex flex-col gap-4 items-center justify-center">
             <div className="text-center text-3xl ">No Orders Yet</div>
-            <button className="btn btn-neutral" onClick={() => navigate("/collection")}>Continue Shopping</button>
+            <button className="btn btn-neutral" onClick={() => navigate("/collection")}>
+              Continue Shopping
+            </button>
           </div>
         )}
       </div>

@@ -18,6 +18,7 @@ function Profile() {
       setModalVisiblity(true);
     }
   }, []);
+  
 
   const [formData, setFormData] = useState({
     firstName: "",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import {
   About,
@@ -12,7 +12,7 @@ import {
   Product,
   Signup,
 } from "./pages";
-import { Footer, Navbar, Profile, SearchBar } from "./components";
+import { AuthLayout, Footer, Navbar, Profile, SearchBar } from "./components";
 import { toast, ToastContainer } from "react-toastify";
 import { useEffect } from "react";
 import axios from "axios";
@@ -22,6 +22,8 @@ import { useShop } from "./contexts/ShopContext";
 function App() {
   const { setUserData, setAuthStatus, setAddress } = useAuth();
   const { setCartItems } = useShop();
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,22 +40,30 @@ function App() {
           if (response.data.success) {
             setUserData(response.data.user);
             setCartItems(response.data.user.cartData);
-            setAddress(response.data.address || [])
+            setAddress(response.data.address || []);
             setAuthStatus(true);
           }
         } else {
           localStorage.removeItem("token");
-          navigate("/");
+          setAuthStatus(false);
         }
       } catch (error) {
-        if (error.response) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error(error.message);
-        }
+        toast.error("Internal Server Error");
+      } finally {
+
+        setLoading(false);
       }
     })();
   }, []);
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <div className="loading loading-spinner w-10 h-10"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
@@ -64,13 +74,27 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/place-order" element={<PlaceOrder />} />
-        <Route path="/collection" element={<Collection />} />
         <Route path="/product/:productId" element={<Product />} />
+        <Route path="/collection" element={<Collection />} />
+        <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/cart" element={<Cart />} />
+        <Route
+          path="/profile"
+          element={
+            <AuthLayout authRequired={true} >
+              <Profile />
+            </AuthLayout>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <AuthLayout authRequired={true} >
+              <Orders />
+            </AuthLayout>
+          }
+        />
       </Routes>
       <Footer />
       <ToastContainer

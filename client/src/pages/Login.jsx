@@ -59,7 +59,7 @@ function Login() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center w-[90%] max-w-96 m-auto mt-14 gap-4 text-gray-800">
+      className="flex flex-col items-center justify-center w-[90%] max-w-96 h-[85vh] m-auto gap-4 text-gray-800">
       <div className="inline-flex items-center mb-2 mt-10 gap-2">
         <p className="prata text-4xl">{currentState}</p>
         <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
@@ -68,7 +68,7 @@ function Login() {
       {currentState === "Sign Up" && (
         <input
           type="text"
-          className="w-full px-3 py-2 border border-gray-800 rounded-md"
+          className="w-full px-3 py-2 border border-gray-800 rounded-md outline-black"
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -77,7 +77,7 @@ function Login() {
       )}
       <input
         type="email"
-        className="w-full px-3 py-2 border border-gray-800 rounded-md"
+        className="w-full px-3 py-2 border border-gray-800 rounded-md outline-black"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -85,7 +85,7 @@ function Login() {
       />
       <input
         type="password"
-        className="w-full px-3 py-2 border border-gray-800 rounded-md"
+        className="w-full px-3 py-2 border border-gray-800 rounded-md outline-black"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
