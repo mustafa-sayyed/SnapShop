@@ -5,7 +5,7 @@ import axios from "axios";
 import { useAuth } from "./UserContext";
 
 function ShopContextProvider({ children }) {
-  const [currency, setCurrency] = useState("$");
+  const [currency, setCurrency] = useState("₹");
   const [deliveryFee, setDeliveryFee] = useState(10);
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");

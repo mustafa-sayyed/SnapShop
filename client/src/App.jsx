@@ -10,6 +10,7 @@ import {
   Orders,
   PlaceOrder,
   Product,
+  Search,
   Signup,
 } from "./pages";
 import { AuthLayout, Footer, Navbar, Profile, SearchBar } from "./components";
@@ -79,6 +80,7 @@ function App() {
         <Route path="/collection" element={<Collection />} />
         <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/search" element={<Search />} />
         <Route
           path="/profile"
           element={

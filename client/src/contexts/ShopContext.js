@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 
 export const ShopContext = createContext({
   deliveryFee: 10,
-  currency: "$",
+  currency: "₹",
   products: [],
   search: "",
   showSearch: false,

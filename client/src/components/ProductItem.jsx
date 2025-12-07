@@ -12,7 +12,7 @@ function ProductItem({ id, image, price, name, className="" }) {
       </div>
       <p className="pt-3 pb-1 text-sm">{name}</p>
       <p className="text-sm font-medium">
-        {currency}
+        <span className="text-base mr-0.5">{currency}</span>
         {price}
       </p>
     </Link>

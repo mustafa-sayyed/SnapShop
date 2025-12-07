@@ -6,7 +6,6 @@ import { ProductItem, Title } from "../components";
 function Collection() {
   const { products, search, showSearch } = useShop();
   const [showFilter, setShowFilter] = useState(false);
-  // const [filteredProducts, setFilteredProducts] = useState([]);
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [sortType, setSortType] = useState("relevant");

@@ -8,6 +8,7 @@ import Login from "./Login";
 import Signup from "./Signup";
 import PlaceOrder from "./PlaceOrder";
 import Orders from "./Orders";
+import Search from "./Search";
 
 export {
   About,
@@ -20,4 +21,5 @@ export {
   Orders,
   PlaceOrder,
   Signup,
+  Search
 };
