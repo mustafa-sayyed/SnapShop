@@ -18,10 +18,11 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(
   cors({
-    origin: [`${process.env.USER_FORNTEND_URL}, ${process.env.ADMIN_FRONTEND_URL}`],
+    origin: [`${process.env.USER_FRONTEND_URL}`, `${process.env.ADMIN_FRONTEND_URL}`],
     credentials: true,
   })
 );
+
 
 // Database connection
 connectDB()
@@ -51,6 +52,6 @@ app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/address", addressRouter);
 
 // APIs
-app.get("/", (req, res) => {
+app.get("/", cors(), (req, res) => {
   res.json({ Message: "This is Backend of Ecommerce" });
 });
