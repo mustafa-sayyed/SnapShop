@@ -38,7 +38,7 @@ function Product() {
 
   if (loading) {
     return (
-      <div className="w-full h-[80vh] flex items-center justify-center ">
+      <div className="w-full h-[85vh] flex items-center justify-center ">
         <div className="animate-spin inline-block size-12 border-5 border-current border-t-transparent text-red-600 rounded-full">
           <span className="sr-only">Loading...</span>
         </div>
@@ -47,7 +47,7 @@ function Product() {
   }
   if (error) {
     return (
-      <div className="w-full h-[80vh] flex items-center justify-center ">
+      <div className="w-full h-[85vh] flex items-center justify-center ">
         <div className="text-3xl text-red-600">{error}</div>
       </div>
     );

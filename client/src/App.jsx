@@ -50,6 +50,7 @@ function App() {
         }
       } catch (error) {
         toast.error("Internal Server Error");
+        console.error(error);
       } finally {
 
         setLoading(false);
@@ -104,6 +105,7 @@ function App() {
         closeOnClick={true}
         theme="light"
         position="bottom-right"
+        limit={3}
       />
     </div>
   );

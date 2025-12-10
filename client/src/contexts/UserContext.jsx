@@ -24,6 +24,7 @@ function UserContextProvider({ children }) {
 
   const logout = () => {
     setAuthStatus(false);
+    setAddress([])
     setUserData({});
     localStorage.removeItem("token");
     navigate("/");

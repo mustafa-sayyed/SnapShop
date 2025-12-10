@@ -10,7 +10,7 @@ const loginUser = async (req, res) => {
     if (!validator.isEmail(email)) {
       return res.status(400).json({
         success: false,
-        message: "Enter a valid email",
+        message: "Email is required",
       });
     }
 
@@ -34,11 +34,14 @@ const loginUser = async (req, res) => {
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
 
+    const address = await Address.find({ userId: user._id });
+
     return res.status(200).json({
       token,
       success: true,
       message: "Login successfull",
       user: { name: user.name, email: user.email, role: user.role },
+      address,
     });
   } catch (error) {
     return res.status(500).json({
@@ -141,18 +144,21 @@ const getCurrentUser = async (req, res) => {
       return res.status(404).json({ success: false, message: "User does not exist" });
     }
 
-    const address = await Address.find({userId: id});
+    const address = await Address.find({ userId: id });
 
     res.status(200).json({
       success: true,
-      user: { name: user.name, email: user.email, role: user.role, cartData: user.cartData },
+      user: {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        cartData: user.cartData,
+      },
       address,
     });
   } catch (error) {
     res.status(500).json({ message: `Internal Server error: ${error.message}` });
   }
 };
-
-
 
 export { loginUser, signupUser, loginAdmin, getCurrentUser };

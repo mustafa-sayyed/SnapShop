@@ -23,6 +23,8 @@ app.use(
   })
 );
 
+console.log(`${process.env.USER_FRONTEND_URL}`, `${process.env.ADMIN_FRONTEND_URL}`);
+
 
 // Database connection
 connectDB()

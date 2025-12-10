@@ -186,19 +186,13 @@ function Collection() {
               />
             ))}
           </div>
-        ): null}
-
-        {!!filteredProducts.length && category.length && subCategory.length && (
-          <div className=" w-full text-xl text-red-500 text-center ">
+        ) : filteredProducts.length && category.length && subCategory.length ? (
+          <div className=" w-full text-xl text-red-500 text-center min-h-screen mt-10 ">
             No Products related to this Search or Filter is Found
           </div>
-        )}
-
-        {!filteredProducts.length && (
-          <div className="w-full h-[80vh] flex items-center justify-center ">
-            <div className="animate-spin inline-block size-12 border-5 border-current border-t-transparent text-red-600 rounded-full">
-              <span className="sr-only">Loading...</span>
-            </div>
+        ) : (
+          <div className=" w-full text-xl text-red-500 text-center min-h-screen mt-10 ">
+            No Products is Found
           </div>
         )}
       </div>

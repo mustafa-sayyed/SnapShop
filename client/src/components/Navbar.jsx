@@ -13,13 +13,32 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserCircle } from "lucide-react";
 
+const navMenu = [
+  {
+    url: "/",
+    text: "Home",
+  },
+  {
+    url: "/collection",
+    text: "Collection",
+  },
+  {
+    url: "/about",
+    text: "About",
+  },
+  {
+    url: "/contact",
+    text: "Contact",
+  },
+];
+
 function Navbar() {
   const [visible, setVisible] = useState(false);
   const [cartCount, setCartCount] = useState(0);
 
   const navigate = useNavigate();
 
-  const { setShowSearch, getCartCount, cartItems } = useShop();
+  const { getCartCount, cartItems } = useShop();
   const { authStatus, logout } = useAuth();
 
   useEffect(() => {
@@ -35,26 +54,16 @@ function Navbar() {
       </Link>
 
       <ul className="hidden sm:flex gap-5 text-gray-700">
-        <NavLink
-          to={"/"}
-          className={({ isActive }) => `text-gray-600 ${isActive ? "text-red-500" : ""}`}>
-          Home
-        </NavLink>
-        <NavLink
-          to={"/collection"}
-          className={({ isActive }) => `text-gray-600 ${isActive ? "text-red-500" : ""}`}>
-          Collection
-        </NavLink>
-        <NavLink
-          to={"/about"}
-          className={({ isActive }) => `text-gray-600 ${isActive ? "text-red-500" : ""}`}>
-          About
-        </NavLink>
-        <NavLink
-          to={"/contact"}
-          className={({ isActive }) => `text-gray-600 ${isActive ? "text-red-500" : ""}`}>
-          Contact
-        </NavLink>
+        {navMenu.map((nav) => (
+          <NavLink
+            to={nav.url}
+            key={nav.text}
+            className={({ isActive }) =>
+              `text-gray-600 ${isActive ? "text-red-500" : ""}`
+            }>
+            {nav.text}
+          </NavLink>
+        ))}
       </ul>
 
       <div className="flex justify-center items-center gap-6">
@@ -76,28 +85,32 @@ function Navbar() {
             {authStatus ? (
               <>
                 <DropdownMenuItem>
-                  <p
+                  <button
                     onClick={() => navigate("/profile")}
-                    className="cursor-pointer hover:text-black">
+                    className="cursor-pointer w-full text-left hover:text-black">
                     My Profile
-                  </p>
+                  </button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <p
+                  <button
                     onClick={() => navigate("/orders")}
-                    className="cursor-pointer hover:text-black">
+                    className="cursor-pointer w-full text-left hover:text-black">
                     Orders
-                  </p>
+                  </button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <p onClick={logout} className="cursor-pointer hover:text-black">
+                  <button
+                    onClick={logout}
+                    className="cursor-pointer w-full text-left hover:text-black">
                     Logout
-                  </p>
+                  </button>
                 </DropdownMenuItem>
               </>
             ) : (
               <DropdownMenuItem>
-                <Link to={"/login"} className="cursor-pointer hover:text-black">
+                <Link
+                  to={"/login"}
+                  className="cursor-pointer w-full text-left hover:text-black">
                   Login
                 </Link>
               </DropdownMenuItem>
@@ -127,53 +140,36 @@ function Navbar() {
         } sm:hidden`}>
         <div className="flex flex-col text-gray-600 mt-4 hover:text-black ">
           <div
-            className="flex items-center gap-4 p-3 cursor-pointer"
+            className="flex border-gray-500 items-center gap-4 p-3 cursor-pointer"
             onClick={() => setVisible(false)}>
             <img className="h-4 rotate-180 " src={assets.dropdown_icon} alt="" />
             <p>Back</p>
           </div>
-          <NavLink
-            onClick={() => setVisible(false)}
-            to="/"
-            className={({ isActive }) =>
-              `py-3 pl-6 border-b border-t mt-2 border-gray-500 ${
-                isActive ? "text-red-500" : ""
-              } `
-            }>
-            Home
-          </NavLink>
-          <NavLink
-            onClick={() => setVisible(false)}
-            to="/about"
-            className={({ isActive }) =>
-              `py-3 pl-6 border-b border-gray-500 ${isActive ? "text-red-500" : ""} `
-            }>
-            About
-          </NavLink>
-          <NavLink
-            onClick={() => setVisible(false)}
-            to="/collection"
-            className={({ isActive }) =>
-              `py-3 pl-6 border-b border-gray-500 ${isActive ? "text-red-500" : ""} `
-            }>
-            Collection
-          </NavLink>
-          <NavLink
-            onClick={() => setVisible(false)}
-            to="/contact"
-            className={({ isActive }) =>
-              `py-3 pl-6 border-b border-gray-500 ${isActive ? "text-red-500" : ""} `
-            }>
-            Contact
-          </NavLink>
-          <NavLink
-            onClick={() => setVisible(false)}
-            to="/login"
-            className={({ isActive }) =>
-              `py-3 pl-6 border-b border-gray-500 ${isActive ? "text-red-500" : ""} `
-            }>
-            Login
-          </NavLink>
+
+          {navMenu.map((nav, index) => (
+            <NavLink
+              onClick={() => setVisible(false)}
+              to={nav.url}
+              key={nav.text}
+              className={({ isActive }) =>
+                `py-3 pl-6 border-b border-gray-500 ${isActive ? "text-red-500" : ""} ${
+                  index == 0 ? "mt-7 border-t" : ""
+                } `
+              }>
+              {nav.text}
+            </NavLink>
+          ))}
+
+          {!authStatus && (
+            <NavLink
+              onClick={() => setVisible(false)}
+              to="/login"
+              className={({ isActive }) =>
+                `py-3 pl-6 border-b border-gray-500 ${isActive ? "text-red-500" : ""} `
+              }>
+              Login
+            </NavLink>
+          )}
         </div>
       </div>
     </div>

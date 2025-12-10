@@ -11,7 +11,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  const { login } = useAuth();
+  const { login, setAddress } = useAuth();
 
   const navigate = useNavigate();
 
@@ -42,16 +42,21 @@ function Login() {
         if (response.data.success) {
           toast.success(response.data.message);
           login(response.data.user, response.data.token);
+          setAddress(response.data.address)
           navigate("/");
         } else {
           toast.error(response.data.message);
         }
       }
     } catch (error) {
+      console.error(error);
       if (error.response) {
         toast.error(error.response.data.message);
       } else {
+        if(!navigator.onLine)
         toast.error(`Error while Login: ${error.message}`);
+        else
+          toast.error("Error while Login: Internal server Error")
       }
     }
   };

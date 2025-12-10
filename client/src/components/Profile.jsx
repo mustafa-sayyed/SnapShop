@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Title from "./Title";
 import { useAuth } from "../contexts/UserContext";
-import { data, useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
