@@ -7,7 +7,6 @@ import LatestCollection from "./LatestCollection";
 import Title from "./Title";
 import BestSeller from "./BestSeller";
 import NewsLetterBox from "./NewsLetterBox";
-import SearchBar from "./SearchBar";
 import RelatedProducts from "./RelatedProducts";
 import CartTotal from "./CartTotal";
 import Profile from "./Profile";
@@ -24,7 +23,6 @@ export {
   ProductItem,
   Title,
   NewsLetterBox,
-  SearchBar,
   RelatedProducts,
   CartTotal,
   Profile,

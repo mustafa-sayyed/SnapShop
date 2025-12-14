@@ -14,7 +14,7 @@ import {
   Search,
   Signup,
 } from "./pages";
-import { AuthLayout, Footer, Navbar, Profile, SearchBar } from "./components";
+import { AuthLayout, Footer, Navbar, Profile } from "./components";
 import { toast, ToastContainer } from "react-toastify";
 import { useEffect } from "react";
 import axios from "axios";
@@ -63,9 +63,8 @@ function App() {
   }
 
   return (
-    <div>
+    <>
       <Navbar />
-      <SearchBar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -103,7 +102,7 @@ function App() {
         position="bottom-right"
         limit={3}
       />
-    </div>
+    </>
   );
 }
 

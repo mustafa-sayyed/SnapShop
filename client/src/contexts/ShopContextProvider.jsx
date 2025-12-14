@@ -9,7 +9,6 @@ function ShopContextProvider({ children }) {
   const [deliveryFee, setDeliveryFee] = useState(10);
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
   const { authStatus } = useAuth();
 
@@ -152,7 +151,6 @@ function ShopContextProvider({ children }) {
         deliveryFee,
         products,
         search,
-        showSearch,
         cartItems,
         setCartItems,
         addToCart,
@@ -160,7 +158,6 @@ function ShopContextProvider({ children }) {
         getCartAmount,
         updateCart,
         setSearch,
-        setShowSearch,
         updateCurrency,
         updateDeliveryFee,
       }}>
