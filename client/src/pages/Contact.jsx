@@ -1,9 +1,10 @@
 import React from "react";
-import { NewsLetterBox, Title } from "../components";
+import { Container, NewsLetterBox, Title } from "../components";
 import { assets } from "../assets/frontend_assets";
 
 function Contact() {
   return (
+    <Container>
     <div>
 
       <div className="text-center text-3xl pt-10 border-t">
@@ -25,6 +26,7 @@ function Contact() {
       <NewsLetterBox />
 
     </div>
+    </Container>
   );
 }
 

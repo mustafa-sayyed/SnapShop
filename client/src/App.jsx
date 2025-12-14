@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import {
   About,
   Cart,
   Collection,
   Contact,
+  Forgotpassword,
   Home,
   Login,
   Orders,
@@ -18,14 +19,10 @@ import { toast, ToastContainer } from "react-toastify";
 import { useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "./contexts/UserContext";
-import { useShop } from "./contexts/ShopContext";
 
 function App() {
-  const { setUserData, setAuthStatus, setAddress } = useAuth();
-  const { setCartItems } = useShop();
+  const { login, clearUserDetails } = useAuth();
   const [loading, setLoading] = useState(true);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -39,25 +36,23 @@ function App() {
           });
 
           if (response.data.success) {
-            setUserData(response.data.user);
-            setCartItems(response.data.user.cartData);
-            setAddress(response.data.address || []);
-            setAuthStatus(true);
+            login(response.data);
           }
         } else {
-          localStorage.removeItem("token");
-          setAuthStatus(false);
+          clearUserDetails();
         }
       } catch (error) {
-        toast.error("Internal Server Error");
+        if (error.response) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error(" Internal server Error");
+        }
         console.error(error);
       } finally {
-
         setLoading(false);
       }
     })();
   }, []);
-
 
   if (loading) {
     return (
@@ -68,13 +63,14 @@ function App() {
   }
 
   return (
-    <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+    <div>
       <Navbar />
       <SearchBar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<Forgotpassword />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/product/:productId" element={<Product />} />
@@ -85,7 +81,7 @@ function App() {
         <Route
           path="/profile"
           element={
-            <AuthLayout authRequired={true} >
+            <AuthLayout authRequired={true}>
               <Profile />
             </AuthLayout>
           }
@@ -93,7 +89,7 @@ function App() {
         <Route
           path="/orders"
           element={
-            <AuthLayout authRequired={true} >
+            <AuthLayout authRequired={true}>
               <Orders />
             </AuthLayout>
           }

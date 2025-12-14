@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useShop } from "../contexts/ShopContext";
-import { CartTotal, Title } from "../components";
+import { CartTotal, Container, Title } from "../components";
 import { assets } from "../assets/frontend_assets";
 import { useNavigate } from "react-router-dom";
 import { FaCartPlus } from "react-icons/fa6";
@@ -41,7 +41,7 @@ function Cart() {
   }, [cartItems]);
 
   return (
-    <>
+    <Container>
       {cartData.length ? (
         <div className="border-t pt-14">
           <div className="text-2xl mb-3">
@@ -122,7 +122,7 @@ function Cart() {
           </div>
         </div>
       )}
-    </>
+    </Container>
   );
 }
 

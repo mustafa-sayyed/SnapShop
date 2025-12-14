@@ -1,14 +1,23 @@
 import React from "react";
-import { BestSeller, Footer, Hero, LatestCollection, NewsLetterBox, Policy } from "../components";
+import {
+  BestSeller,
+  Container,
+  Hero,
+  LatestCollection,
+  NewsLetterBox,
+  Policy,
+} from "../components";
 
 function Home() {
   return (
     <div>
       <Hero />
-      <LatestCollection />
-      <BestSeller />
-      <Policy />
-      <NewsLetterBox />
+      <Container>
+        <LatestCollection />
+        <BestSeller />
+        <Policy />
+        <NewsLetterBox />
+      </Container>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import RelatedProducts from "./RelatedProducts";
 import CartTotal from "./CartTotal";
 import Profile from "./Profile";
 import AuthLayout from "./AuthLayout";
+import Container from "./Container";
 
 export {
   Hero,
@@ -27,5 +28,6 @@ export {
   RelatedProducts,
   CartTotal,
   Profile,
-  AuthLayout
+  AuthLayout,
+  Container,
 };

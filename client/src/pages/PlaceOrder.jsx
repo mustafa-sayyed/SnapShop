@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { CartTotal, Title } from "../components";
+import { CartTotal, Container, Title } from "../components";
 import { assets } from "../assets/frontend_assets";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useShop } from "../contexts/ShopContext";
 import { useAuth } from "../contexts/UserContext";
-import { useEffect } from "react";
 
 function PlaceOrder() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
@@ -133,6 +132,7 @@ function PlaceOrder() {
   };
 
   return (
+    <Container>
     <form
       onSubmit={handleCheckout}
       className="flex flex-col sm:flex-row gap-4 justify-between pt-5 sm:pt-14 min-h-[90vh] border-t">
@@ -151,8 +151,10 @@ function PlaceOrder() {
                 onClick={() => setSelectedAddress(addr)}
                 key={addr._id}
                 className={` ${
-                  selectedAddress && selectedAddress._id === addr._id ? "border" : ""
-                } h-fit cursor-pointer bg-slate-200 px-6 sm:px-8 py-4 flex flex-col gap-[2px] rounded-md text-xs sm:text-sm`}>
+                  selectedAddress && selectedAddress._id === addr._id
+                    ? "border-gray-400"
+                    : ""
+                } h-fit cursor-pointer border-2 bg-slate-200 px-6 sm:px-8 py-4 flex flex-col gap-[2px] rounded-md text-xs sm:text-sm`}>
                 <p>
                   {addr.firstName} {addr.lastName}
                 </p>
@@ -182,21 +184,10 @@ function PlaceOrder() {
         </div>
 
         <div className="mt-12">
-          <Title children1={"Payment"} children2={"Method"} />
+          <div className="text-xl">
+            <Title children1={"Payment"} children2={"Method"} />
+          </div>
           <div className="flex flex-col sm:flex-row gap-3">
-            <div
-              className="flex gap-3 border items-center p-2 px-3 cursor-pointer rounded-md border-gray-400"
-              onClick={() => setPaymentMethod("stripe")}>
-              <p
-                className={`w-4 h-4 border-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center 
-              ${paymentMethod === "stripe" ? "border-green-500" : "border-gray-400"}`}>
-                {paymentMethod === "stripe" && (
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                )}
-              </p>
-              <img src={assets.stripe_logo} alt="Strpe" className="h-4 mx-4" />
-            </div>
-
             <div
               className="flex gap-3 border items-center p-2 px-3 cursor-pointer rounded-md border-gray-400"
               onClick={() => setPaymentMethod("razorpay")}>
@@ -234,6 +225,7 @@ function PlaceOrder() {
         </div>
       </div>
     </form>
+    </Container>
   );
 }
 

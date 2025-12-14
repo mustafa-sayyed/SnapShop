@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useShop } from "../contexts/ShopContext";
-import { Title } from "../components";
+import { Container, Title } from "../components";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -60,6 +60,7 @@ function Orders() {
   }
 
   return (
+    <Container>
     <div className="border-t pt-16">
       <div className="text-2xl">
         <Title children1={"My"} children2={"Orders"} />
@@ -117,6 +118,7 @@ function Orders() {
         )}
       </div>
     </div>
+    </Container>
   );
 }
 

@@ -106,7 +106,7 @@ function Profile() {
         <p>Email: {userData.email}</p>
         <p>Address:</p>
         <div className="flex flex-wrap sm:flex-row item-center gap-4 mt-2">
-          {address.length ? (
+          {address?.length ? (
             address.map((addr) => (
               <div
                 key={addr._id}
