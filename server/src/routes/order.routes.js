@@ -15,13 +15,9 @@ const router = express.Router();
 // User Routes
 router.post("/", authenticate(), placeOrder);
 router.get("/myorders", authenticate(), getUserOrders);
-
 router.post("/razorpay", authenticate(), placeOrderRazorpay)
 router.post("/razorpay/verify", authenticate(), verifyRazorpay)
 
-// Payment Routes
-// router.post("/webhook/stripe", placeOrderStripe);
-// router.post("/webhook/razorpay", placeOrderRazorpay);
 
 // Admin Routes
 router.get("/", authenticate(["admin"]), getAllOrders);

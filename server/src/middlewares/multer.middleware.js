@@ -6,6 +6,7 @@ const storage = multer.diskStorage({
     cb(null, filename);
   },
   // destination: () => {}
+  // Not Providing the Folder path, it will store the files in System Memory temporarily
 });
 
 const upload = multer({ storage });

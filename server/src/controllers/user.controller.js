@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import validator from "validator";
 import bcrypt from "bcrypt";
 import { Address } from "../models/address.model.js";
+import { sendWelcomeEmail } from "../emails/welcomeEmail.js";
 
 const loginUser = async (req, res) => {
   try {
@@ -40,8 +41,13 @@ const loginUser = async (req, res) => {
       token,
       success: true,
       message: "Login successfull",
-      user: { name: user.name, email: user.email, role: user.role },
-      address,
+      user: {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        cartData: user.cartData,
+      },
+      addresses: address,
     });
   } catch (error) {
     return res.status(500).json({
@@ -86,6 +92,8 @@ const signupUser = async (req, res) => {
     });
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+
+    await sendWelcomeEmail(email, name);
 
     return res.status(201).json({
       token,
@@ -154,7 +162,7 @@ const getCurrentUser = async (req, res) => {
         role: user.role,
         cartData: user.cartData,
       },
-      address,
+      addresses: address,
     });
   } catch (error) {
     res.status(500).json({ message: `Internal Server error: ${error.message}` });

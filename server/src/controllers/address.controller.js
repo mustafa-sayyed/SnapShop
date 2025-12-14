@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { Address } from "../models/address.model.js";
 import { User } from "../models/user.model.js";
 
-const addAddress = async (req, res) => {
+const createAddress = async (req, res) => {
   try {
     const userId = req.user.id;
     const { firstName, lastName, email, address, phone, pincode, country, state, city } =
@@ -31,6 +31,13 @@ const addAddress = async (req, res) => {
 };
 
 
-export {
-    addAddress
+const updateAddress = async (req, res) => {
+  
 }
+
+const deleteAddress = async (req, res) => {
+
+}
+
+
+export { createAddress, updateAddress, deleteAddress };

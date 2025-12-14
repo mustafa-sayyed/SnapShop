@@ -9,7 +9,6 @@ import cartRouter from "./src/routes/cart.routes.js";
 import orderRouter from "./src/routes/order.routes.js";
 import addressRouter from "./src/routes/address.routes.js";
 import seedAdmin from "./src/utils/seedAdmin.js";
-import seedProducts from "./src/utils/seedProduct.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,8 +21,6 @@ app.use(
     credentials: true,
   })
 );
-
-console.log(`${process.env.USER_FRONTEND_URL}`, `${process.env.ADMIN_FRONTEND_URL}`);
 
 
 // Database connection
@@ -40,13 +37,13 @@ connectDB()
   .catch((error) => {
     console.log(`DB Connection Failed: ${error}`);
   });
+  
 
 // Cloudinary Connection
 connectCloudinary();
 
-// Seeding Products
-// seedProducts();
 
+// Routes
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/cart", cartRouter);
@@ -55,5 +52,5 @@ app.use("/api/v1/address", addressRouter);
 
 // APIs
 app.get("/", cors(), (req, res) => {
-  res.json({ Message: "This is Backend of Ecommerce" });
+  res.json({ Message: "This is Backend of SnapShop" });
 });
