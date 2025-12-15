@@ -61,63 +61,68 @@ function Orders() {
 
   return (
     <Container>
-    <div className="border-t pt-16">
-      <div className="text-2xl">
-        <Title children1={"My"} children2={"Orders"} />
-      </div>
+      <div className="border-t pt-16 min-h-screen">
+        <div className="text-2xl">
+          <Title children1={"My"} children2={"Orders"} />
+        </div>
 
-      <div>
-        {orderItems.length ? (
-          orderItems.map((product, index) => (
-            <div
-              key={index}
-              className="flex py-4 border-t border-b border-gray-400 text-gray-700 flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div className="flex items-start text-sm gap-6">
-                <img src={product.image[0]} alt="productImage" className="w-16 sm:w-20" />
-                <div>
-                  <p className="sm:text-base font-medium">{product.name}</p>
-                  <div className="flex items-center gap-3 mt-2 text-base text-gray-700">
-                    <p className="text-lg">
-                      {currency}
-                      {product.price}
+        <div>
+          {orderItems.length ? (
+            orderItems.map((product, index) => (
+              <div
+                key={index}
+                className="flex py-4 border-t border-b border-gray-400 text-gray-700 flex-col md:flex-row md:items-center md:justify-between gap-4"
+              >
+                <div className="flex items-start text-sm gap-6">
+                  <img
+                    src={product.image[0]}
+                    alt="productImage"
+                    className="w-16 sm:w-20"
+                  />
+                  <div>
+                    <p className="sm:text-base font-medium">{product.name}</p>
+                    <div className="flex items-center gap-3 mt-2 text-base text-gray-700">
+                      <p className="text-lg">
+                        {currency}
+                        {product.price}
+                      </p>
+                      <p>Quantity: {product.quantity}</p>
+                      <p>Size: {product.size}</p>
+                    </div>
+                    <p className="mt-2">
+                      Date:{" "}
+                      <span className="text-gray-400">
+                        {new Date(product.createdAt).toLocaleString()}
+                      </span>
                     </p>
-                    <p>Quantity: {product.quantity}</p>
-                    <p>Size: {product.size}</p>
+                    <p className="mt-2">
+                      Payment:{" "}
+                      <span className="text-gray-400">{product.paymentMethod}</span>
+                    </p>
                   </div>
-                  <p className="mt-2">
-                    Date:{" "}
-                    <span className="text-gray-400">
-                      {new Date(product.createdAt).toLocaleString()}
-                    </span>
-                  </p>
-                  <p className="mt-2">
-                    Payment:{" "}
-                    <span className="text-gray-400">{product.paymentMethod}</span>
-                  </p>
                 </div>
-              </div>
 
-              <div className="md:w-1/2 flex justify-between">
-                <div className="flex items-center gap-2">
-                  <p className="min-w-2 h-2 rounded-full bg-yellow-400"></p>
-                  <p className="text-sm md:text-base">{product.status}</p>
+                <div className="md:w-1/2 flex justify-between">
+                  <div className="flex items-center gap-2">
+                    <p className="min-w-2 h-2 rounded-full bg-yellow-400"></p>
+                    <p className="text-sm md:text-base">{product.status}</p>
+                  </div>
+                  <button className="border rounded-sm px-4 py-2 font-medium text-sm border-gray-400">
+                    Track Order
+                  </button>
                 </div>
-                <button className="border rounded-sm px-4 py-2 font-medium text-sm border-gray-400">
-                  Track Order
-                </button>
               </div>
+            ))
+          ) : (
+            <div className="min-h-[70vh] flex flex-col gap-4 items-center justify-center">
+              <div className="text-center text-3xl ">No Orders Yet</div>
+              <button className="btn btn-neutral" onClick={() => navigate("/collection")}>
+                Continue Shopping
+              </button>
             </div>
-          ))
-        ) : (
-          <div className="min-h-[70vh] flex flex-col gap-4 items-center justify-center">
-            <div className="text-center text-3xl ">No Orders Yet</div>
-            <button className="btn btn-neutral" onClick={() => navigate("/collection")}>
-              Continue Shopping
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
     </Container>
   );
 }

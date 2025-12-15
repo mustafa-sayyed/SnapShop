@@ -1,8 +1,9 @@
 import React from "react";
+import { Container } from ".";
 
 function Footer() {
   return (
-    <>
+    <Container>
       <footer className="w-full footer sm:footer-horizontal bg-white text-base-content p-10">
         <aside>
           <p className="text-3xl font-medium italic">
@@ -42,7 +43,7 @@ function Footer() {
           </p>
         </aside>
       </div>
-    </>
+    </Container>
   );
 }
 
