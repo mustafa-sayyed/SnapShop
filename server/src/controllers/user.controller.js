@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import validator from "validator";
 import bcrypt from "bcrypt";
 import { Address } from "../models/address.model.js";
-import { sendWelcomeEmail } from "../emails/welcomeEmail.js";
 
 const loginUser = async (req, res) => {
   try {
@@ -92,8 +91,6 @@ const signupUser = async (req, res) => {
     });
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
-
-    await sendWelcomeEmail(email, name);
 
     return res.status(201).json({
       token,

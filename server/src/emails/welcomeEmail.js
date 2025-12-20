@@ -46,7 +46,7 @@ const welcomeEmail = (name) => {
 export async function sendWelcomeEmail(email, username) {
   try {
     const res = await resend.emails.send({
-      from: "SnapShop <work@mustafasayyed.tech>",
+      from: "SnapShop <work@mustafasayyed.dev>",
       to: [email],
       subject: "Welcome to SnapShop!! 🎉",
       html: welcomeEmail(username),
