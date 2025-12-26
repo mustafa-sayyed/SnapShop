@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { UploadCloud } from "lucide-react";
 
 function Add() {
   const [image1, setImage1] = useState("");
@@ -16,17 +17,6 @@ function Add() {
   const [subCategory, setSubCategory] = useState("Topwear");
   const [bestSeller, setBestSeller] = useState(false);
   const [sizes, setSizes] = useState([]);
-
-  // const handlePhotoChange = (e, setImage) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     const fileReader = new FileReader();
-  //     fileReader.onloadend = () => {
-  //       setImage(fileReader.result);
-  //     };
-  //     fileReader.readAsDataURL(file);
-  //   }
-  // };
 
   const handleSizeChange = (size) => {
     if (sizes.includes(size)) {
@@ -110,11 +100,17 @@ function Add() {
         <p>Upload Images</p>
         <div className="flex flex-wrap gap-2 mt-2">
           <label htmlFor="image1" className="cursor-pointer w-28">
-            <img
-              src={(image1 && URL.createObjectURL(image1)) || assets.upload_area}
-              alt="image1"
-              className="w-28 h-24 rounded-xs"
-            />
+            {image1 ? (
+              <img
+                src={URL.createObjectURL(image1)}
+                alt="image1"
+                className="w-28 h-24 rounded-lg"
+              />
+            ) : (
+              <div className="w-28 h-24 flex items-center justify-center bg-muted rounded-lg">
+                <UploadCloud />
+              </div>
+            )}
             <input
               type="file"
               id="image1"
@@ -123,11 +119,17 @@ function Add() {
             />
           </label>
           <label htmlFor="image2" className="cursor-pointer w-28">
-            <img
-              src={(image2 && URL.createObjectURL(image2)) || assets.upload_area}
-              alt="image2"
-              className="w-28 h-24 rounded-xs"
-            />
+            {image2 ? (
+              <img
+                src={URL.createObjectURL(image2)}
+                alt="image1"
+                className="w-28 h-24 rounded-lg"
+              />
+            ) : (
+              <div className="w-28 h-24 flex items-center justify-center bg-muted rounded-lg">
+                <UploadCloud />
+              </div>
+            )}
             <input
               type="file"
               id="image2"
@@ -136,11 +138,17 @@ function Add() {
             />
           </label>
           <label htmlFor="image3" className="cursor-pointer w-28">
-            <img
-              src={(image3 && URL.createObjectURL(image3)) || assets.upload_area}
-              alt="image3"
-              className="w-28 h-24 rounded-xs"
-            />
+            {image3 ? (
+              <img
+                src={URL.createObjectURL(image3)}
+                alt="image1"
+                className="w-28 h-24 rounded-lg"
+              />
+            ) : (
+              <div className="w-28 h-24 flex items-center justify-center bg-muted rounded-lg">
+                <UploadCloud />
+              </div>
+            )}
             <input
               type="file"
               id="image3"
@@ -149,11 +157,17 @@ function Add() {
             />
           </label>
           <label htmlFor="image4" className="cursor-pointer w-28">
-            <img
-              src={(image4 && URL.createObjectURL(image4)) || assets.upload_area}
-              alt="image4"
-              className="w-28 h-24 rounded-xs"
-            />
+            {image4 ? (
+              <img
+                src={URL.createObjectURL(image4)}
+                alt="image1"
+                className="w-28 h-24 rounded-lg"
+              />
+            ) : (
+              <div className="w-28 h-24 flex items-center justify-center bg-muted rounded-lg">
+                <UploadCloud />
+              </div>
+            )}
             <input
               type="file"
               id="image4"
@@ -193,7 +207,8 @@ function Add() {
           <select
             className="w-full px-3 py-2 border border-gray-400 rounded-md outline-gray-500"
             value={category}
-            onChange={(e) => setCategory(e.target.value)}>
+            onChange={(e) => setCategory(e.target.value)}
+          >
             <option value="Men">Men</option>
             <option value="Women">Women</option>
             <option value="Kids">Kids</option>
@@ -205,7 +220,8 @@ function Add() {
           <select
             className="w-full px-3 py-2 border border-gray-400 rounded-md outline-gray-500"
             value={subCategory}
-            onChange={(e) => setSubCategory(e.target.value)}>
+            onChange={(e) => setSubCategory(e.target.value)}
+          >
             <option value="Topwear">Topwear</option>
             <option value="Bottomwear">Bottomwear</option>
             <option value="Winterwear">Winterwear</option>
@@ -232,7 +248,8 @@ function Add() {
               <p
                 className={`px-3 py-1.5 cursor-pointer rounded-sm border ${
                   sizes.includes(size) ? "bg-pink-100" : "bg-slate-200 border-slate-200"
-                }`}>
+                }`}
+              >
                 {size}
               </p>
             </div>

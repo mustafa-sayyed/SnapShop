@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Login } from "./components";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import { Add, List, Orders, Home, Banners } from "./pages";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { Add, List, Orders, Home, Banners, Login, NotFound } from "./pages";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "./context/userContext";
 import axios from "axios";
 import DashboardLayout from "./layouts/DashboardLayout";
+import AuthLayout from "./layouts/AuthLayout";
 export const currency = "$";
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const { login, authStatus } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,6 +24,7 @@ function App() {
           },
         })
         .then((res) => {
+          console.log(res);
           return res.data.user;
         })
         .then((user) => {
@@ -55,30 +56,28 @@ function App() {
     );
   }
 
-  return authStatus ? (
+  return (
     <>
       <Routes>
+        <Route path="/" element={<Navigate to={"/dashboard/home"} replace={true} />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route path="home" element={<Home />} />
+          <Route path="home" index element={<Home />} />
           <Route path="banners" element={<Banners />} />
           <Route path="add" element={<Add />} />
           <Route path="list" element={<List />} />
           <Route path="orders" element={<Orders />} />
         </Route>
+        <Route
+          path="/login"
+          element={
+            <AuthLayout authentication={false}>
+              <Login />
+            </AuthLayout>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
-      <ToastContainer
-        autoClose={3000}
-        closeOnClick={true}
-        pauseOnFocusLoss={false}
-        limit={2}
-      />
-    </>
-  ) : (
-    <>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-      </Routes>
       <ToastContainer
         autoClose={3000}
         closeOnClick={true}

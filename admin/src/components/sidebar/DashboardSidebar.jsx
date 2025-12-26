@@ -1,9 +1,10 @@
-"use client";;
+"use client";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -20,13 +21,14 @@ import {
   ShoppingBag,
   Sparkles,
   Store,
+  Tag,
+  TagIcon,
   TrendingUp,
   Users,
 } from "lucide-react";
 import { Logo } from "@/components/sidebar/logo";
 import DashboardNavigation from "@/components/sidebar/DashboardNavigation";
 import { Link } from "react-router-dom";
-
 
 const dashboardRoutes = [
   {
@@ -38,7 +40,7 @@ const dashboardRoutes = [
   {
     id: "Manage Featured Banners",
     title: "Manage Featured Banners",
-    icon: <Home className="size-4" />,
+    icon: <Tag className="size-4" />,
     link: "banners",
   },
   {
@@ -153,24 +155,24 @@ const dashboardRoutes = [
   },
 ];
 
-
-
-export function DashboardSidebar() {
+function DashboardSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader
-        className={cn("flex md:pt-3.5", isCollapsed
-          ? "flex-row items-center justify-between gap-y-4 md:flex-col md:items-start md:justify-start"
-          : "flex-row items-center justify-between")}>
+        className={cn(
+          "flex md:pt-3.5",
+          isCollapsed
+            ? "flex-row items-center justify-between gap-y-4 md:flex-col md:items-start md:justify-start"
+            : "flex-row items-center justify-between"
+        )}
+      >
         <Link to="#" className="flex items-center gap-2">
           <Logo className="h-8 w-8" />
           {!isCollapsed && (
-            <span className="font-semibold text-black dark:text-white">
-              SnapShop
-            </span>
+            <span className="font-semibold text-black dark:text-white">SnapShop</span>
           )}
         </Link>
       </SidebarHeader>
@@ -178,11 +180,15 @@ export function DashboardSidebar() {
         <DashboardNavigation routes={dashboardRoutes} />
       </SidebarContent>
       <SidebarFooter className="px-2">
-        <div>
-          <span>Logout</span>
-          <LogOut />
-        </div>
+        <SidebarMenuButton tooltip={"Logout"} className="cursor-pointer flex justify-center items-center gap-3">
+          {!isCollapsed && (
+            <span className="text-[18px] text-black dark:text-white">Logout</span>
+          )}
+          <LogOut size={20} />
+        </SidebarMenuButton>
       </SidebarFooter>
     </Sidebar>
   );
 }
+
+export default DashboardSidebar;

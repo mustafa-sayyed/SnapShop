@@ -4,7 +4,7 @@ import { useAuth } from "../context/userContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-function Login() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useAuth();
@@ -50,7 +50,6 @@ function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen w-full">
       <div className="bg-white shadow-md rounded-lg px-9 py-8 max-w-md">
         <h1 className="font-bold mb-4 text-4xl text-center">Admin Panel</h1>
         <form onSubmit={handleSubmit}>
@@ -81,8 +80,7 @@ function Login() {
           </button>
         </form>
       </div>
-    </div>
   );
 }
 
-export default Login;
+export default LoginForm;

@@ -2,20 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 
-function AuthLayout({ children, authentication = true }) {
+function AuthLayout({ children, authentication = false }) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { authStatus } = useAuth();
 
   useEffect(() => {
     setLoading(false);
-    // const token = localStorage.getItem("token");
-    if (authentication) {
-      if (authentication && authStatus !== authentication) {
-        navigate("/login");
-      } else if (!authentication && authStatus !== authentication) {
-        navigate("/");
-      }
+    if (authentication && authStatus !== authentication) {
+      navigate("/login");
+    } else if (!authentication && authStatus !== authentication) {
+      navigate("/dashboard/home");
     }
   }, [authentication, authStatus]);
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { assets } from "../assets";
+import { Trash2 } from "lucide-react";
 
 function List() {
   const [products, setProducts] = useState([]);
@@ -82,11 +82,7 @@ function List() {
               <p>{product.category}</p>
               <p>{product.price}</p>
               <div className="flex md:justify-center justify-end items-center">
-                <img
-                  src={assets.delete_icon}
-                  className="w-6 h-6 cursor-pointer text-right hover:text-red-600"
-                  onClick={() => deleteProduct(product._id)}
-                />
+                <Trash2 onClick={() => deleteProduct(product._id)} />
               </div>
             </div>
           ))}
