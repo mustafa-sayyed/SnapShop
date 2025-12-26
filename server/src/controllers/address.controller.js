@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { Address } from "../models/address.model.js";
-import { User } from "../models/user.model.js";
 
 const createAddress = async (req, res) => {
   try {

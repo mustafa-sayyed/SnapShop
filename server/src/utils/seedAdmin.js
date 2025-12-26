@@ -10,19 +10,17 @@ const seedAdmin = async () => {
     if (!exists) {
       const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
-      const user = await User.create({
+      await User.create({
         name: "Super Admin",
         email: adminEmail,
         password: hashedPassword,
         role: "admin",
       });
 
-      console.log("Admin Seeded");
-    } else {
-      console.log("Admin Already Seeded");
+      console.log("Super Admin Created.");
     }
   } catch (error) {
-    console.log(`Internal Server error while seeding admin: ${error.message}`);
+    console.log(`Internal Server error while creating Super Admin: ${error.message}`);
   }
 };
 

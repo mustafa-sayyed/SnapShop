@@ -22,26 +22,24 @@ app.use(
   })
 );
 
-
+console.log(`${process.env.USER_FRONTEND_URL}`, `${process.env.ADMIN_FRONTEND_URL}`);
 // Database connection
 connectDB()
   .then(() => {
     app.on("error", (error) => {
       console.log(`Server Error: ${error}`);
-    }),
-      app.listen(PORT, () => {
-        console.log(`Server is listening on http://localhost:${PORT}`);
-      });
+    });
+    app.listen(PORT, () => {
+      console.log(`Server is listening on PORT: ${PORT}`);
+    });
     seedAdmin();
   })
   .catch((error) => {
     console.log(`DB Connection Failed: ${error}`);
   });
-  
 
 // Cloudinary Connection
 connectCloudinary();
-
 
 // Routes
 app.use("/api/v1/users", userRouter);
@@ -50,7 +48,7 @@ app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/address", addressRouter);
 
-// APIs
-app.get("/", cors(), (req, res) => {
-  res.json({ Message: "This is Backend of SnapShop" });
+// Health API
+app.get("/health", (req, res) => {
+  res.json({ Message: "This is Backend of SnapShop is working fine..." });
 });

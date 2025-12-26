@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
       type: Object,
       default: {},
     },
+    __v: {
+      type: Number,
+      select: false,
+    },
   },
   { timestamps: true, minimize: false }
 );

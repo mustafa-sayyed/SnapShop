@@ -1,18 +1,11 @@
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
-import validator from "validator";
 import bcrypt from "bcrypt";
 import { Address } from "../models/address.model.js";
 
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required",
-      });
-    }
 
     const user = await User.findOne({ email });
 
@@ -40,12 +33,7 @@ const loginUser = async (req, res) => {
       token,
       success: true,
       message: "Login successfull",
-      user: {
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        cartData: user.cartData,
-      },
+      user,
       addresses: address,
     });
   } catch (error) {
@@ -68,20 +56,6 @@ const signupUser = async (req, res) => {
       });
     }
 
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({
-        success: false,
-        message: "Enter a valid email",
-      });
-    }
-
-    if (password.length < 8) {
-      return res.status(400).json({
-        success: false,
-        message: "Enter a strong password",
-      });
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -96,7 +70,7 @@ const signupUser = async (req, res) => {
       token,
       success: true,
       message: "Account created successfully",
-      user: { name: user.name, email: user.email, role: user.role },
+      user,
     });
   } catch (error) {
     console.log("Error in Creating Account: ", error);

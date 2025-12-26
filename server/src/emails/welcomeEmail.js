@@ -46,7 +46,7 @@ const welcomeEmail = (name) => {
 export async function sendWelcomeEmail(email, username) {
   try {
     const res = await resend.emails.send({
-      from: "SnapShop <work@mustafasayyed.dev>",
+      from: "SnapShop <dev@mustafasayyed.dev>",
       to: [email],
       subject: "Welcome to SnapShop!! 🎉",
       html: welcomeEmail(username),
@@ -56,6 +56,6 @@ export async function sendWelcomeEmail(email, username) {
     return { success: true, message: "Email sent successfully" };
   } catch (error) {
     console.log(error);
-    return { success: false, message: "Error while sending email" };
+    return { success: false, message: "Error while sending welcome email" };
   }
 }
