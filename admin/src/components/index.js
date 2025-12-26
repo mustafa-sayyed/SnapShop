@@ -1,6 +1,5 @@
 import Navbar from "./Navbar";
-import Sidebar from "./Sidebar";
 import Login from "./Login";
-import AuthLayout from "./AuthLayout";
+import AuthLayout from "../layouts/AuthLayout";
 
-export { Navbar, Sidebar, Login, AuthLayout };
+export { Navbar, Login, AuthLayout };

@@ -40,7 +40,7 @@ function Login() {
         type: "success",
       });
 
-      navigate("/");
+      navigate("/dashboard/home");
     } catch (error) {
       console.log("Error while login:", error.message);
       if (error.response) {
@@ -62,6 +62,7 @@ function Login() {
               className="w-full rounded-md px-3 py-2 border border-gray-400 outline-none"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <div className="mb-3 min-w-72">
@@ -72,6 +73,7 @@ function Login() {
               className="w-full rounded-md px-3 py-2 border border-gray-400 outline-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
           <button className="px-8 py-2 rounded-md bg-black text-white w-full mt-3 cursor-pointer">

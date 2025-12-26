@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "./components/Navbar";
-import { AuthLayout, Login, Sidebar } from "./components";
+import { Login } from "./components";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { Add, List, Orders } from "./pages";
+import { Add, List, Orders, Home } from "./pages";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "./context/userContext";
 import axios from "axios";
-export const currency = "$"
+import DashboardLayout from "./layouts/DashboardLayout";
+export const currency = "$";
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const { login, authStatus, user } = useAuth();
+  const { login, authStatus } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-
     const token = localStorage.getItem("token");
 
     if (token) {
@@ -31,7 +30,7 @@ function App() {
           login({ name: user.name, email: user.email, role: user.role });
         })
         .catch((error) => {
-          localStorage.removeItem("token")
+          localStorage.removeItem("token");
           toast("Error, Login Again.", {
             type: "warning",
           });
@@ -57,41 +56,15 @@ function App() {
   }
 
   return authStatus ? (
-    <div className="bg-gray-50 min-h-screen">
-      <Navbar />
-      <hr />
-
-      <div className="flex w-full">
-        <Sidebar />
-        <div className="w-[70%] my-8 mx-auto ml-[max(5vw,25px))] text-gray-600 text-base">
-          <Routes>
-            <Route
-              path="/add"
-              element={
-                <AuthLayout authentication={true}>
-                  <Add />
-                </AuthLayout>
-              }
-            />
-            <Route
-              path="/list"
-              element={
-                <AuthLayout authentication={true}>
-                  <List />
-                </AuthLayout>
-              }
-            />
-            <Route
-              path="/orders"
-              element={
-                <AuthLayout authentication={true}>
-                  <Orders />
-                </AuthLayout>
-              }
-            />
-          </Routes>
-        </div>
-      </div>
+    <>
+      <Routes>
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="home" element={<Home />} />
+          <Route path="add" element={<Add />} />
+          <Route path="list" element={<List />} />
+          <Route path="orders" element={<Orders />} />
+        </Route>
+      </Routes>
 
       <ToastContainer
         autoClose={3000}
@@ -99,7 +72,7 @@ function App() {
         pauseOnFocusLoss={false}
         limit={2}
       />
-    </div>
+    </>
   ) : (
     <>
       <Routes>
