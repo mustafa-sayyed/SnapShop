@@ -36,6 +36,12 @@ const dashboardRoutes = [
     link: "home",
   },
   {
+    id: "Manage Featured Banners",
+    title: "Manage Featured Banners",
+    icon: <Home className="size-4" />,
+    link: "banners",
+  },
+  {
     id: "products",
     title: "Products",
     icon: <Package2 className="size-4" />,

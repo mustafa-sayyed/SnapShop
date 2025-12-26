@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { assets } from "../assets";
+import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 

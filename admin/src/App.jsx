@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Login } from "./components";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { Add, List, Orders, Home } from "./pages";
+import { Add, List, Orders, Home, Banners } from "./pages";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "./context/userContext";
 import axios from "axios";
@@ -60,6 +60,7 @@ function App() {
       <Routes>
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="home" element={<Home />} />
+          <Route path="banners" element={<Banners />} />
           <Route path="add" element={<Add />} />
           <Route path="list" element={<List />} />
           <Route path="orders" element={<Orders />} />
