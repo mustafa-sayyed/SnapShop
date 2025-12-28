@@ -1,3 +1,5 @@
+import IndexBarChart from "@/components/charts/BarCharts";
+import IndexLineChart from "@/components/charts/LineChart";
 import React from "react";
 
 function Home() {
@@ -22,13 +24,10 @@ function Home() {
         </div>
       </div>
       <div className="bg-muted/50 w-full min-h-60 p-4 rounded-xl"> 
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum possimus obcaecati quo sapiente, laborum tenetur cumque, eligendi dolorum cupiditate odit aperiam ipsam reiciendis dolores veniam magnam nostrum doloribus quibusdam sunt.
+        <IndexBarChart />
       </div>
       <div className="bg-muted/50 w-full min-h-60 p-4 rounded-xl"> 
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum possimus obcaecati quo sapiente, laborum tenetur cumque, eligendi dolorum cupiditate odit aperiam ipsam reiciendis dolores veniam magnam nostrum doloribus quibusdam sunt.
-      </div>
-      <div className="bg-muted/50 w-full min-h-60 p-4 rounded-xl"> 
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eum possimus obcaecati quo sapiente, laborum tenetur cumque, eligendi dolorum cupiditate odit aperiam ipsam reiciendis dolores veniam magnam nostrum doloribus quibusdam sunt.
+        <IndexLineChart />
       </div>
     </div>
   );
