@@ -59,9 +59,9 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Navigate to={"/dashboard/home"} replace={true} />} />
+        <Route path="/" element={<Navigate to={"/dashboard/home"} replace />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route path="home" index element={<Home />} />
+          <Route path="home" index={true} element={<Home />} />
           <Route path="banners" element={<Banners />} />
           <Route path="add" element={<Add />} />
           <Route path="list" element={<List />} />

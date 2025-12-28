@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { UploadCloud } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 function Add() {
   const [image1, setImage1] = useState("");
@@ -244,26 +246,20 @@ function Add() {
         <p>Product Sizes</p>
         <div className="flex gap-2 mt-2">
           {["S", "M", "L", "XL", "XXL"].map((size) => (
-            <div onClick={() => handleSizeChange(size)} key={size}>
-              <p
-                className={`px-3 py-1.5 cursor-pointer rounded-sm border ${
-                  sizes.includes(size) ? "bg-pink-100" : "bg-slate-200 border-slate-200"
-                }`}
-              >
-                {size}
-              </p>
-            </div>
+           <Button type="button" variant="outline" className={`cursor-pointer border-2 ${sizes.includes(size) ? "dark:border-green-700 border-green-700" : ""} `} onClick={() => handleSizeChange(size)} key={size}>
+            {size}
+           </Button>
           ))}
         </div>
       </div>
 
-      <div className="flex gap-2 mt-2">
-        <input
+      <div className="flex items-center gap-2 mt-2">
+        <Input
           type="checkbox"
           id="bestSeller"
           checked={bestSeller}
-          className="w-4"
-          onChange={(e) => setBestSeller((prev) => !prev)}
+          className="w-4 bg-green-600"
+          onChange={() => setBestSeller((prev) => !prev)}
         />
         <label htmlFor="bestSeller" className="cursor-pointer">
           Add to Best Seller

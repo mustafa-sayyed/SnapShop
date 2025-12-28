@@ -2,6 +2,17 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Trash2 } from "lucide-react";
+import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { productListColumns } from "@/lib/tableColumns";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 function List() {
   const [products, setProducts] = useState([]);
@@ -52,62 +63,70 @@ function List() {
     }
   };
 
+  const alteredProductListColumns = productListColumns.map((product) => {
+    if (product.accessorKey == "action") {
+      product["cell"] = ({ row }) => {
+        const _id = row.original._id;
+
+        return (
+          <Button
+            variant="outline"
+            className="cursor-pointer hover:text-red-600"
+            onClick={() => deleteProduct(_id)}
+          >
+            <Trash2 />
+          </Button>
+        );
+      };
+    }
+    return product;
+  });
+
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  const table = useReactTable({
+    data: products,
+    columns: alteredProductListColumns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
     <div>
-      <p className="mb-2">All Product List</p>
-      <div className="flex flex-col gap-2">
-        <div className="hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center py-1 px-3 border bg-gray-100 text-sm">
-          <b>Image</b>
-          <b>Name</b>
-          <b>Category</b>
-          <b>Price</b>
-          <b className="text-center">Action</b>
-        </div>
-
-        {products &&
-          products.map((product) => (
-            <div
-              key={product._id}
-              className="grid grid-cols-[1fr_3fr_1fr md:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center gap-2 py-1 px-2 text-sm border border-gray-400">
-              <img
-                src={product.image[0]}
-                alt="productImage"
-                className="w-20 rounded-xs"
-              />
-              <p>{product.name}</p>
-              <p>{product.category}</p>
-              <p>{product.price}</p>
-              <div className="flex md:justify-center justify-end items-center">
-                <Trash2 onClick={() => deleteProduct(product._id)} />
-              </div>
-            </div>
+      <p className="mb-4 text-2xl">All Product List</p>
+      <Table className="">
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id} className="bg-accent">
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
+            </TableRow>
           ))}
-      </div>
-
-      {/* <div>Products Will be displayed here</div>
-      {products &&
-        products.map((product) => ( 
-          <div key={product._id}>
-          <div className="flex items-center flex-wrap gap-4">
-
-            {
-              product.image.map(img => (
-                  <img src={img} alt="images" className="w-36 rounded-sm" />
-              )) 
-            }
-          </div>
-
-            <div>{product.name}</div>
-            <div>{product.descrition}</div>
-            <div>{product.price}</div>
-            <div>{product.category}</div>
-            <div>{product.subCategory}</div>
-          </div>
-        ))} */}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={productListColumns.length} className="h-36 text-center">
+                No Products Found.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }

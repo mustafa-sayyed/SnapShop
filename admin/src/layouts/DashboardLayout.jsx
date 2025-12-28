@@ -9,9 +9,20 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { Outlet } from "react-router-dom";
+import { useAuth } from "@/context/userContext";
+import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 function DashboardLayout() {
+  const { authStatus } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authStatus) {
+      navigate("/login");
+    }
+  }, []);
+
   return (
     <>
       <DashboardSidebar />
@@ -44,6 +55,5 @@ function DashboardLayout() {
     </>
   );
 }
-
 
 export default DashboardLayout;
