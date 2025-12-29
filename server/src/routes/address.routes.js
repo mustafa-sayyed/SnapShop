@@ -6,8 +6,7 @@ import {
   updateAddress,
 } from "../controllers/address.controller.js";
 import validate from "../middlewares/validation.middleware.js";
-import addressSchema from "../schema/address.validation.js";
-
+import addressSchema from "../schema/address.schema.js";
 const router = express.Router();
 
 router.post("/", authenticate(), validate(addressSchema), createAddress);

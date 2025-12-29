@@ -8,6 +8,7 @@ import productRouter from "./src/routes/product.route.js";
 import cartRouter from "./src/routes/cart.routes.js";
 import orderRouter from "./src/routes/order.routes.js";
 import addressRouter from "./src/routes/address.routes.js";
+import featuredBannerRouter from "./src/routes/featuredBanner.routes.js";
 import seedAdmin from "./src/utils/seedAdmin.js";
 
 const app = express();
@@ -47,6 +48,7 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/address", addressRouter);
+app.use("/api/v1/featured-banner", featuredBannerRouter)
 
 // Health API
 app.get("/health", (req, res) => {

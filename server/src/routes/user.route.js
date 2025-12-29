@@ -7,7 +7,7 @@ import {
 } from "../controllers/user.controller.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
 import validate from "../middlewares/validation.middleware.js";
-import { loginSchema, signupSchema } from "../schema/auth.validation.js";
+import { loginSchema, signupSchema } from "../schema/auth.schema.js";
 
 const router = Router();
 
