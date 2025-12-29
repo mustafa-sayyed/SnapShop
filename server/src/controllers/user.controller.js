@@ -37,8 +37,11 @@ const loginUser = async (req, res) => {
       addresses: address,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: `Internal Server error: ${error.message}`,
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
     });
   }
 };
@@ -74,8 +77,10 @@ const signupUser = async (req, res) => {
     });
   } catch (error) {
     console.log("Error in Creating Account: ", error);
-    return res.status(500).json({
-      message: `Internal Server error: ${error.message}`,
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
     });
   }
 };
@@ -109,7 +114,12 @@ const loginAdmin = async (req, res) => {
       user: { name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
-    res.status(500).json({ message: `Internal Server error: ${error.message}` });
+    console.log(err);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
+    });
   }
 };
 
@@ -136,7 +146,12 @@ const getCurrentUser = async (req, res) => {
       addresses: address,
     });
   } catch (error) {
-    res.status(500).json({ message: `Internal Server error: ${error.message}` });
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
+    });
   }
 };
 
