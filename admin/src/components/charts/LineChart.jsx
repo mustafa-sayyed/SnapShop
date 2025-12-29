@@ -98,12 +98,12 @@ const chartConfig = {
 export default function IndexLineChart() {
   return (
     <ChartContainer config={chartConfig} className="min-h-60 max-h-[400px] w-full">
-      <LineChart responsive data={data}>
-        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+      <LineChart responsive data={data} className="-ml-5" >
+        <CartesianGrid vertical={false} strokeDasharray="3"  />
         <XAxis />
-        <YAxis />
-        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-        <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+        <YAxis axisLine={false} tickMargin={5} tickSize={0} />
+        <Line type="monotone" dot={false} dataKey="uv" stroke="#8884d8" />
+        <Line type="monotone" dot={false} dataKey="pv" stroke="#82ca9d" />
         <ChartTooltip content={<ChartTooltipContent />} />
         <ChartLegend content={<ChartLegendContent />} />
       </LineChart>

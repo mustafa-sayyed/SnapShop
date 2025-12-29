@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 function Add() {
   const [image1, setImage1] = useState("");
@@ -246,30 +247,32 @@ function Add() {
         <p>Product Sizes</p>
         <div className="flex gap-2 mt-2">
           {["S", "M", "L", "XL", "XXL"].map((size) => (
-           <Button type="button" variant="outline" className={`cursor-pointer border-2 ${sizes.includes(size) ? "dark:border-green-700 border-green-700" : ""} `} onClick={() => handleSizeChange(size)} key={size}>
-            {size}
-           </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className={`cursor-pointer border-2 ${
+                sizes.includes(size) ? "dark:border-green-700 border-green-700" : ""
+              } `}
+              onClick={() => handleSizeChange(size)}
+              key={size}
+            >
+              {size}
+            </Button>
           ))}
         </div>
       </div>
 
       <div className="flex items-center gap-2 mt-2">
-        <Input
-          type="checkbox"
-          id="bestSeller"
-          checked={bestSeller}
-          className="w-4 bg-green-600"
-          onChange={() => setBestSeller((prev) => !prev)}
-        />
+        <Checkbox id="bestSeller" onChange={() => setBestSeller((prev) => !prev)} />
         <label htmlFor="bestSeller" className="cursor-pointer">
           Add to Best Seller
         </label>
       </div>
 
-      <button className="px-8 py-3 mt-2 cursor-pointer bg-black text-white rounded-md active:bg-gray-900">
+      <button className="px-8 py-3 mt-2 cursor-pointer bg-black text-white dark:bg-white dark:text-black rounded-md active:bg-gray-900 disabled:bg-white/60" disabled={addingProduct}>
         {addingProduct ? (
           <div className="flex items-center gap-2">
-            <span className="animate-spin inline-block size-5 border-3 border-current border-t-transparent text-white rounded-full"></span>
+            <span className="animate-spin inline-block size-5 border-3 border-current border-t-transparent text-white dark:text-black rounded-full"></span>
             <span>Adding Product...</span>
           </div>
         ) : (
