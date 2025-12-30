@@ -37,23 +37,3 @@ export const productListColumns = [
     header: "Action",
   },
 ];
-
-
-export const featuredBannerColumns = [
-  {
-    accessorkey: "image",
-    header: "Image"
-  },
-  {
-    accessorKey: "title",
-    header: "title"
-  },
-  {
-    accessorKey: "active",
-    header: "active"
-  },
-  {
-    accessoryKey: "action",
-    header: "Action"
-  }
-]

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table";
 import { featuredBannerColumns } from "@/lib/tableColumns";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import axios from "axios";
 import { Plus, UploadCloud } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -28,10 +29,22 @@ import { toast } from "react-toastify";
 function Banners() {
   const [banners, setBanners] = useState([]);
   const [bannerImage, setBannerImage] = useState();
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(5);
+  const token = localStorage.getItem("token");
 
   const fetchBanners = async () => {
     try {
-      setBanners([]);
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/featured-banner?limit=${limit}&page=${page}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setBanners(res.data.banners);
     } catch (error) {
       console.log("Error while fetching banners: ", error);
     }
@@ -39,20 +52,71 @@ function Banners() {
 
   const deleteBanner = async (id) => {
     try {
-      toast.success("Banner deleted successfully");
+      const res = await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/featured-banner`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data.success) {
+        toast.success("Banner deleted successfully");
+      }
     } catch (error) {
+      if (error.res.data) {
+        toast.error(error.res.data.message);
+      }
       console.log("Error while fetching banners: ", error);
-      toast.error("Error while deleting banner");
     }
   };
 
   const toggleBannerActive = async (id) => {
     try {
-      // Todo: Add logic for Activate/Deactivate
+      const res = await axios.patch(
+        `${import.meta.env.VITE_BACKEND_URL}/featured-banner/${id}/toggle`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (error) {
+      if (error.res.data) {
+        toast.error(error.res.data.message);
+      }
       console.log("Error while toggling Banner Active ", error);
     }
   };
+
+  const featuredBannerColumns = [
+    {
+      accessorkey: "image",
+      header: "Image",
+    },
+    {
+      accessorKey: "title",
+      header: "title",
+    },
+    {
+      accessorKey: "active",
+      header: "active",
+    },
+    {
+      accessoryKey: "activate/deactivate",
+      header: "Activate/Deactivate",
+      cell: ({row}) => {
+
+        return (
+          <div>
+            
+          </div>
+        )
+      }
+    },
+  ];
 
   const table = useReactTable({
     data: banners,
