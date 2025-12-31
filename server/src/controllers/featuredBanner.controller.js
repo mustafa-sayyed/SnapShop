@@ -85,31 +85,42 @@ const deleteFeaturedBanner = async (req, res, next) => {
 
 const getAllBanners = async (req, res, next) => {
   try {
-    const page = Number(req.query.page) || 0;
-    const limit = Number(req.query.limit) || 5;
-    console.log(await featuredBanner.countDocuments());
-    const totalPages = Math.floor((await featuredBanner.countDocuments()) / limit);
+    // Use - if there is large no. of Banners
+    // const page = Number(req.query.page) || 0;
+    // const limit = Number(req.query.limit) || 5;
+    // console.log(await featuredBanner.countDocuments());
+    // const totalPages = Math.floor((await featuredBanner.countDocuments()) / limit);
 
-    if (page < 0 || page > totalPages) {
-      res.status(200).json({
-        success: false,
-        message: `Banners not Found, pages must be within 0 or ${totalPages}`,
-      });
-    }
+    // if (page < 0 || page > totalPages) {
+    //   res.status(200).json({
+    //     success: false,
+    //     message: `Banners not Found, pages must be within 0 or ${totalPages}`,
+    //   });
+    // }
 
-    const banners = await featuredBanner
-      .find({})
-      .skip(page * limit)
-      .limit(limit);
+    const banners = await featuredBanner.find({});
 
     res.status(200).json({
       success: true,
       message: "Banners fetched",
       banners,
-      totalPages,
-      page,
-      limit,
     });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      success: false,
+      message: `Internal Server error`,
+      errorStack,
+    });
+  }
+};
+
+const getAllActiveBanners = async (req, res, next) => {
+  try {
+    const activeBanners = await featuredBanner.find({ isActive: true });
+
+    res.status(200).json({ success: true, banners: activeBanners });
   } catch (error) {
     console.log(error);
     const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
@@ -126,4 +137,5 @@ export {
   toggleActiveFeaturedBanner,
   deleteFeaturedBanner,
   getAllBanners,
+  getAllActiveBanners
 };

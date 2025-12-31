@@ -2,6 +2,7 @@ import express from "express";
 import {
   createFeaturedBanner,
   deleteFeaturedBanner,
+  getAllActiveBanners,
   getAllBanners,
   toggleActiveFeaturedBanner,
 } from "../controllers/featuredBanner.controller.js";
@@ -19,6 +20,7 @@ router
     createFeaturedBanner
   );
 router.route("/").get(getAllBanners);
+router.route("/active").get(getAllActiveBanners);
 router.route("/:bannerId/toggle").patch(toggleActiveFeaturedBanner);
 router.route("/:bannerId").delete(deleteFeaturedBanner);
 
