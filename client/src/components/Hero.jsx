@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from "react";
-import {
-  Navigation,
-  Pagination,
-  Scrollbar,
-  A11y,
-  Autoplay,
-  EffectFade,
-} from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
-import "swiper/css/effect-fade";
-import "./Hero.css";
-import { Button } from "./ui/button";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel";
+import { Dot } from "lucide-react";
+import { Button } from "./ui/button";
+import useEmblaCarousel from "embla-carousel-react";
 
 function Hero() {
   const [slides, setSlides] = useState([]);
+  const [api, setApi] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [_, api2] = useEmblaCarousel({});
 
   async function fetchSlides() {
     try {
@@ -33,55 +31,46 @@ function Hero() {
     }
   }
 
+  const onSelect = useCallback(() => {
+    setSelectedIndex(api.selectedScrollSnap());
+  }, []);
+
   useEffect(() => {
     fetchSlides();
+    if (!api) return;
+    api.on("select", onSelect);
   }, []);
 
   return (
-    <div className="hero-container">
-      <Swiper
-        modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay, EffectFade]}
-        spaceBetween={0}
-        slidesPerView={1}
-        navigation
-        pagination={{ clickable: true }}
-        autoplay={{
-          delay: 5000,
-          disableOnInteraction: false,
-        }}
-        loop={true}
-        speed={800}
-        effect="fade"
-        fadeEffect={{ crossFade: true }}
-        className="hero-swiper"
-      >
-        {slides.map((slide, index) => (
-          <SwiperSlide key={index}>
-            <div className="slide-wrapper">
-              <img
-                src={slide.bannerImage}
-                className="slide-image"
-                alt={slide.bannerTitle || "Slides"}
-                loading={index === 0 ? "eager" : "lazy"}
-              />
-              <div className="slide-overlay">
-                <div className="slide-content">
-                  <h2 className="slide-title">{slide.bannerTitle}</h2>
-                  {/* <p className="slide-description">{slide.desc}</p> */}
-                  {slide.bannerLink ? (
-                    <Button
-                      size="lg"
-                      className="bg-red-500 hover:bg-red-600 cursor-pointer rounded-full p-6"
-                    >
-                      Explore More
-                    </Button>
-                  ) : null}
-                </div>
+    <div className="w-full relative">
+      <Carousel className="w-full relative" setApi={setApi}>
+        <CarouselContent>
+          {slides.map((slide, index) => (
+            <CarouselItem key={slide._id}>
+              <div className="">
+                <img
+                  src={slide.bannerImage}
+                  className="h-[85vh] object-cover w-full "
+                  alt={slide.bannerTitle}
+                />
               </div>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="ml-16 cursor-pointer size-12" />
+        <CarouselNext className="mr-16 cursor-pointer size-12" />
+        <div className="absolute w-full flex items-center justify-center gap-1 bottom-5">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              className={`${
+                selectedIndex == index ? "w-8" : ""
+              } bg-white rounded-full h-3 w-3 cursor-pointer`}
+              onClick={() => api.scrollTo(index)}
+            ></button>
+          ))}
+        </div>
+      </Carousel>
     </div>
   );
 }
