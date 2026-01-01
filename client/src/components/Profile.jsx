@@ -5,9 +5,11 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Container } from ".";
+import { Button } from "./ui/button";
+import { Plus } from "lucide-react";
 
 function Profile() {
-  const { userData, address, setAddress } = useAuth();
+  const { userData } = useAuth();
   const [modalVisiblity, setModalVisiblity] = useState(false);
   const [addingAddress, setAddingAddress] = useState(false);
 
@@ -48,8 +50,7 @@ function Profile() {
     setAddingAddress(false);
     setModalVisiblity(false);
     setFormData({
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
       phone: "",
       pincode: "",
@@ -82,7 +83,6 @@ function Profile() {
       );
 
       if (response.data.success) {
-        setAddress(response.data.address);
         closeModal();
         toast.success("Address Addedd Successfully");
       }
@@ -94,6 +94,8 @@ function Profile() {
       }
     }
   };
+
+  console.log("User Data: ", userData);
 
   return (
     <Container>
@@ -107,14 +109,14 @@ function Profile() {
           <p>Email: {userData.email}</p>
           <p>Address:</p>
           <div className="flex flex-wrap sm:flex-row item-center gap-4 mt-2">
-            {address?.length ? (
-              address.map((addr) => (
+            {userData.defaultAddress ? (
+              userData.defaultAddress.map((addr) => (
                 <div
                   key={addr._id}
                   className="bg-slate-200 px-6 sm:px-8 py-4 flex flex-col gap-[2px] rounded-md text-xs sm:text-sm"
                 >
                   <p>
-                    {addr.firstName} {addr.lastName}
+                    {addr.name}
                   </p>
                   <p>{addr.email}</p>
                   <p>{addr.address}</p>
@@ -149,33 +151,25 @@ function Profile() {
               </button>
               <h3 className="font-semibold text-xl mb-6">Add Address</h3>
               <div className="flex flex-col gap-4 w-full text-right">
-                <div className="flex gap-3">
                   <input
                     type="text"
-                    name="firstName"
-                    placeholder="First Name"
+                    name="name"
+                    placeholder="Enter Name"
                     className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-                    onChange={(e) => updateFormData("firstName", e.target.value)}
+                    onChange={(e) => updateFormData("name", e.target.value)}
                     value={formData.firstName}
+                    defaultValue={userData.name}
                     required
                     autoFocus
                   />
-                  <input
-                    type="text"
-                    name="LastName"
-                    placeholder="Last Name"
-                    className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
-                    onChange={(e) => updateFormData("lastName", e.target.value)}
-                    value={formData.lastName}
-                    required
-                  />
-                </div>
+                  
                 <input
                   type="email"
                   placeholder="Email Address"
                   className="outline-none border border-gray-400 py-1.5 px-3.5 w-full rounded-md"
                   onChange={(e) => updateFormData("email", e.target.value)}
                   value={formData.email}
+                  defaultValue={userData.email}
                   required
                 />
                 <input
@@ -245,12 +239,12 @@ function Profile() {
             </form>
           </div>
 
-          <button
-            className="underline cursor-pointer mt-8"
+          <Button
+            className="cursor-pointer mt-8"
             onClick={() => setModalVisiblity(true)}
           >
-            + Add Address
-          </button>
+            <Plus /> Add Address
+          </Button>
         </div>
       </div>
     </Container>

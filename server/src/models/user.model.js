@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
       type: Object,
       default: {},
     },
+    defaultAddress: {
+      type: Object,
+      default: null,
+    },
     __v: {
       type: Number,
       select: false,

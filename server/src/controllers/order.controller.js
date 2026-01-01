@@ -11,7 +11,7 @@ const razorpayInstance = new razorpay({
 
 const placeOrder = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const { items, amount, address } = req.body;
 
     const order = await Orders.create({
@@ -47,12 +47,12 @@ const getAllOrders = async (req, res) => {
 
 const getUserOrders = async (req, res) => {
   try {
-    const id = req.user.id;
+    const id = req.user._id;
     const orders = await Orders.find({ userId: id }).lean();
     res.status(200).json({ success: true, orders });
   } catch (error) {
     console.log(error.message);
-    res.json({ success: false, message: `Server Error: ${error.message}` });
+    res.json({ success: false, message: `Internal Server Error` });
   }
 };
 
@@ -68,11 +68,9 @@ const updateStatus = async (req, res) => {
   }
 };
 
-const placeOrderStripe = async (req, res) => {};
-
 const placeOrderRazorpay = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const { address, items, amount } = req.body;
 
     const newOrder = await Orders.create({
@@ -100,13 +98,13 @@ const placeOrderRazorpay = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
 const verifyRazorpay = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const { razorpay_order_id } = req.body;
 
     const payment = await razorpayInstance.orders.fetch(razorpay_order_id);
@@ -120,14 +118,13 @@ const verifyRazorpay = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
 export {
   placeOrder,
   placeOrderRazorpay,
-  placeOrderStripe,
   updateStatus,
   getUserOrders,
   getAllOrders,

@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import { User } from "../models/user.model.js";
 
-const authenticate = (role = []) => (req, res, next) => {
+const authenticate = (role = []) => async (req, res, next) => {
   const token = req.headers.authorization?.replace("Bearer ", "")?.trim();
 
   if (!token) {
@@ -9,7 +10,8 @@ const authenticate = (role = []) => (req, res, next) => {
 
   let user;
   try {
-    user = jwt.verify(token, process.env.JWT_SECRET);
+    const decodedUser = jwt.verify(token, process.env.JWT_SECRET);
+    user = await User.findById(decodedUser.id);
   } catch (error) {
     console.log(error);
     return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -20,6 +22,7 @@ const authenticate = (role = []) => (req, res, next) => {
       .status(403)
       .json({ success: false, message: "Forbidden: Insufficient role" });
   }
+
 
   req.user = user;
 

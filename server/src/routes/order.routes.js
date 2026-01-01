@@ -5,7 +5,6 @@ import {
   getUserOrders,
   placeOrder,
   placeOrderRazorpay,
-  placeOrderStripe,
   updateStatus,
   verifyRazorpay,
 } from "../controllers/order.controller.js";

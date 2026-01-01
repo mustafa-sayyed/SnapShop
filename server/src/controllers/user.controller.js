@@ -1,7 +1,6 @@
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { Address } from "../models/address.model.js";
 import { sendWelcomeEmail } from "../emails/welcomeEmail.js";
 
 const loginUser = async (req, res) => {
@@ -133,13 +132,7 @@ const getCurrentUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      user: {
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        cartData: user.cartData,
-        address: user.defaultAddress,
-      },
+      user,
     });
   } catch (error) {
     console.log(error);

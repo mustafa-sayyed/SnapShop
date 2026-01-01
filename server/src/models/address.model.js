@@ -7,11 +7,7 @@ const addressSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
+    name: {
       type: String,
       required: true,
     },
@@ -42,6 +38,10 @@ const addressSchema = new mongoose.Schema(
     phone: {
       type: Number,
       required: true,
+    },
+    isDefault: {
+      type: Boolean,
+      deafult: false,
     },
   },
   { timestamps: true }

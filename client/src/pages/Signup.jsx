@@ -10,7 +10,6 @@ import { Spinner } from "@/components/ui/spinner.jsx";
 
 function Signup() {
   const [name, setName] = useState("");
-  const [phoneNo, setPhoneNo] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
@@ -67,15 +66,7 @@ function Signup() {
         disabled={isCreatingAccount}
         required
       />
-      <Input
-        type="tel"
-        className="w-full px-3 py-2 border border-gray-800 rounded-md outline-black"
-        placeholder="Phone No"
-        value={phoneNo}
-        onChange={(e) => setPhoneNo(Number(e.target.value))}
-        disabled={isCreatingAccount}
-        required
-      />
+     
       <Input
         type="email"
         className="w-full px-3 py-2 border border-gray-800 rounded-md outline-black"

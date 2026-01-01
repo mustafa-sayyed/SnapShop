@@ -2,11 +2,9 @@ import { User } from "../models/user.model.js";
 
 const addToCart = async (req, res) => {
   try {
-    const userId = req.user.id;
     const { productId, size, quantity = 1 } = req.body;
-
-    const user = await User.findById(userId);
-    const cartData = user.cartData;
+    const userId = req.user._id;
+    const cartData = req.user.cartData;
 
     if (cartData[productId]) {
       if (cartData[productId][size]) {
@@ -23,35 +21,39 @@ const addToCart = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Added to cart" });
   } catch (error) {
-    res.status(403).json({ success: false, message: error.message });
-    console.log(error.message);
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error", errorStack });
   }
 };
 
 const updateCart = async (req, res) => {
   try {
-    const userId = req.user.id;
     const { productId, size, quantity } = req.body;
 
-    const user = await User.findById(userId);
+    const userId = req.user._id;
+    const cartData = req.user.cartData;
 
-    const cartData = user.cartData;
     cartData[productId][size] = quantity;
 
     await User.findByIdAndUpdate(userId, { cartData });
 
     res.status(200).json({ success: true, message: "Updates the Cart" });
   } catch (error) {
-    res.status(403).json({ success: false, message: error.message });
-    console.log(error.message);
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error", errorStack });
   }
 };
 
 const getCart = async (req, res) => {
   try {
-    const userId = req.user.id;
 
-    const user = await User.findById(userId);
+    const user = req.user;
 
     if (Object.entries(user.cartData)) {
       res.status(200).json({ success: true, cartData: user.cartData });
@@ -59,8 +61,11 @@ const getCart = async (req, res) => {
       res.status(404).json({ success: true, message: "Your Cart is Empty" });
     }
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ success: false, message: error.message });
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error", errorStack });
   }
 };
 

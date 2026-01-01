@@ -1,4 +1,4 @@
-import { resend } from "../utils/resend";
+import { resend } from "../utils/resend.js";
 
 const orderPlaceEmail = (username, orderDetails) => {
   return `
