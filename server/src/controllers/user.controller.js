@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { Address } from "../models/address.model.js";
+import { sendWelcomeEmail } from "../emails/welcomeEmail.js";
 
 const loginUser = async (req, res) => {
   try {
@@ -27,14 +28,11 @@ const loginUser = async (req, res) => {
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
 
-    const address = await Address.find({ userId: user._id });
-
     return res.status(200).json({
       token,
       success: true,
       message: "Login successfull",
       user,
-      addresses: address,
     });
   } catch (error) {
     console.log(error);
@@ -68,6 +66,8 @@ const signupUser = async (req, res) => {
     });
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+
+    await sendWelcomeEmail(email, name);
 
     return res.status(201).json({
       token,
@@ -125,15 +125,11 @@ const loginAdmin = async (req, res) => {
 
 const getCurrentUser = async (req, res) => {
   try {
-    const id = req.user.id;
-
-    const user = await User.findOne({ _id: id });
+    const user = req.user;
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User does not exist" });
     }
-
-    const address = await Address.find({ userId: id });
 
     res.status(200).json({
       success: true,
@@ -142,8 +138,8 @@ const getCurrentUser = async (req, res) => {
         email: user.email,
         role: user.role,
         cartData: user.cartData,
+        address: user.defaultAddress,
       },
-      addresses: address,
     });
   } catch (error) {
     console.log(error);

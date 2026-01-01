@@ -22,7 +22,7 @@ const welcomeEmail = (name) => {
                                 <p style="color:#555555; font-size:14px; line-height:1.6;">
                                     Discover amazing products, exclusive deals, and a smooth shopping experience—all in one place.
                                 </p>
-                                <a href="htts://snapshop.mustafasayyed.tech" 
+                                <a href="https://snapshop.mustafasayyed.dev" target="_blank"
                                 style="display:inline-block; margin-top:20px; padding:12px 25px; 
                                         background-color:#007bff; color:#ffffff; 
                                         text-decoration:none; border-radius:4px; font-size:14px;">
@@ -32,6 +32,8 @@ const welcomeEmail = (name) => {
                                     Happy shopping,<br>
                                     <strong>The SnapShop Team</strong>
                                 </p>
+
+                                <p style="margin-top: 20px; font-size:12px; color:#888888;">Do not reply to this email, This is an auto generated email</p>
                             </td>
                         </tr>
                     </table>
@@ -46,7 +48,7 @@ const welcomeEmail = (name) => {
 export async function sendWelcomeEmail(email, username) {
   try {
     const res = await resend.emails.send({
-      from: "SnapShop <dev@mustafasayyed.dev>",
+      from: "SnapShop <no-reply-snapshop@mustafasayyed.dev>",
       to: [email],
       subject: "Welcome to SnapShop!! 🎉",
       html: welcomeEmail(username),

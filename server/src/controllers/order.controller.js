@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Orders } from "../models/order.model.js";
 import { User } from "../models/user.model.js";
 import razorpay from "razorpay";
+import { sendOrderPlaceEmail } from "../emails/orderPlaceEmail.js";
 
 const razorpayInstance = new razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -24,6 +25,8 @@ const placeOrder = async (req, res) => {
     });
 
     await User.findByIdAndUpdate(userId, { cartData: {} });
+
+    await sendOrderPlaceEmail()
 
     res.status(200).json({ success: true, message: "Order Placed" });
   } catch (error) {

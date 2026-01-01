@@ -19,12 +19,15 @@ const orderPlaceEmail = (username, orderDetails) => {
                                 <p style="color:#555555; font-size:14px; line-height:1.6;">
                                     Your order was palced successfully
 
-                                    Order Details: ${orderDetails}
+                                    <div><b>Order Details: </b></div>
+                                    Product name: ${orderDetails.name}
+                                    Product total: ${orderDetails.price}
+                                    Product Quantity: ${orderDetails.quantity}
                                 </p>
                                 <p style="color:#555555; font-size:14px; line-height:1.6;">
                                     Discover amazing products, exclusive deals, and a smooth shopping experience—all in one place.
                                 </p>
-                                <a href="htts://snapshop.mustafasayyed.tech" 
+                                <a href="https://snapshop.mustafasayyed.dev" target="_blank"
                                 style="display:inline-block; margin-top:20px; padding:12px 25px; 
                                         background-color:#007bff; color:#ffffff; 
                                         text-decoration:none; border-radius:4px; font-size:14px;">
@@ -34,6 +37,8 @@ const orderPlaceEmail = (username, orderDetails) => {
                                     Happy shopping,<br>
                                     <strong>The SnapShop Team</strong>
                                 </p>
+
+                                <p style="margin-top: 20px; font-size:12px; color:#888888;">Do not reply to this email, This is an auto generated email</p>
                             </td>
                         </tr>
                     </table>
@@ -45,13 +50,13 @@ const orderPlaceEmail = (username, orderDetails) => {
     `;
 };
 
-export const sendOrderPlaceEmail = async (to) => {
+export const sendOrderPlaceEmail = async (email, name, orderDetails) => {
   try {
     const res = resend.emails.send({
-      from: "SnapShop <dev@mustafasayyed.dev>",
-      to: to,
+      from: "SnapShop <no-reply-snapshop@mustafasayyed.dev>",
+      to: [email],
       subject: "Your Order Placed successfully",
-      html: orderPlaceEmail(name, order),
+      html: orderPlaceEmail(name, orderDetails),
     });
 
     console.log("Order Place Email: ", res);
