@@ -10,14 +10,12 @@ import {
 } from "./ui/carousel";
 import { Dot } from "lucide-react";
 import { Button } from "./ui/button";
-import useEmblaCarousel from "embla-carousel-react";
 
 function Hero() {
   const [slides, setSlides] = useState([]);
   const [api, setApi] = useState(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [_, api2] = useEmblaCarousel({});
-
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  
   async function fetchSlides() {
     try {
       const res = await axios.get(
@@ -32,6 +30,7 @@ function Hero() {
   }
 
   const onSelect = useCallback(() => {
+    if (!api) return;
     setSelectedIndex(api.selectedScrollSnap());
   }, []);
 
@@ -40,17 +39,17 @@ function Hero() {
     if (!api) return;
     api.on("select", onSelect);
   }, []);
-
+  
   return (
-    <div className="w-full relative">
-      <Carousel className="w-full relative" setApi={setApi}>
+    <div className="w-full">
+      <Carousel className="w-full" setApi={setApi}>
         <CarouselContent>
-          {slides.map((slide, index) => (
+          {slides.map((slide) => (
             <CarouselItem key={slide._id}>
               <div className="">
                 <img
                   src={slide.bannerImage}
-                  className="h-[85vh] object-cover w-full "
+                  className="h-[40vh] md:h-[75vh] xl:h-[85vh] object-fill w-full"
                   alt={slide.bannerTitle}
                 />
               </div>
