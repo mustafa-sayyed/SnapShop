@@ -6,10 +6,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useShop } from "../contexts/ShopContext";
 import { useAuth } from "../contexts/UserContext";
+import { Phone, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function PlaceOrder() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
-  const { address } = useAuth();
+  const { userData } = useAuth();
   const [selectedAddress, setSelectedAddress] = useState(null);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
@@ -133,98 +135,110 @@ function PlaceOrder() {
 
   return (
     <Container>
-    <form
-      onSubmit={handleCheckout}
-      className="flex flex-col sm:flex-row gap-4 justify-between pt-5 sm:pt-14 min-h-[90vh] border-t">
-      {/* left Side */}
-      <div className="flex flex-col">
-        <button
-          className="self-start underline cursor-pointer"
-          type="button"
-          onClick={() => navigate("/profile?add=true")}>
-          + Add Address
-        </button>
-        <div className="flex flex-wrap sm:flex-row item-center content-center justify-start gap-4 mt-2">
-          {address && address.length ? (
-            address.map((addr) => (
-              <div
-                onClick={() => setSelectedAddress(addr)}
-                key={addr._id}
-                className={` ${
-                  selectedAddress && selectedAddress._id === addr._id
-                    ? "border-gray-400"
-                    : ""
-                } h-fit cursor-pointer border-2 bg-slate-200 px-6 sm:px-8 py-4 flex flex-col gap-[2px] rounded-md text-xs sm:text-sm`}>
-                <p>
-                  {addr.firstName} {addr.lastName}
-                </p>
-                <p>{addr.email}</p>
-                <p>{addr.address}</p>
-                <p>
-                  {addr.city}- {addr.pincode}
-                </p>
-                <p>
-                  {addr.state}, {addr.country}.
-                </p>
-                <p>{addr.phone}</p>
+      <form
+        onSubmit={handleCheckout}
+        className="flex flex-col sm:flex-row gap-4 justify-between pt-5 sm:pt-14 min-h-[90vh] border-t"
+      >
+        {/* left Side */}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3 ">
+            <Button
+              className="cursor-pointer w-auto"
+              type="button"
+              onClick={() => navigate("/profile?add=true")}
+            >
+              <Plus /> Add Address
+            </Button>
+            <Button
+              className="cursor-pointer w-auto"
+              type="button"
+              onClick={() => navigate("/profile?change=true")}
+            >
+              Change Default Address
+            </Button>
+          </div>
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">Default Address:</h2>
+            {userData?.defaultAddress ? (
+              <div className="card border px-4 sm:px-6 py-5 rounded-lg bg-slate-50 max-w-md">
+                <div className="space-y-2 text-sm sm:text-base">
+                  <p className="font-semibold text-gray-900">
+                    {userData.defaultAddress.name}
+                  </p>
+                  <p>{userData.defaultAddress.email}</p>
+                  <p>{userData.defaultAddress.address}</p>
+                  <p>
+                    {userData.defaultAddress.city}, {userData.defaultAddress.state} -{" "}
+                    {userData.defaultAddress.pincode}
+                  </p>
+                  <p>{userData.defaultAddress.country}</p>
+                  <p className="flex items-center gap-2">
+                    <Phone size={20} />
+                    {userData.defaultAddress.phone}
+                  </p>
+                </div>
               </div>
-            ))
-          ) : (
-            <div>
-              <div>No Address Found</div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Right Side */}
-      <div className="mt-8">
-        <div className="mt-8 min-w-80">
-          <CartTotal />
-        </div>
-
-        <div className="mt-12">
-          <div className="text-xl">
-            <Title children1={"Payment"} children2={"Method"} />
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div
-              className="flex gap-3 border items-center p-2 px-3 cursor-pointer rounded-md border-gray-400"
-              onClick={() => setPaymentMethod("razorpay")}>
-              <p
-                className={`w-4 h-4 border-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center 
-              ${paymentMethod === "razorpay" ? "border-green-500" : "border-gray-400"}`}>
-                {paymentMethod === "razorpay" && (
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                )}
-              </p>
-              <img src={assets.razorpay_logo} alt="Strpe" className="h-4 mx-4" />
-            </div>
-
-            <div
-              className="flex gap-3 border items-center p-2 px-3 cursor-pointer rounded-md border-gray-400"
-              onClick={() => setPaymentMethod("cod")}>
-              <p
-                className={`w-4 h-4 border-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center 
-              ${paymentMethod === "cod" ? "border-green-500" : "border-gray-400"}`}>
-                {paymentMethod === "cod" && (
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                )}
-              </p>
-              <p className="text-gray-500 text-sm font-medium mx-4">Cash on Delivery</p>
-            </div>
-          </div>
-
-          <div className="w-full mt-8 text-end">
-            <button
-              type="submit"
-              className="bg-black text-white px-16 py-3 rounded-md cursor-pointer active:bg-gray-900">
-              Place Order
-            </button>
+            ) : (
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 text-center">
+                <p className="text-gray-500">No default address set</p>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-    </form>
+
+        {/* Right Side */}
+        <div className="mt-8">
+          <div className="mt-8 min-w-80">
+            <CartTotal />
+          </div>
+
+          <div className="mt-12">
+            <div className="text-xl">
+              <Title children1={"Payment"} children2={"Method"} />
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div
+                className="flex gap-3 border items-center p-2 px-3 cursor-pointer rounded-md border-gray-400"
+                onClick={() => setPaymentMethod("razorpay")}
+              >
+                <p
+                  className={`w-4 h-4 border-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center 
+              ${paymentMethod === "razorpay" ? "border-green-500" : "border-gray-400"}`}
+                >
+                  {paymentMethod === "razorpay" && (
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  )}
+                </p>
+                <img src={assets.razorpay_logo} alt="Strpe" className="h-4 mx-4" />
+              </div>
+
+              <div
+                className="flex gap-3 border items-center p-2 px-3 cursor-pointer rounded-md border-gray-400"
+                onClick={() => setPaymentMethod("cod")}
+              >
+                <p
+                  className={`w-4 h-4 border-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center 
+              ${paymentMethod === "cod" ? "border-green-500" : "border-gray-400"}`}
+                >
+                  {paymentMethod === "cod" && (
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  )}
+                </p>
+                <p className="text-gray-500 text-sm font-medium mx-4">Cash on Delivery</p>
+              </div>
+            </div>
+
+            <div className="w-full mt-8 text-end">
+              <button
+                type="submit"
+                className="bg-black text-white px-16 py-3 rounded-md cursor-pointer active:bg-gray-900"
+              >
+                Place Order
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
     </Container>
   );
 }

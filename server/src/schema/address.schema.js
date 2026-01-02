@@ -1,7 +1,6 @@
 import z from "zod";
 
 const addressSchema = z.object({
-  userId: z.string().min(1, "User id is required"),
   name: z.string().min(1, "Name is required"),
   email: z.email("Enter a valid email"),
   country: z.string().min(1, "Country is required"),

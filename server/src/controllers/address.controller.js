@@ -40,6 +40,7 @@ const createAddress = async (req, res) => {
       isDefault,
     });
 
+
     if (isDefault) {
       await setaUserDefaultAddress(newAddress, userId);
       return res.status(201).json({
@@ -54,7 +55,6 @@ const createAddress = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "address created successfully",
-      address: defaultAddress,
     });
   } catch (error) {
     console.log(error);
@@ -80,6 +80,10 @@ const updateAddress = async (req, res) => {
     if (city) addressUpdateData.city = city;
     if (isDefault) addressUpdateData.isDefault = isDefault;
 
+    if (isDefault) {
+      await Address.updateMany({ userId }, { isDefault: false });
+    }
+
     const updatedAddress = await Address.findByIdAndUpdate(
       addressId,
       {
@@ -87,6 +91,7 @@ const updateAddress = async (req, res) => {
       },
       { new: true }
     );
+
 
     if (isDefault) {
       await setaUserDefaultAddress(updatedAddress, userId);

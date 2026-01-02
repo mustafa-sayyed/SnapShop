@@ -49,7 +49,7 @@ function Hero() {
               <div className="">
                 <img
                   src={slide.bannerImage}
-                  className="h-[40vh] md:h-[75vh] xl:h-[85vh] object-fill w-full"
+                  className="h-[40vh] md:h-[75vh] xl:h-[85vh] lg:object-cover object-fill w-full"
                   alt={slide.bannerTitle}
                 />
               </div>
