@@ -18,6 +18,7 @@ import {
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import { Spinner } from "./ui/spinner";
+import ManageAddress from "./ManageAddress";
 
 function Profile() {
   const { userData, setUserData } = useAuth();
@@ -452,6 +453,8 @@ function Profile() {
               </DialogContent>
             </Dialog>
           </div>
+
+          <ManageAddress />
         </div>
       </div>
     </Container>

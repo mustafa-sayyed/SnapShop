@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { refine } from "zod";
 
 const addressSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -7,8 +7,12 @@ const addressSchema = z.object({
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
   address: z.string().min(1, "Address is required"),
-  pincode: z.string().regex(/^[1-9][0-9]{5}$/, "Invalid Pincode, must be 6 digits"),
-  phone: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+  pincode: z.coerce
+    .number("Pincode must be a number")
+    .refine((val) => `${val}`.length === 6, "Invalid Pincode, must be 6 digits"),
+  phone: z.coerce
+    .number("Phone no. must be number")
+    .refine((val) => `${val}`.length === 10, "Invalid Phone no, must be 10 digits"),
   isDefault: z.boolean().default(false),
 });
 
