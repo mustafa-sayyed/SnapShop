@@ -7,7 +7,7 @@ on:
         
         
 jobs:
-  test-job:
+  learning-github-actions:
     runs-on: ubuntu-latest
 
     steps:
