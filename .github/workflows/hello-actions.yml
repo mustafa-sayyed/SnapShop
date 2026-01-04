@@ -11,11 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Say Hello
-        run: echo "Hello World GitHub Actions!"
-
       - name: Checkout Repository
         uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            server
       
       - name: List all the files
         run: ls -la
+
+      - name: Display server directory
+        run: ls -ls server
+
+      - name: Check Docker Version
+        run: docker --version
+      
+      - name: Build Docker Image
+        run: Docker build -t mustafasayyed/snapshop-backend .
