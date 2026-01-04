@@ -30,7 +30,7 @@ function Profile() {
   const [isSettingDefaultAddress, setIsSettingDefaultAddress] = useState(false);
 
   const [defaultAddress, setDefaultAddress] = useState(
-    userData?.defaultAddress._id ?? null
+    userData?.defaultAddress?._id ?? null
   );
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -90,7 +90,7 @@ function Profile() {
         params.delete("change");
         return params;
       });
-    }    
+    }
     setDefaultAddress(userData.defaultAddress._id ?? null);
   };
 
@@ -162,6 +162,9 @@ function Profile() {
   };
 
   const handleSetDefaultAddress = async () => {
+    if (!defaultAddress || !addresses.length) {
+      return;
+    }
     try {
       setIsSettingDefaultAddress(true);
       const result = await axios.patch(
@@ -239,7 +242,7 @@ function Profile() {
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">  
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
             <Dialog
               open={isAddressModalOpen}
               onOpenChange={(isOpen) => handleModalChange("addAddress", isOpen)}

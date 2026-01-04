@@ -133,7 +133,6 @@ function ManageAddress() {
           setUserData(updatedUserData);
         }
 
-        // Refresh address list
         await getAllAddresses();
         setIsAddressModalOpen(false);
         resetForm();
@@ -178,14 +177,16 @@ function ManageAddress() {
       if (response.data.success) {
         toast.success("Address deleted successfully");
 
-        // Update user context if default address changed
         if (response.data.address) {
           const updatedUserData = { ...userData };
           updatedUserData.defaultAddress = response.data.address;
           setUserData(updatedUserData);
         }
 
-        // Refresh address list
+        if (addressToDelete.isDefault) {
+          setUserData((prev) => ({ ...prev, defaultAddress: null }));
+        }
+
         await getAllAddresses();
       }
     } catch (error) {
@@ -258,7 +259,6 @@ function ManageAddress() {
         </div>
       )}
 
-      {/* Edit Address Dialog */}
       <Dialog open={isAddressModalOpen} onOpenChange={handleModalChange}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -382,7 +382,6 @@ function ManageAddress() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

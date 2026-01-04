@@ -40,7 +40,6 @@ const createAddress = async (req, res) => {
       isDefault,
     });
 
-
     if (isDefault) {
       await setaUserDefaultAddress(newAddress, userId);
       return res.status(201).json({
@@ -92,7 +91,6 @@ const updateAddress = async (req, res) => {
       { new: true }
     );
 
-
     if (isDefault) {
       await setaUserDefaultAddress(updatedAddress, userId);
       return res.status(200).json({
@@ -125,6 +123,10 @@ const deleteAddress = async (req, res) => {
 
     if (!address) {
       return res.status(404).json({ success: false, message: "Address not found" });
+    }
+
+    if (address.isDefault) {
+      await User.findByIdAndUpdate(req.user._id, { defaultAddress: null });
     }
 
     const defaultAddress = await getDefaultAddress(req.user._id);

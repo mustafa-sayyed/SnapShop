@@ -3,7 +3,6 @@ import z from "zod";
 const validate = (schema) => (req, res, next) => {
   try {
     const result = z.safeParse(schema, req.body);
-    console.log(req.body);
 
     if (!result.success) {
       return res.status(400).json({
@@ -13,7 +12,6 @@ const validate = (schema) => (req, res, next) => {
     }
 
     req.body = result.data;
-    console.log("validation: ", result.data);
 
     next();
   } catch (error) {
