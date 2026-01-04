@@ -1,11 +1,10 @@
-name: Testing GitHub Actions
+name: Build and Push Docker Image and Deploy it to Azure App Service
 
 on:
-    push: 
-        branches:
-          - main
-        
-        
+  push:
+    branches:
+      - main
+
 jobs:
   learning-github-actions:
     runs-on: ubuntu-latest
@@ -16,19 +15,9 @@ jobs:
         with:
           sparse-checkout: |
             server
-      
-      - name: List all the files
-        run: ls -la
 
-      - name: Display server directory
-        run: ls -ls server
-
-      - name: Check Docker Version
-        run: docker --version
-      
       - name: Build Docker Image
         run: docker build -t mustafasayyed/snapshop-backend:2.0 ./server
-
 
       - name: Login to DockerHub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -39,5 +28,13 @@ jobs:
       - name: Docker Logout
         run: docker logout
 
-      - name: Completion Message
-        run: echo "Docker Image pushed successfully!"
+      - name: Docker Build and Push completion message
+        run: echo "Docker Image Build and Pushed successfully!"
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
