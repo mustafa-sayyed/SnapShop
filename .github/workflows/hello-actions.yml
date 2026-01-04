@@ -27,14 +27,14 @@ jobs:
         run: docker --version
       
       - name: Build Docker Image
-        run: docker build -t mustafasayyed/snapshop-backend:1.0 ./server
+        run: docker build -t mustafasayyed/snapshop-backend:2.0 ./server
 
 
       - name: Login to DockerHub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker Image
-        run: docker push mustafasayyed/snapshop-backend
+        run: docker push mustafasayyed/snapshop-backend:2.0
 
       - name: Docker Logout
         run: docker logout
