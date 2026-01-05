@@ -1,4 +1,4 @@
-name: Build and Push Docker Image and Deploy it to Azure App Service
+name: Build and Push Docker Image and Deploy it to Azure Container Apps
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  learning-github-actions:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,3 +35,12 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS}}
+        
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+            az containerapp up --name snapshop-backend --image docker.io/mustafasayyed/snapshop-backend:2.0
+            az containerapp show --name snapshop-backend -g snapshop-backend-group
