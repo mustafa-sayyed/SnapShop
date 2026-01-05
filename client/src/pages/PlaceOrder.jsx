@@ -12,7 +12,9 @@ import { Button } from "@/components/ui/button";
 function PlaceOrder() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const { userData } = useAuth();
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(
+    userData?.defaultAddress ?? null
+  );
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
   const { products, cartItems, deliveryFee, getCartAmount, setCartItems } = useShop();
@@ -76,60 +78,69 @@ function PlaceOrder() {
       }
     }
 
-    try {
-      switch (paymentMethod) {
-        case "cod":
-          const response = await axios.post(
-            `${backendUrl}/orders`,
-            {
-              address: selectedAddress,
-              items: orderItems,
-              amount: getCartAmount() + deliveryFee,
+    async function handleCashOnDelivery() {
+      try {
+        const response = await axios.post(
+          `${backendUrl}/orders`,
+          {
+            address: selectedAddress,
+            items: orderItems,
+            amount: getCartAmount() + deliveryFee,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          if (response.data.success) {
-            toast.success(response.data.message);
-            setCartItems({});
-            navigate("/orders");
           }
+        );
 
-          break;
-        case "razorpay":
-          const responseRazorpay = await axios.post(
-            `${backendUrl}/orders/razorpay`,
-            {
-              address: selectedAddress,
-              items: orderItems,
-              amount: getCartAmount() + deliveryFee,
+        if (response.data.success) {
+          toast.success(response.data.message);
+          setCartItems({});
+          navigate("/orders");
+        }
+      } catch (error) {
+        console.log(error);
+        const messsage = error?.response?.data?.message || "Internal Server Error";
+        toast.error(messsage);
+      }
+    }
+
+    async function handleRazorpay() {
+      try {
+        const razorpayResponse = await axios.post(
+          `${backendUrl}/orders/razorpay`,
+          {
+            address: selectedAddress,
+            items: orderItems,
+            amount: getCartAmount() + deliveryFee,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          if (responseRazorpay.data.success) {
-            initPay(responseRazorpay.data.order);
-          } else {
-            console.log(error);
-            toast.error(responseRazorpay.data.message);
           }
+        );
 
-          break;
+        if (razorpayResponse.data.success) {
+          initPay(razorpayResponse.data.order);
+        } else {
+          toast.error(razorpayResponse.data.message);
+        }
+      } catch (error) {
+        console.log(error);
+        const messsage = error?.response?.data?.message || "Internal Server Error";
+        toast.error(messsage);
       }
-    } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(`Server Error: ${error.message}`);
-      }
+    }
+
+    switch (paymentMethod) {
+      case "cod":
+        handleCashOnDelivery();
+        break;
+      case "razorpay":
+        handleRazorpay();
+        break;
     }
   };
 
@@ -180,7 +191,7 @@ function PlaceOrder() {
               </div>
             ) : (
               <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 text-center">
-                <p className="text-gray-500">No default address set</p>
+                <p className="text-gray-500">No Default Address Found</p>
               </div>
             )}
           </div>
