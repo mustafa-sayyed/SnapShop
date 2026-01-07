@@ -14,6 +14,8 @@ import {
   Home,
   LinkIcon,
   LogOut,
+  Mail,
+  MailPlus,
   Package2,
   Percent,
   PieChart,
@@ -58,47 +60,25 @@ const dashboardRoutes = [
         title: "All Products",
         link: "list",
         icon: <Package2 className="size-4" />,
-      },
-      {
-        title: "Checkout Links",
-        link: "#",
-        icon: <LinkIcon className="size-4" />,
-      },
-      {
-        title: "Discounts",
-        link: "#",
-        icon: <Percent className="size-4" />,
-      },
+      }
     ],
-  },
-  {
-    id: "usage-billing",
-    title: "Usage Billing",
-    icon: <PieChart className="size-4" />,
-    link: "#",
-    subs: [
-      {
-        title: "Meters",
-        link: "#",
-        icon: <PieChart className="size-4" />,
-      },
-      {
-        title: "Events",
-        link: "#",
-        icon: <Activity className="size-4" />,
-      },
-    ],
-  },
-  {
-    id: "benefits",
-    title: "Benefits",
-    icon: <Sparkles className="size-4" />,
-    link: "#",
   },
   {
     id: "customers",
     title: "Customers",
     icon: <Users className="size-4" />,
+    link: "#",
+  },
+  {
+    id: "email-subscribers",
+    title: "Email Subscribers",
+    icon: <Mail className="size-4" />,
+    link: "#",
+  },
+  {
+    id: "send-email",
+    title: "Send Email",
+    icon: <MailPlus className="size-4" />,
     link: "#",
   },
   {
@@ -113,17 +93,11 @@ const dashboardRoutes = [
         icon: <ShoppingBag className="size-4" />,
       },
       {
-        title: "Subscriptions",
+        title: "Sales Analytics",
         link: "#",
-        icon: <Infinity className="size-4" />,
+        icon: <TrendingUp className="size-4" />,
       },
     ],
-  },
-  {
-    id: "storefront",
-    title: "Storefront",
-    icon: <Store className="size-4" />,
-    link: "#",
   },
   {
     id: "analytics",
@@ -132,26 +106,10 @@ const dashboardRoutes = [
     link: "#",
   },
   {
-    id: "finance",
-    title: "Finance",
-    icon: <DollarSign className="size-4" />,
-    link: "#",
-    subs: [
-      { title: "Incoming", link: "#" },
-      { title: "Outgoing", link: "#" },
-      { title: "Payout Account", link: "#" },
-    ],
-  },
-  {
     id: "settings",
     title: "Settings",
     icon: <Settings className="size-4" />,
     link: "#",
-    subs: [
-      { title: "General", link: "#" },
-      { title: "Webhooks", link: "#" },
-      { title: "Custom Fields", link: "#" },
-    ],
   },
 ];
 
