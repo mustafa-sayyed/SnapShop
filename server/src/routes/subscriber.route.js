@@ -10,11 +10,12 @@ import subscriberSchema from "../schema/subscriber.schema.js";
 
 const router = Router();
 
+router.route("/").get(getAllSubscribers).post(validate(subscriberSchema), subscribe);
+
 router
-  .route("/")
-  .get(getAllSubscribers)
-  .post(validate(subscriberSchema), subscribe)
-  .patch(validate(subscriberSchema), unsubscribe)
-  .delete(validate(subscriberSchema), deleteSubscriber);
+  .route("/unsubscribe/:unsubscribeToken")
+  .patch(validate(subscriberSchema), unsubscribe);
+
+router.route("/:subscriberId").delete(validate(subscriberSchema), deleteSubscriber);
 
 export default router;

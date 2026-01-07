@@ -32,7 +32,7 @@ const subscribe = async (req, res) => {
 
 const unsubscribe = async (req, res) => {
   try {
-    const unsubscriberToken = req.params.token;
+    const unsubscribeToken = req.params.unsubscribeToken;
 
     const { email } = req.body;
 
@@ -42,7 +42,7 @@ const unsubscribe = async (req, res) => {
       return res.status(400).json({ success: false, message: "You aren't subscribed" });
     }
 
-    if (unsubscriberToken === subscriber.unsubscribeToken) {
+    if (unsubscribeToken === subscriber.unsubscribeToken) {
       subscriber.unsubscribedAt = new Date();
       subscriber.status = "unsubscribed";
       subscriber.save();
@@ -85,7 +85,7 @@ const getAllSubscribers = async (req, res) => {
 
 const deleteSubscriber = async (req, res) => {
   try {
-    const { email } = req.body;
+    const subscriberId = req.params.subscriberId;
 
     const isSubscriber = await Subscriber.findOneAndDelete({ email });
 
