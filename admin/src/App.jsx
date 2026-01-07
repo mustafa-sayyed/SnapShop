@@ -6,7 +6,7 @@ import { useAuth } from "./context/userContext";
 import axios from "axios";
 import DashboardLayout from "./layouts/DashboardLayout";
 import AuthLayout from "./layouts/AuthLayout";
-export const currency = "$";
+export const currency = "₹";
 
 function App() {
   const [loading, setLoading] = useState(true);

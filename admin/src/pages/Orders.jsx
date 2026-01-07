@@ -3,6 +3,24 @@ import { useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { currency } from "../App.jsx";
+import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table.jsx";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select.jsx";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -59,54 +77,138 @@ function Orders() {
     }
   };
 
+  const orderTableColumns = [
+    {
+      header: "Order Details",
+      accessorKey: "items",
+      cell: ({ getValue }) => {
+        const orderDetails = getValue();
 
-  
+        return (
+          <div>
+            {orderDetails?.map((order) => (
+              <div>
+                {order.quantity}
+                {" x "}
+                {order.name}
+              </div>
+            ))}
+          </div>
+        );
+      },
+    },
+    {
+      header: "Delivery Address",
+      accessorKey: "address",
+      cell: ({ getValue }) => {
+        const addressDetails = getValue();
+        return (
+          <div className="text-sm">
+            <p>{addressDetails.address}</p>
+            <p>
+              {addressDetails.city}, {addressDetails.city} - {addressDetails.pincode}
+            </p>
+            <p>{addressDetails.country}</p>
+          </div>
+        );
+      },
+    },
+    {
+      header: "Payment Method",
+      accessorKey: "paymentMethod",
+    },
+    {
+      header: "Order Date",
+      accessorKey: "createdAt",
+      cell: ({ getValue }) => {
+        return new Date(getValue()).toLocaleString();
+      },
+    },
+    {
+      header: "Total Amount",
+      accessorKey: "totalPrice",
+      cell: ({getValue}) => {
+
+        return <p className="text-center">{currency} {getValue()}</p>
+      }
+    },
+    {
+      header: "order Status",
+      accessorKey: "status",
+      cell: ({ getValue }) => {
+        const badgeClass =
+          getValue() === "delivered"
+            ? "bg-green-500"
+            : getValue() === "cancelled"
+            ? "bg-red-500"
+            : "bg-amber-300";
+        return (
+          <p
+            className={`${badgeClass} rounded-full flex items-center justify-center h-fit p-0.5`}
+          >
+            {getValue()}
+          </p>
+        );
+      },
+    },
+    {
+      header: "Change Status",
+      accessorKey: "changeStatus",
+      cell: ({ row }) => {
+        return (
+          <Select onValueChange={(status) => handleStatusChange(status, row.original._id)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Change Order Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Select an Order Status</SelectLabel>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="delivered">Delivered</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        );
+      },
+    },
+  ];
+
+  const table = useReactTable({
+    columns: orderTableColumns,
+    data: orders,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
     <div>
       <h2>All Orders</h2>
       <div>
-        {orders.map((order) => (
-          <div
-            key={order._id}
-            className="grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border-2 border-gray-300 my-3 md:my-3 p-5 sm:p-8 text-xs sm:text-sm text-gray-700">
-            <div>
-              <div className="">
-                {order.items.map((item) => (
-                  <p key={item._id}>
-                    {" "}
-                    {item.name} X {item.quantity}{" "}
-                    <span className="ml-1">{item.size}</span>
-                  </p>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((hg) => (
+              <TableRow key={hg.id}>
+                {hg.headers.map((header) => (
+                  <TableHead key={header.id} className="px-4">
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
                 ))}
-              </div>
-              <p className="font-medium py-1">{`${order.address.firstName} ${order.address.lastName}`}</p>
-              <div>
-                <p>{`${order.address.street}, `}</p>
-                <p>{`${order.address.city}, ${order.address.state}, ${order.address.country} - ${order.address.pincode} `}</p>
-              </div>
-              <p>{order.address.phone}</p>
-            </div>
-            <div>
-              <p>Item: {order.items.length}</p>
-              <p className="mt-3">Payment Method: {order.paymentMethod}</p>
-              <p>Payment: {order.payment ? "Done" : "Pending"}</p>
-              <p>Date: {new Date(order.createdAt).toLocaleString()}</p>
-            </div>
-            <p>
-              Total: {currency}
-              {order.totalPrice}
-            </p>
-            <select
-              value={order.status}
-              onChange={(e) => handleStatusChange(e.target.value, order._id)}
-              className="px-4 py-1.5 outline-none border rounded-md border-gray-300 cursor-pointer font-medium">
-              <option value="pending">pending</option>
-              <option value="delivered">delivered</option>
-              <option value="shipped">shipped</option>
-              <option value="cancelled">cancelled</option>
-            </select>
-          </div>
-        ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+
+          <TableBody>
+            {table.getCoreRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id} className="px-4">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
