@@ -1,21 +1,24 @@
+import { sendSubscribeEmail } from "../emails/subscriberEmail.js";
 import { Subscriber } from "../models/subscribe.model.js";
 
 const subscribe = async (req, res) => {
   try {
     const { email } = req.body;
     const isEmailExist = await Subscriber.findOne({ email });
-
+    
     if (isEmailExist) {
       return res
-        .status(200)
-        .json({ success: true, message: "Already subscribed to email" });
+      .status(200)
+      .json({ success: true, message: "Already subscribed to email" });
     }
-
+    
     await Subscriber.create({
       email,
       status: "active",
       subscribedAt: new Date(),
     });
+    
+    await sendSubscribeEmail(email);
 
     res.status(201).json({ success: true, message: "Subscribed to email successfully" });
   } catch (error) {

@@ -3,27 +3,33 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Spinner } from "./ui/spinner";
 
 function NewsLetterBox() {
   const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
+      setIsSubscribing(true);
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/users/subscribe`,
+        `${import.meta.env.VITE_BACKEND_URL}/subscribers`,
         {
           email,
         }
       );
 
       if (response.data.success) {
-        toast.success("Subscribed to ");
+        const message = response.data?.message || "Subscribed to email successfully";
+        toast.success(message);
       }
     } catch (error) {
       console.log(error);
       const message = error?.response?.data?.message || "Internal Server Error";
       toast.error(message);
+    } finally {
+      setIsSubscribing(false);
     }
   };
 
@@ -46,10 +52,22 @@ function NewsLetterBox() {
           onChange={(e) => setEmail(e.target.value)}
           className="p-5 outline-none bg-gray-100 w-full rounded-md"
           placeholder="Enter your Email"
+          disabled={isSubscribing}
           required
         />
-        <Button className="sm:flex-1 bg-black text-white text-sm p-5 px-8 rounded-md cursor-pointer active:bg-gray-900">
-          Subscribe
+
+        <Button
+          disabled={isSubscribing}
+          className="sm:flex-1 bg-black text-white text-sm p-5 px-8 rounded-md cursor-pointer active:bg-gray-900"
+        >
+          {isSubscribing ? (
+            <div className="flex items-center gap-2">
+              <Spinner />
+              subscribing...
+            </div>
+          ) : (
+            "Subscribe"
+          )}
         </Button>
       </form>
     </div>

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import {
   Carousel,
   CarouselContent,
@@ -8,18 +7,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "./ui/carousel";
-import { Dot } from "lucide-react";
-import { Button } from "./ui/button";
 
 function Hero() {
   const [slides, setSlides] = useState([]);
   const [api, setApi] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(null);
-  
+
   async function fetchSlides() {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/featured-banner/active`
+        `${import.meta.env.VITE_BACKEND_URL}/featured-banners/active`
       );
       if (res.data.success) {
         setSlides(res.data.banners);
@@ -39,7 +36,7 @@ function Hero() {
     if (!api) return;
     api.on("select", onSelect);
   }, []);
-  
+
   return (
     <div className="w-full">
       <Carousel className="w-full" setApi={setApi}>

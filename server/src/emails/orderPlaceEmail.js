@@ -52,14 +52,12 @@ const orderPlaceEmail = (username, orderDetails) => {
 
 export const sendOrderPlaceEmail = async (email, name, orderDetails) => {
   try {
-    const res = resend.emails.send({
+    await resend.emails.send({
       from: "SnapShop <no-reply-snapshop@mustafasayyed.dev>",
       to: [email],
       subject: "Your Order Placed successfully",
       html: orderPlaceEmail(name, orderDetails),
     });
-
-    console.log("Order Place Email: ", res);
 
     return {
       success: true,
