@@ -26,7 +26,7 @@ const placeOrder = async (req, res) => {
 
     await User.findByIdAndUpdate(userId, { cartData: {} });
 
-    await sendOrderPlaceEmail()
+    await sendOrderPlaceEmail();
 
     res.status(200).json({ success: true, message: "Order Placed" });
   } catch (error) {
@@ -37,7 +37,9 @@ const placeOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await Orders.find({});
+    const orders = (
+      await Orders.find({}, {}, { populate: "address" })
+    ).reverse();
     res.status(200).json({ success: true, orders });
   } catch (error) {
     console.log(error.message);
@@ -128,5 +130,5 @@ export {
   updateStatus,
   getUserOrders,
   getAllOrders,
-  verifyRazorpay
+  verifyRazorpay,
 };

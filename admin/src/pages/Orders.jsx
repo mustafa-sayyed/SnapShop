@@ -21,14 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.jsx";
+import { Spinner } from "@/components/ui/spinner.jsx";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
+  const [isOrdersLoading, setIsOrdersLoading] = useState(false);
+
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
 
   const fetchOrders = async () => {
     try {
+      setIsOrdersLoading(true);
       const response = await axios.get(`${backendUrl}/orders`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -45,6 +49,8 @@ function Orders() {
         console.log(error.message);
         toast.error(`Server error: ${error.message}`);
       }
+    } finally {
+      setIsOrdersLoading(false);
     }
   };
 
@@ -65,7 +71,16 @@ function Orders() {
       );
       if (response.data.success) {
         // toast.success(response.data.message);
-        await fetchOrders();
+        // await fetchOrders();
+        setOrders((orders) =>
+          orders.map((order) => {
+            if (order._id === id) {
+              order.status = status;
+            }
+
+            return order;
+          })
+        );
       }
     } catch (error) {
       if (error.response) {
@@ -103,7 +118,7 @@ function Orders() {
       cell: ({ getValue }) => {
         const addressDetails = getValue();
         return (
-          <div className="text-sm">
+          <div className="text-sm font-light">
             <p>{addressDetails.address}</p>
             <p>
               {addressDetails.city}, {addressDetails.city} - {addressDetails.pincode}
@@ -116,6 +131,9 @@ function Orders() {
     {
       header: "Payment Method",
       accessorKey: "paymentMethod",
+      cell: ({ getValue }) => {
+        return <p className="text-center">{getValue()}</p>;
+      },
     },
     {
       header: "Order Date",
@@ -127,10 +145,13 @@ function Orders() {
     {
       header: "Total Amount",
       accessorKey: "totalPrice",
-      cell: ({getValue}) => {
-
-        return <p className="text-center">{currency} {getValue()}</p>
-      }
+      cell: ({ getValue }) => {
+        return (
+          <p className="text-center">
+            {currency} {getValue()}
+          </p>
+        );
+      },
     },
     {
       header: "order Status",
@@ -156,7 +177,9 @@ function Orders() {
       accessorKey: "changeStatus",
       cell: ({ row }) => {
         return (
-          <Select onValueChange={(status) => handleStatusChange(status, row.original._id)}>
+          <Select
+            onValueChange={(status) => handleStatusChange(status, row.original._id)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Change Order Status" />
             </SelectTrigger>
@@ -182,12 +205,12 @@ function Orders() {
 
   return (
     <div>
-      <h2>All Orders</h2>
+      <h2 className="mb-4 text-2xl">All Orders</h2>
       <div>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
+              <TableRow key={hg.id} className="bg-accent" >
                 {hg.headers.map((header) => (
                   <TableHead key={header.id} className="px-4">
                     {flexRender(header.column.columnDef.header, header.getContext())}
@@ -198,15 +221,33 @@ function Orders() {
           </TableHeader>
 
           <TableBody>
-            {table.getCoreRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="px-4">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={orderTableColumns.length}
+                  className="h-36 text-center"
+                >
+                  {isOrdersLoading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Spinner />
+                      Loading...
+                    </div>
+                  ) : (
+                    "No Orders"
+                  )}
+                </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>

@@ -36,6 +36,8 @@ function Banners() {
   const [isBannerAdding, setIsBannerAdding] = useState(false);
   const [addBanner, setAddBanner] = useState(false);
   const [isDeletingBanner, setIsDeletingBanner] = useState(false);
+  const [deleteBannerId, setDeleteBannerId] = useState("");
+  
 
   const token = localStorage.getItem("token");
 
@@ -59,6 +61,7 @@ function Banners() {
 
   const deleteBanner = async (id) => {
     try {
+      setDeleteBannerId(id);
       const res = await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/featured-banners/${id}`,
         {
@@ -75,6 +78,8 @@ function Banners() {
       const message = error.response?.data?.message ?? "Failed to delete banner";
       toast.error(message);
       console.log("Error while fetching banners: ", error);
+    } finally {
+      setDeleteBannerId("");
     }
   };
 
@@ -197,7 +202,7 @@ function Banners() {
             className="hover:text-red-500 cursor-pointer"
             onClick={() => handleDeleteBanner(id)}
           >
-            {isDeletingBanner ? <Spinner /> : <Trash2 />}
+            {isDeletingBanner && deleteBannerId === id ? <Spinner /> : <Trash2 />}
           </Button>
         );
       },

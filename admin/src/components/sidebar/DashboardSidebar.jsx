@@ -73,7 +73,7 @@ const dashboardRoutes = [
     id: "email-subscribers",
     title: "Email Subscribers",
     icon: <Mail className="size-4" />,
-    link: "#",
+    link: "subscribers",
   },
   {
     id: "send-email",

@@ -23,6 +23,7 @@ function NewsLetterBox() {
       if (response.data.success) {
         const message = response.data?.message || "Subscribed to email successfully";
         toast.success(message);
+        setEmail("");
       }
     } catch (error) {
       console.log(error);
