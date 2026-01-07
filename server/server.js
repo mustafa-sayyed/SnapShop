@@ -5,11 +5,12 @@ import express from "express";
 import cors from "cors";
 import userRouter from "./src/routes/user.route.js";
 import productRouter from "./src/routes/product.route.js";
-import cartRouter from "./src/routes/cart.routes.js";
-import orderRouter from "./src/routes/order.routes.js";
-import addressRouter from "./src/routes/address.routes.js";
-import featuredBannerRouter from "./src/routes/featuredBanner.routes.js";
+import cartRouter from "./src/routes/cart.route.js";
+import orderRouter from "./src/routes/order.route.js";
+import addressRouter from "./src/routes/address.route.js";
+import featuredBannerRouter from "./src/routes/featuredBanner.route.js";
 import seedAdmin from "./src/utils/seedAdmin.js";
+import subscriberRouter from "./src/routes/subscriber.route.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -48,7 +49,8 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/addresses", addressRouter);
-app.use("/api/v1/featured-banner", featuredBannerRouter)
+app.use("/api/v1/featured-banners", featuredBannerRouter)
+app.use("/api/v1/subscribers", subscriberRouter)
 
 // Health API
 app.get("/health", (req, res) => {

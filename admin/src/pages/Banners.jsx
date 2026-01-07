@@ -43,7 +43,7 @@ function Banners() {
   const fetchBanners = async () => {
     try {
       setIsBannersLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/featured-banner`, {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/featured-banners`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -61,7 +61,7 @@ function Banners() {
   const deleteBanner = async (id) => {
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/featured-banner/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/featured-banners/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ function Banners() {
   const toggleBannerActive = async (id) => {
     try {
       await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/featured-banner/${id}/toggle`,
+        `${import.meta.env.VITE_BACKEND_URL}/featured-banners/${id}/toggle`,
         {},
         {
           headers: {
@@ -116,7 +116,7 @@ function Banners() {
     try {
       setIsBannerAdding(true);
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/featured-banner`,
+        `${import.meta.env.VITE_BACKEND_URL}/featured-banners`,
         formData,
         {
           headers: {
