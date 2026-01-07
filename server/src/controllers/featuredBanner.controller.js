@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 const createFeaturedBanner = async (req, res, next) => {
   try {
-    const { bannerTitle, bannerLink, isActive } = req.body;
+    const { bannerTitle, isActive } = req.body;
 
     if (!req.file) {
       return res
@@ -16,7 +16,6 @@ const createFeaturedBanner = async (req, res, next) => {
     const banner = await featuredBanner.create({
       bannerImage: uploadResult.secure_url,
       bannerTitle,
-      bannerLink,
       isActive,
     });
 

@@ -10,11 +10,6 @@ const featuredBannerSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    bannerLink: {
-      type: String,
-      required: false,
-      default: "",
-    },
     isActive: {
       type: Boolean,
       required: true,

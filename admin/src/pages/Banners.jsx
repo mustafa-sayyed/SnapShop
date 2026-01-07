@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/table";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import axios from "axios";
-import { CloudCog, FingerprintIcon, Plus, Trash2, UploadCloud } from "lucide-react";
+import { Plus, Trash2, UploadCloud } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -31,7 +31,6 @@ function Banners() {
   const [banners, setBanners] = useState([]);
   const [bannerImage, setBannerImage] = useState();
   const [bannerTitle, setBannerTitle] = useState("");
-  const [bannerLink, setBannerLink] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [isBannersLoading, setIsBannersLoading] = useState(false);
   const [isBannerAdding, setIsBannerAdding] = useState(false);
@@ -111,7 +110,6 @@ function Banners() {
 
     formData.append("bannerImage", bannerImage);
     formData.append("bannerTitle", bannerTitle);
-    formData.append("bannerLink", bannerLink);
     formData.append("isActive", isActive);
     try {
       setIsBannerAdding(true);
@@ -161,16 +159,6 @@ function Banners() {
       cell: ({ getValue }) => {
         if (!getValue()) {
           return "No Title Given";
-        }
-        return getValue();
-      },
-    },
-    {
-      accessorKey: "bannerLink",
-      header: "Link",
-      cell: ({ getValue }) => {
-        if (!getValue()) {
-          return "No Link Given";
         }
         return getValue();
       },
@@ -280,15 +268,6 @@ function Banners() {
                     value={bannerTitle}
                     disabled={isBannerAdding}
                     onChange={(e) => setBannerTitle(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="link">Add Link for Button</Label>
-                  <Input
-                    id="link"
-                    value={bannerLink}
-                    disabled={isBannerAdding}
-                    onChange={(e) => setBannerLink(e.target.value)}
                   />
                 </div>
                 <div className="flex gap-2">
