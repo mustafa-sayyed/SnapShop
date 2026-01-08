@@ -237,7 +237,7 @@ function List() {
       <div className="flex flex-col gap-3 p-2 items-start sm:flex-row sm:items-center justify-between w-full">
         {totalProducts && <p className="text-xl font-bold">Total Products: {totalProducts}</p>}
         <p>
-          Showing {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}{" "}
+          Showing {table.getState().pagination.pageIndex + 1} of {pageCount}{" "}
           Pages
         </p>
         <div className="flex items-center gap-2">

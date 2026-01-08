@@ -69,7 +69,7 @@ const getAllSubscribers = async (req, res) => {
     const search = req.query.search || "";
     const filter = search ? { email: { $regex: search, $options: "i" } } : {};
     const totalSubscribers = await Subscriber.countDocuments(filter);
-    const totalPages = Math.ceil(totalSubscribers / limit) - 1;
+    const totalPages = Math.ceil(totalSubscribers / limit);
 
     const subscribers = await Subscriber.find(filter)
       .skip((page - 1) * limit)

@@ -50,7 +50,7 @@ function DashboardLayout() {
     <>
       <DashboardSidebar />
 
-      <SidebarInset>
+      <SidebarInset className="overflow-hidden" >
         <header className="flex p-6 justify-between h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
