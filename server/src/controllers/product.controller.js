@@ -96,7 +96,8 @@ const getAllProducts = async (req, res) => {
     const products = await Product.find(filter)
       .lean()
       .skip(page * limit)
-      .limit(limit);
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,

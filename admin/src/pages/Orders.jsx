@@ -6,6 +6,7 @@ import { currency } from "../App.jsx";
 import {
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -28,77 +29,24 @@ import {
 } from "@/components/ui/select.jsx";
 import { Spinner } from "@/components/ui/spinner.jsx";
 import { Button } from "@/components/ui/button.jsx";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ListMinus } from "lucide-react";
 import { Input } from "@/components/ui/input.jsx";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [isOrdersLoading, setIsOrdersLoading] = useState(false);
+  const [totalOrders, setTotalOrders] = useState(null);
+  
+  const [pageCount, setPageCount] = useState(0);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
 
-  const fetchOrders = async () => {
-    try {
-      setIsOrdersLoading(true);
-      const response = await axios.get(`${backendUrl}/orders`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.data.success) {
-        setOrders(response.data.orders);
-      }
-    } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data.message);
-      } else {
-        console.log(error.message);
-        toast.error(`Server error: ${error.message}`);
-      }
-    } finally {
-      setIsOrdersLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const handleStatusChange = async (status, id) => {
-    try {
-      const response = await axios.patch(
-        `${backendUrl}/orders/${id}/status`,
-        { status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.data.success) {
-        // toast.success(response.data.message);
-        // await fetchOrders();
-        setOrders((orders) =>
-          orders.map((order) => {
-            if (order._id === id) {
-              order.status = status;
-            }
-
-            return order;
-          })
-        );
-      }
-    } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data.message);
-      } else {
-        console.log(error.message);
-        toast.error(`Server error: ${error.message}`);
-      }
-    }
-  };
-
+  
   const orderTableColumns = [
     {
       header: "Order Details",
@@ -207,32 +155,98 @@ function Orders() {
   const table = useReactTable({
     columns: orderTableColumns,
     data: orders,
+    pageCount,
+    state: { pagination },
+    manualPagination: true,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const fetchOrders = async () => {
+    try {
+      setIsOrdersLoading(true);
+      const response = await axios.get(`${backendUrl}/orders`, {
+        params: {
+          page: pagination.pageIndex,
+          limit: pagination.pageSize,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.success) {
+        setOrders(response.data.orders);
+        setPageCount(response.data.totalPages);
+        setTotalOrders(response.data.totalOrders);
+      }
+    } catch (error) {
+      if (error.response) {
+        toast.error(error.response.data.message);
+      } else {
+        console.log(error.message);
+        toast.error(`Server error: ${error.message}`);
+      }
+    } finally {
+      setIsOrdersLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, [pagination.pageIndex, pagination.pageSize]);
+
+
+  const handleStatusChange = async (status, id) => {
+    try {
+      const response = await axios.patch(
+        `${backendUrl}/orders/${id}/status`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.data.success) {
+        // toast.success(response.data.message);
+        // await fetchOrders();
+        setOrders((orders) =>
+          orders.map((order) => {
+            if (order._id === id) {
+              order.status = status;
+            }
+
+            return order;
+          })
+        );
+      }
+    } catch (error) {
+      if (error.response) {
+        toast.error(error.response.data.message);
+      } else {
+        console.log(error.message);
+        toast.error(`Server error: ${error.message}`);
+      }
+    }
+  };
+
 
   return (
     <div>
       <h2 className="mb-4 text-2xl">All Orders</h2>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 w-full">
-        <Input
-          placeholder="Search Orders"
-          className="max-w-md"
-          value={table.getColumn("items").getFilterValue() ?? ""}
-          onChange={(e) => table.getColumn("items").setFilterValue(e.target.value)}
-        />
+      <div className="mb-4 w-full">
         <Select onValueChange={(size) => table.setPageSize(Number(size))}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select No. of Product to be Displayed" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>Select No. of Product to be Displayed</SelectLabel>
+              <SelectLabel>Select No. of Orders to be Displayed</SelectLabel>
               <SelectItem value="10">10</SelectItem>
               <SelectItem value="20">20</SelectItem>
               <SelectItem value="30">30</SelectItem>
-              <SelectItem value="30">40</SelectItem>
-              <SelectItem value="30">50</SelectItem>
+              <SelectItem value="40">40</SelectItem>
+              <SelectItem value="50">50</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -277,9 +291,10 @@ function Orders() {
           )}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-between w-full">
+      <div className="flex flex-col gap-3 p-2 items-start sm:flex-row sm:items-center justify-between w-full">
+        {totalOrders && <p className="text-xl font-bold">Total Orders: {totalOrders}</p>}
         <p>
-          Showing {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}{" "}
+          Showing {pagination.pageIndex + 1} of {pageCount}{" "}
           Page
         </p>
         <div className="flex items-center gap-2">

@@ -37,13 +37,20 @@ const placeOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
   try {
-    const orders = (
-      await Orders.find({}, {}, { populate: "address" })
-    ).reverse();
-    res.status(200).json({ success: true, orders });
+    const page = req.query.page || 0;
+    const limit = req.query.limit || 10;
+    const totalOrders = await Orders.countDocuments();
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    const orders = await Orders.find({}, {}, { populate: "address" })
+      .skip(page * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, orders, totalPages, limit, page, totalOrders });
   } catch (error) {
-    console.log(error.message);
-    res.json({ success: false, message: `Server Error: ${error.message}` });
+    console.log(error);
+    res.json({ success: false, message: `Internal Server Error` });
   }
 };
 
@@ -53,7 +60,7 @@ const getUserOrders = async (req, res) => {
     const orders = await Orders.find({ userId: id }).lean();
     res.status(200).json({ success: true, orders });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     res.json({ success: false, message: `Internal Server Error` });
   }
 };
@@ -65,8 +72,8 @@ const updateStatus = async (req, res) => {
     const order = await Orders.findByIdAndUpdate(orderId, { status });
     res.status(200).json({ success: true, message: "Status updates successfully" });
   } catch (error) {
-    console.log(error.message);
-    res.json({ success: false, message: `Server Error: ${error.message}` });
+    console.log(error);
+    res.json({ success: false, message: `Internal Server Error` });
   }
 };
 

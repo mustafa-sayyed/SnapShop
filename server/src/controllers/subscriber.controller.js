@@ -5,19 +5,19 @@ const subscribe = async (req, res) => {
   try {
     const { email } = req.body;
     const isEmailExist = await Subscriber.findOne({ email });
-    
+
     if (isEmailExist) {
       return res
-      .status(200)
-      .json({ success: true, message: "Already subscribed to email" });
+        .status(200)
+        .json({ success: true, message: "Already subscribed to email" });
     }
-    
+
     await Subscriber.create({
       email,
       status: "active",
       subscribedAt: new Date(),
     });
-    
+
     await sendSubscribeEmail(email);
 
     res.status(201).json({ success: true, message: "Subscribed to email successfully" });
@@ -66,14 +66,19 @@ const getAllSubscribers = async (req, res) => {
   try {
     const page = req.query.page || 0;
     const limit = req.query.limit || 10;
-    const totalSubscribers = await Subscriber.countDocuments();
-    const totalPages = Math.floor(totalSubscribers / limit) - 1;
+    const search = req.query.search || "";
+    const filter = search ? { email: { $regex: search, $options: "i" } } : {};
+    const totalSubscribers = await Subscriber.countDocuments(filter);
+    const totalPages = Math.ceil(totalSubscribers / limit);
 
-    const subscribers = await Subscriber.find({})
+    const subscribers = await Subscriber.find(filter)
       .skip(page * limit)
-      .limit(limit);
+      .limit(limit)
+      .sort({ subscribedAt: -1 });
 
-    res.status(200).json({ success: true, subscribers, totalPages, limit, page });
+    res
+      .status(200)
+      .json({ success: true, subscribers, totalPages, limit, page, totalSubscribers });
   } catch (error) {
     console.log(error);
     const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
@@ -94,7 +99,6 @@ const deleteSubscriber = async (req, res) => {
     }
 
     res.status(200).json({ success: true, message: "Subscriber deleted successfully" });
-
   } catch (error) {
     console.log(error);
     const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
