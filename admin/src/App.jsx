@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
-import { Add, List, Orders, Home, Banners, Login, NotFound, Subscribers } from "./pages";
+import { Add, List, Orders, Home, Banners, Login, NotFound, Subscribers, Customers } from "./pages";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "./context/userContext";
 import axios from "axios";
@@ -66,6 +66,8 @@ function App() {
           <Route path="list" element={<List />} />
           <Route path="orders" element={<Orders />} />
           <Route path="subscribers" element={<Subscribers />} />
+          <Route path="customers" element={<Customers />} />
+
         </Route>
         <Route
           path="/login"

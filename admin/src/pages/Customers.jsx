@@ -24,23 +24,24 @@ import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-function Subscribers() {
-  const [subscribers, setSubscribers] = useState([]);
-  const [isSubscriberLoading, setIsSubscriberLoading] = useState(false);
-  const [isDeletingSubscriber, setIsDeletingSubscriber] = useState(false);
-  const [totalSubscribers, setTotalSubscribers] = useState(null);
+function Users() {
+  const [users, setUsers] = useState([]);
+  const [isUsersLoading, setIsUsersLoading] = useState(false);
+  const [isDeletingUser, setIsDeletingUser] = useState(false);
+  const [totalUsers, setTotalUsers] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
+
   const token = localStorage.getItem("token");
 
-  const handleSubscriberDelete = async (id) => {
+  const handleUserDelete = async (id) => {
     try {
-      setIsDeletingSubscriber(true);
+      setIsDeletingUser(true);
       const res = await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/subscribers/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/users/${id}/admin`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -49,74 +50,64 @@ function Subscribers() {
       );
 
       if (res.data.success) {
-        toast.success("Subscriber deleted successfully");
-        setSubscribers((subscribers) => subscribers.filter((subs) => subs._id != id));
+        toast.success("User deleted successfully");
+        setUsers((users) => users.filter((user) => user._id != id));
       }
     } catch (error) {
-      const message = error.response?.data?.message ?? "Failed to delete subscriber";
+      const message = error.response?.data?.message ?? "Failed to delete user";
       toast.error(message);
-      console.log("Error while deleting subscriber: ", error);
+      console.log("Error while deleting user: ", error);
     } finally {
-      setIsDeletingSubscriber(false);
+      setIsDeletingUser(false);
     }
   };
 
-  const getAllSubscribers = async () => {
+  const getAllUsers = async () => {
     try {
-      setIsSubscriberLoading(true);
-      const result = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/subscribers`, {
+      setIsUsersLoading(true);
+      const result = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/all`, {
         params: {
           page: pagination.pageIndex,
           limit: pagination.pageSize,
-          search: table.getColumn("email")?.getFilterValue() ?? "",
+          search: table.getColumn("name")?.getFilterValue() ?? "",
         },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       if (result.data.success) {
-        setSubscribers(result.data.subscribers);
+        setUsers(result.data.users);
         setPageCount(result.data.totalPages);
-        setTotalSubscribers(result.data.totalSubscribers);
+        setTotalUsers(result.data.totalUsers);
       }
     } catch (error) {
       console.log(error);
     } finally {
-      setIsSubscriberLoading(false);
+      setIsUsersLoading(false);
     }
   };
 
   useEffect(() => {
-    getAllSubscribers();
+    getAllUsers();
   }, [pagination.pageIndex, pagination.pageSize]);
 
   const subscriberTableColumns = [
+    {
+      accessorKey: "name",
+      header: "Name",
+    },
     {
       accessorKey: "email",
       header: "Email",
     },
     {
-      accessorKey: "subscribedAt",
-      header: "Subscribed At",
+      accessorKey: "createdAt",
+      header: "Accoutn Created At",
       cell: ({ getValue }) => {
         return new Date(getValue()).toLocaleString();
       },
     },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ getValue }) => {
-        return (
-          <p
-            className={` rounded-full flex items-center justify-center w-fit px-4 h-fit p-0.5 text-white ${
-              getValue() === "active" ? "bg-green-500" : "bg-amber-300"
-            }`}
-          >
-            {getValue()}
-          </p>
-        );
-      },
-    },
+
     {
       accessorKey: "action",
       header: "Action",
@@ -124,11 +115,11 @@ function Subscribers() {
         return (
           <Button
             variant="outline"
-            onClick={() => handleSubscriberDelete(row.original._id)}
+            onClick={() => handleUserDelete(row.original._id)}
             className="hover:text-red-500 cursor-pointer"
-            disabled={isDeletingSubscriber}
+            disabled={isDeletingUser}
           >
-            {isDeletingSubscriber ? <Spinner /> : <Trash2 />}
+            {isDeletingUser ? <Spinner /> : <Trash2 />}
           </Button>
         );
       },
@@ -137,46 +128,45 @@ function Subscribers() {
 
   const table = useReactTable({
     columns: subscriberTableColumns,
-    data: subscribers,
+    data: users,
     pageCount,
     manualPagination: true,
-    state: {pagination},
-    onPaginationChange:setPagination,
+    state: { pagination },
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
   });
 
   useEffect(() => {
-    setPagination((prev) => ({...prev, pageIndex: 0}));
-    getAllSubscribers();
-  }, [table.getColumn("email")?.getFilterValue()]);
-
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    getAllUsers();
+  }, [table.getColumn("name")?.getFilterValue()]);
 
   return (
     <div className="w-full">
-      <p className="mb-4 text-2xl">All Subscribers</p>
+      <p className="mb-4 text-2xl">All Users</p>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 w-full">
-              <Input
-                placeholder="Search Products..."
-                className="max-w-md"
-                value={table.getColumn("email")?.getFilterValue() ?? ""}
-                onChange={(e) => table.getColumn("email")?.setFilterValue(e.target.value)}
-              />
-              <Select onValueChange={(size) => table.setPageSize(Number(size))}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select No. of Product to be Displayed" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Select No. of Subscribers to be Displayed</SelectLabel>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="30">30</SelectItem>
-                    <SelectItem value="40">40</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+        <Input
+          placeholder="Search User from Names..."
+          className="max-w-md"
+          value={table.getColumn("name")?.getFilterValue() ?? ""}
+          onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
+        />
+        <Select onValueChange={(size) => table.setPageSize(Number(size))}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select No. of Product to be Displayed" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Select No. of Users to be Displayed</SelectLabel>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="30">30</SelectItem>
+              <SelectItem value="40">40</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((hg) => (
@@ -206,13 +196,13 @@ function Subscribers() {
                 colSpan={subscriberTableColumns.length}
                 className="h-36 text-center"
               >
-                {isSubscriberLoading ? (
+                {isUsersLoading ? (
                   <div className="flex items-center justify-center gap-2">
                     <Spinner />
                     Loading...
                   </div>
                 ) : (
-                  "No Subscribers"
+                  "No Users"
                 )}
               </TableCell>
             </TableRow>
@@ -220,9 +210,7 @@ function Subscribers() {
         </TableBody>
       </Table>
       <div className="flex flex-col gap-3 p-2 items-start sm:flex-row sm:items-center justify-between w-full">
-        {totalSubscribers && (
-          <p className="text-xl font-bold">Total Products: {totalSubscribers}</p>
-        )}
+        {totalUsers && <p className="text-xl font-bold">Total Users: {totalUsers}</p>}
         <p>
           Showing {table.getState().pagination.pageIndex + 1} of {pageCount} Pages
         </p>
@@ -248,4 +236,4 @@ function Subscribers() {
   );
 }
 
-export default Subscribers;
+export default Users;

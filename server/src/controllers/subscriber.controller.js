@@ -64,15 +64,15 @@ const unsubscribe = async (req, res) => {
 
 const getAllSubscribers = async (req, res) => {
   try {
-    const page = req.query.page || 0;
-    const limit = req.query.limit || 10;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
     const search = req.query.search || "";
     const filter = search ? { email: { $regex: search, $options: "i" } } : {};
     const totalSubscribers = await Subscriber.countDocuments(filter);
-    const totalPages = Math.ceil(totalSubscribers / limit);
+    const totalPages = Math.ceil(totalSubscribers / limit) - 1;
 
     const subscribers = await Subscriber.find(filter)
-      .skip(page * limit)
+      .skip((page - 1) * limit)
       .limit(limit)
       .sort({ subscribedAt: -1 });
 

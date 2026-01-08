@@ -37,13 +37,13 @@ const placeOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
   try {
-    const page = req.query.page || 0;
-    const limit = req.query.limit || 10;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
     const totalOrders = await Orders.countDocuments();
     const totalPages = Math.ceil(totalOrders / limit);
 
     const orders = await Orders.find({}, {}, { populate: "address" })
-      .skip(page * limit)
+      .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
 

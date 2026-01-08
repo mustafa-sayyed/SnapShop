@@ -144,4 +144,56 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-export { loginUser, signupUser, loginAdmin, getCurrentUser };
+const getAllUsers = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const search = req.query.search || "";
+    const filter = search
+      ? { name: { $regex: search, $options: "i" }, role: "user" }
+      : { role: "user" };
+    const totalUsers = await User.countDocuments(filter);
+
+    const users = await User.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      users,
+      totalUsers,
+      page,
+      limit,
+      totalPages: Math.ceil(totalUsers / limit),
+    });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
+    });
+  }
+};
+
+const deleteuser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
+    });
+  }
+};
+
+export { loginUser, signupUser, loginAdmin, getCurrentUser, getAllUsers, deleteuser };

@@ -88,14 +88,14 @@ const deleteProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 0;
+    const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const search = req.query.search || "";
     const filter = search ? { name: { $regex: search, $options: "i" } } : {};
     const totalProducts = await Product.countDocuments(filter);
     const products = await Product.find(filter)
       .lean()
-      .skip(page * limit)
+      .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
 
@@ -105,7 +105,7 @@ const getAllProducts = async (req, res) => {
       page,
       limit,
       totalProducts,
-      totalPages: Math.ceil(totalProducts / limit),
+      totalPages: Math.ceil(totalProducts / limit) - 1,
     });
   } catch (error) {
     console.log(error);

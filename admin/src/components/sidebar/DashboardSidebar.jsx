@@ -81,7 +81,7 @@ const dashboardRoutes = [
     id: "customers",
     title: "Customers",
     icon: <Users className="size-4" />,
-    link: "#",
+    link: "customers",
   },
   {
     id: "email-subscribers",
@@ -112,12 +112,6 @@ const dashboardRoutes = [
         icon: <TrendingUp className="size-4" />,
       },
     ],
-  },
-  {
-    id: "analytics",
-    title: "Analytics",
-    icon: <TrendingUp className="size-4" />,
-    link: "#",
   },
   {
     id: "settings",

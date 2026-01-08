@@ -120,7 +120,7 @@ function Orders() {
             : "bg-amber-300";
         return (
           <p
-            className={`${badgeClass} rounded-full flex items-center justify-center h-fit p-0.5`}
+            className={`${badgeClass} text-white rounded-full flex items-center justify-center h-fit p-0.5`}
           >
             {getValue()}
           </p>
