@@ -42,7 +42,9 @@ const createProduct = async (req, res) => {
 
     res.status(201).json({ success: true, message: "Product added successfully" });
   } catch (error) {
-    res.status(500).json({ message: `Internal Server error: ${error.message}` });
+    console.log(error);
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res.status(500).json({ message: `Internal Server error`, errorStack });
   }
 };
 
@@ -79,16 +81,35 @@ const deleteProduct = async (req, res) => {
     res.status(200).json({ success: true, product, message: "Product deleted" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: `Internal Server error: ${error.message}` });
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res.status(500).json({ message: `Internal Server error`, errorStack });
   }
 };
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find().lean();
-    return res.status(200).json({ success: true, products });
+    const page = Number(req.query.page) || 0;
+    const limit = Number(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const filter = search ? { name: { $regex: search, $options: "i" } } : {};
+    const totalProducts = await Product.countDocuments(filter);
+    const products = await Product.find(filter)
+      .lean()
+      .skip(page * limit)
+      .limit(limit);
+
+    return res.status(200).json({
+      success: true,
+      products,
+      page,
+      limit,
+      totalProducts,
+      totalPages: Math.ceil(totalProducts / limit),
+    });
   } catch (error) {
-    res.status(500).json({ message: `Internal Server error: ${error.message}` });
+    console.log(error);
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res.status(500).json({ message: `Internal Server error`, errorStack });
   }
 };
 
@@ -104,7 +125,9 @@ const getProduct = async (req, res) => {
 
     res.status(200).json({ success: true, product });
   } catch (error) {
-    res.status(500).json({ message: `Internal Server error: ${error.message}` });
+    console.log(error);
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res.status(500).json({ message: `Internal Server error`, errorStack });
   }
 };
 

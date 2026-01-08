@@ -3,7 +3,12 @@ import { useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { currency } from "../App.jsx";
-import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -22,6 +27,9 @@ import {
   SelectValue,
 } from "@/components/ui/select.jsx";
 import { Spinner } from "@/components/ui/spinner.jsx";
+import { Button } from "@/components/ui/button.jsx";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Input } from "@/components/ui/input.jsx";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -40,7 +48,6 @@ function Orders() {
       });
       if (response.data.success) {
         setOrders(response.data.orders);
-        console.log(response.data.orders);
       }
     } catch (error) {
       if (error.response) {
@@ -102,7 +109,7 @@ function Orders() {
         return (
           <div>
             {orderDetails?.map((order) => (
-              <div>
+              <div key={order._id}>
                 {order.quantity}
                 {" x "}
                 {order.name}
@@ -201,55 +208,97 @@ function Orders() {
     columns: orderTableColumns,
     data: orders,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
     <div>
       <h2 className="mb-4 text-2xl">All Orders</h2>
-      <div>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id} className="bg-accent" >
-                {hg.headers.map((header) => (
-                  <TableHead key={header.id} className="px-4">
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 w-full">
+        <Input
+          placeholder="Search Orders"
+          className="max-w-md"
+          value={table.getColumn("items").getFilterValue() ?? ""}
+          onChange={(e) => table.getColumn("items").setFilterValue(e.target.value)}
+        />
+        <Select onValueChange={(size) => table.setPageSize(Number(size))}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select No. of Product to be Displayed" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Select No. of Product to be Displayed</SelectLabel>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="30">30</SelectItem>
+              <SelectItem value="30">40</SelectItem>
+              <SelectItem value="30">50</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((hg) => (
+            <TableRow key={hg.id} className="bg-accent">
+              {hg.headers.map((header) => (
+                <TableHead key={header.id} className="px-4">
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+
+        <TableBody>
+          {table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
                 ))}
               </TableRow>
-            ))}
-          </TableHeader>
-
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={orderTableColumns.length}
-                  className="h-36 text-center"
-                >
-                  {isOrdersLoading ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <Spinner />
-                      Loading...
-                    </div>
-                  ) : (
-                    "No Orders"
-                  )}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={orderTableColumns.length} className="h-36 text-center">
+                {isOrdersLoading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <Spinner />
+                    Loading...
+                  </div>
+                ) : (
+                  "No Orders"
+                )}
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <div className="flex items-center justify-between w-full">
+        <p>
+          Showing {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}{" "}
+          Page
+        </p>
+        <div className="flex items-center gap-2">
+          <Button
+            className="cursor-pointer"
+            disabled={!table.getCanPreviousPage()}
+            onClick={() => table.previousPage()}
+          >
+            <ChevronLeft />
+          </Button>
+          <Button>{table.getState().pagination.pageIndex + 1}</Button>
+          <Button
+            className="cursor-pointer"
+            disabled={!table.getCanNextPage()}
+            onClick={() => table.nextPage()}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
       </div>
     </div>
   );

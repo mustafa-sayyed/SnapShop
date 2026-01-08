@@ -24,7 +24,6 @@ function App() {
           },
         })
         .then((res) => {
-          console.log(res);
           return res.data.user;
         })
         .then((user) => {
