@@ -31,6 +31,20 @@ import {
 import { Logo } from "@/components/sidebar/logo";
 import DashboardNavigation from "@/components/sidebar/DashboardNavigation";
 import { Link } from "react-router-dom";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { useAuth } from "@/context/userContext";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 const dashboardRoutes = [
   {
@@ -60,7 +74,7 @@ const dashboardRoutes = [
         title: "All Products",
         link: "list",
         icon: <Package2 className="size-4" />,
-      }
+      },
     ],
   },
   {
@@ -115,7 +129,16 @@ const dashboardRoutes = [
 
 function DashboardSidebar() {
   const { state } = useSidebar();
+  const {logout} = useAuth();
   const isCollapsed = state === "collapsed";
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  
+
+  const handleLogout = () => {
+    toast.success("Logged out successfully");
+    logout();
+    setIsLogoutDialogOpen(false);
+  }
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -138,12 +161,32 @@ function DashboardSidebar() {
         <DashboardNavigation routes={dashboardRoutes} />
       </SidebarContent>
       <SidebarFooter className="px-2">
-        <SidebarMenuButton tooltip={"Logout"} className="cursor-pointer flex justify-center items-center gap-3">
-          {!isCollapsed && (
-            <span className="text-[18px] text-black dark:text-white">Logout</span>
-          )}
-          <LogOut size={20} />
-        </SidebarMenuButton>
+        <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
+          <DialogTrigger asChild>
+            <SidebarMenuButton
+              tooltip={"Logout"}
+              className="cursor-pointer flex justify-center items-center gap-3"
+            >
+              {!isCollapsed && (
+                <span className=" text-black dark:text-white">Logout</span>
+              )}
+              <LogOut size={20} />
+            </SidebarMenuButton>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Are you sure you want to logout?</DialogTitle>
+              <DialogDescription>
+                Confirming will log you out of your account.
+              </DialogDescription>
+            </DialogHeader>
+
+            <DialogFooter>
+              <DialogClose><Button variant="outline" className="cursor-pointer" >Cancel</Button></DialogClose>
+              <Button variant="destructive" className="cursor-pointer" onClick={handleLogout} >Logout</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </SidebarFooter>
     </Sidebar>
   );

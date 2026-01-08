@@ -23,11 +23,11 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       return displayError("All fields are required.");
     }
-    
+
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     try {
       setIsloging(true);
@@ -63,16 +63,27 @@ function LoginForm() {
       <form onSubmit={handleSubmit}>
         <div className="mb-4 min-w-72">
           <p className="text-sm font-medium text-gray-700 mb-2">Email Address</p>
-          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" required />
+          <Input
+            type="email"
+            disabled={isloging}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter email"
+            required
+          />
         </div>
         <div className="mb-3 min-w-72">
           <p className="text-sm font-medium text-gray-700 mb-2">Password</p>
-          <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter passowrd" required />
+          <Input
+            type="password"
+            disabled={isloging}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter passowrd"
+            required
+          />
         </div>
-        <Button
-          disabled={isloging}
-          className="w-full mt-3 cursor-pointer"
-        >
+        <Button disabled={isloging} className="w-full mt-3 cursor-pointer">
           {isloging ? (
             <span className="flex items-center justify-center gap-2">
               <Spinner />
