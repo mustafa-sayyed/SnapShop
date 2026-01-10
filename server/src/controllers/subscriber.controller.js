@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import { sendSubscribeEmail } from "../emails/subscriberEmail.js";
 import { Subscriber } from "../models/subscribe.model.js";
 
@@ -12,13 +13,16 @@ const subscribe = async (req, res) => {
         .json({ success: true, message: "Already subscribed to email" });
     }
 
+    const unsubscribeToken = jwt.sign({ email }, process.env.JWT_SECRET );
+
     await Subscriber.create({
       email,
       status: "active",
       subscribedAt: new Date(),
+      unsubscribeToken
     });
 
-    await sendSubscribeEmail(email);
+    await sendSubscribeEmail(email, unsubscribeToken);
 
     res.status(201).json({ success: true, message: "Subscribed to email successfully" });
   } catch (error) {
@@ -34,25 +38,18 @@ const unsubscribe = async (req, res) => {
   try {
     const unsubscribeToken = req.params.unsubscribeToken;
 
-    const { email } = req.body;
-
-    const subscriber = await Subscriber.findOne({ email });
+    const subscriber = await Subscriber.findOne({ unsubscribeToken, status: "active" });
 
     if (!subscriber) {
-      return res.status(400).json({ success: false, message: "You aren't subscribed" });
+      return res.status(400).json({ success: false, message: "You aren't subscribed to our Email" });
     }
 
-    if (unsubscribeToken === subscriber.unsubscribeToken) {
-      subscriber.unsubscribedAt = new Date();
-      subscriber.status = "unsubscribed";
-      subscriber.save();
+    subscriber.unsubscribedAt = new Date();
+    subscriber.status = "unsubscribed";
+    await subscriber.save();
 
-      return res
-        .status(200)
-        .json({ success: true, message: "Unsubscribed successfully" });
-    }
+    res.status(200).json({ success: true, message: "Unsubscribed successfully" });
 
-    res.status(400).json({ success: false, message: "Invalid token for unsubscribe" });
   } catch (error) {
     console.log(error);
     const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
@@ -92,9 +89,9 @@ const deleteSubscriber = async (req, res) => {
   try {
     const subscriberId = req.params.subscriberId;
 
-    const isSubscriber = await Subscriber.findOneAndDelete({ email });
+    const deletedSubscriber = await Subscriber.findOneAndDelete({ _id: subscriberId });
 
-    if (!isSubscriber) {
+    if (!deletedSubscriber) {
       return res.status(404).json({ success: false, message: "Subscriber not found" });
     }
 

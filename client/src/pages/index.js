@@ -10,6 +10,7 @@ import PlaceOrder from "./PlaceOrder";
 import Orders from "./Orders";
 import Search from "./Search";
 import Forgotpassword from "./Forgotpassword";
+import Unsubscribe from "./Unsubscribe";
 
 export {
   About,
@@ -23,5 +24,6 @@ export {
   PlaceOrder,
   Signup,
   Search,
-  Forgotpassword
+  Forgotpassword,
+  Unsubscribe
 };

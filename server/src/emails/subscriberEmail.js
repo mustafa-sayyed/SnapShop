@@ -1,7 +1,7 @@
 import { resend } from "../utils/resend.js";
 
-const subscriberEmail = (email) => {
-return `<!DOCTYPE html>
+const subscriberEmail = (email, unsubscribeToken) => {
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -48,6 +48,14 @@ return `<!DOCTYPE html>
                             <p style="margin: 0; color: #999999; font-size: 14px;">© 2024 SnapShop. All rights reserved.</p>
                         </td>
                     </tr>
+
+                    <tr>
+                        <td>
+                            <p style="font-size: 12px; color: #999999; text-align: center; margin-top: 10px;">
+                                If you wish to unsubscribe from our emails, please <a href="${process.env.USER_FRONTEND_URL}/unsubscribe?token=${unsubscribeToken}" style="color: #007bff; text-decoration: none;">click here</a>.
+                            </p>
+                        </td>
+                    </tr>
                 </table>
             </td>
         </tr>
@@ -56,13 +64,13 @@ return `<!DOCTYPE html>
 </html>`;
 };
 
-export const sendSubscribeEmail = async (email) => {
+export const sendSubscribeEmail = async (email, unsubscribeToken) => {
   try {
     await resend.emails.send({
       from: "SnapShop <no-reply-snapshop@mustafasayyed.dev>",
       to: email,
       subject: "Thank you for subscribing to email",
-      html: subscriberEmail(email),
+      html: subscriberEmail(email, unsubscribeToken),
     });
 
     return {

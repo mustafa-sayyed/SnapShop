@@ -14,8 +14,8 @@ router.route("/").get(getAllSubscribers).post(validate(subscriberSchema), subscr
 
 router
   .route("/unsubscribe/:unsubscribeToken")
-  .patch(validate(subscriberSchema), unsubscribe);
+  .patch(unsubscribe);
 
-router.route("/:subscriberId").delete(validate(subscriberSchema), deleteSubscriber);
+router.route("/:subscriberId").delete(deleteSubscriber);
 
 export default router;

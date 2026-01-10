@@ -44,14 +44,14 @@ function NewsLetterBox() {
       </p>
       <form
         onSubmit={onSubmitHandler}
-        className="w-full sm:w-1/2 flex flex-col sm:flex-row items-center gap-3 mx-auto my-6"
+        className="max-w-lg flex flex-col sm:flex-row items-center gap-3 mx-auto my-6"
       >
         <div></div>
         <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="p-5 outline-none bg-gray-100 w-full rounded-md"
+          className="p-5 outline-none bg-gray-100 rounded-md"
           placeholder="Enter your Email"
           disabled={isSubscribing}
           required

@@ -13,6 +13,7 @@ import {
   Product,
   Search,
   Signup,
+  Unsubscribe,
 } from "./pages";
 import { AuthLayout, Footer, Navbar, Profile } from "./components";
 import { toast, ToastContainer } from "react-toastify";
@@ -77,6 +78,7 @@ function App() {
         <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route
           path="/profile"
           element={
