@@ -91,7 +91,7 @@ function Profile() {
         return params;
       });
     }
-    setDefaultAddress(userData.defaultAddress._id ?? null);
+    setDefaultAddress(userData.defaultAddress?._id ?? null);
   };
 
   const updateFormData = (key, value) => {

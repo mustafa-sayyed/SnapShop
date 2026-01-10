@@ -24,9 +24,9 @@ function UserContextProvider({ children }) {
 
   const login = (data) => {
     setAuthStatus(true);
-    setUserData(data.user);
-    setCartItems(data.user.cartData);
-    setAddress(data.addresses);
+    setUserData(data?.user);
+    setCartItems(data?.user?.cartData);
+    setAddress(data?.addresses);
     if (data.token) {
       localStorage.setItem("token", data.token);
     }

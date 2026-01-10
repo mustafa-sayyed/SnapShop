@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendWelcomeEmail } from "../emails/welcomeEmail.js";
+import verifyGoogleLogin from "../utils/verifyGoogleLogin.js";
 
 const loginUser = async (req, res) => {
   try {
@@ -14,6 +15,13 @@ const loginUser = async (req, res) => {
         success: false,
         message: "User does not exists",
       });
+    }
+
+    if (user && user.authProvider == "google" && !user.password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please use Google to login",
+      })
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -49,7 +57,7 @@ const signupUser = async (req, res) => {
 
     const userExists = await User.findOne({ email });
 
-    if (userExists) {
+    if (userExists && userExists.authProvider == "email") {
       return res.status(409).json({
         success: false,
         message: "User already exists",
@@ -196,4 +204,54 @@ const deleteuser = async (req, res) => {
   }
 };
 
-export { loginUser, signupUser, loginAdmin, getCurrentUser, getAllUsers, deleteuser };
+const handleGoogleLogin = async (req, res) => {
+  try {
+    const { token: tokenId } = req.body;
+
+    const userData = await verifyGoogleLogin(tokenId);
+
+    let user = await User.findOne({ email: userData.email });
+
+    if (!user) {
+      user = await User.create({
+        name: userData.name,
+        email: userData.email,
+        authProvider: "google",
+        googleId: userData.sub,
+        role: "user",
+      });
+    }
+
+    if (user && user.authProvider === "email") {
+      user.authProvider = "google";
+      user.googleId = userData.sub;
+      await user.save();
+    }
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+
+    res.status(200).json({
+      success: true,
+      message: "Login Successfull",
+      user,
+      token,
+    });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
+    });
+  }
+};
+
+export {
+  loginUser,
+  signupUser,
+  loginAdmin,
+  getCurrentUser,
+  getAllUsers,
+  deleteuser,
+  handleGoogleLogin,
+};

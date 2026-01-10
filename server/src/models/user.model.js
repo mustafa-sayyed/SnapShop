@@ -13,7 +13,16 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
+    },
+    googleId: {
+      type: String,
+      required: false,
+    },
+    authProvider: {
+      type: String,
+      enum: ["email", "google"],
+      default: "email",
     },
     role: {
       type: String,
@@ -27,10 +36,6 @@ const userSchema = new mongoose.Schema(
     defaultAddress: {
       type: Object,
       default: null,
-    },
-    __v: {
-      type: Number,
-      select: false,
     },
   },
   { timestamps: true, minimize: false }

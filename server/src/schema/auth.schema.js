@@ -11,4 +11,8 @@ const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export { signupSchema, loginSchema };
+const token = z.object({
+  token: z.string().min(1, "Token is required"),
+});
+
+export { signupSchema, loginSchema, token };
