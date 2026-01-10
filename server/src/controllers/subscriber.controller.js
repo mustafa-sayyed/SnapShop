@@ -1,25 +1,32 @@
-import jwt from "jsonwebtoken";
+import crypto from "node:crypto";
 import { sendSubscribeEmail } from "../emails/subscriberEmail.js";
 import { Subscriber } from "../models/subscribe.model.js";
 
 const subscribe = async (req, res) => {
   try {
     const { email } = req.body;
-    const isEmailExist = await Subscriber.findOne({ email });
+    const subscriber = await Subscriber.findOne({ email });
 
-    if (isEmailExist) {
+    if (subscriber && subscriber.status === "unsubscribed") {
+      return res.status(200).json({
+        success: true,
+        message: "Subscription activated successfully",
+      });
+    }
+
+    if (subscriber) {
       return res
         .status(200)
         .json({ success: true, message: "Already subscribed to email" });
     }
 
-    const unsubscribeToken = jwt.sign({ email }, process.env.JWT_SECRET );
+    const unsubscribeToken = crypto.randomUUID();
 
     await Subscriber.create({
       email,
       status: "active",
       subscribedAt: new Date(),
-      unsubscribeToken
+      unsubscribeToken,
     });
 
     await sendSubscribeEmail(email, unsubscribeToken);
@@ -41,7 +48,9 @@ const unsubscribe = async (req, res) => {
     const subscriber = await Subscriber.findOne({ unsubscribeToken, status: "active" });
 
     if (!subscriber) {
-      return res.status(400).json({ success: false, message: "You aren't subscribed to our Email" });
+      return res
+        .status(400)
+        .json({ success: false, message: "You aren't subscribed to our Email" });
     }
 
     subscriber.unsubscribedAt = new Date();
@@ -49,7 +58,6 @@ const unsubscribe = async (req, res) => {
     await subscriber.save();
 
     res.status(200).json({ success: true, message: "Unsubscribed successfully" });
-
   } catch (error) {
     console.log(error);
     const errorStack = process.env.NODE_ENV === "development" ? error : undefined;

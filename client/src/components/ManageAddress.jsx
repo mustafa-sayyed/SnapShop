@@ -232,22 +232,20 @@ function ManageAddress() {
                 </p>
               </div>
 
-              <div className="flex gap-2 pt-3 border-t border-slate-200">
+              <div className="flex gap-2 pt-3 justify-end border-slate-200">
                 <Button
                   variant="outline"
-                  size="sm"
                   onClick={() => handleEditAddress(address)}
-                  className="flex-1 cursor-pointer"
+                  className="cursor-pointer "
                 >
-                  <Pencil className="w-3 h-3 mr-1" /> Edit
+                  <Pencil className="w-3 h-3 mr-1" />
                 </Button>
                 <Button
-                  variant="destructive"
-                  size="sm"
+                  variant="outline"
                   onClick={() => handleDeleteClick(address)}
-                  className="flex-1 cursor-pointer"
+                  className="cursor-pointer hover:text-red-500"
                 >
-                  <Trash2 className="w-3 h-3 mr-1" /> Delete
+                  <Trash2 className="w-3 h-3 mr-1" />
                 </Button>
               </div>
             </div>
