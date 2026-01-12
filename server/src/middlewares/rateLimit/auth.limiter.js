@@ -1,4 +1,4 @@
-import { createLimiter, timeWindow } from "./baseLimiter";
+import { createLimiter, timeWindow } from "./baseLimiter.js";
 
 export const loginLimiter = createLimiter({
   windowMs: timeWindow.TEN_MINUTES,
