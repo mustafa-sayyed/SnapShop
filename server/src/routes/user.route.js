@@ -28,6 +28,6 @@ router.route("/admin/signin").post(validate(loginSchema), loginAdmin);
 router.route("/all").get(authenticate(["admin"]), getAllUsers);
 router
   .route("/:userId/admin")
-  .delete(authenticate(["admin"]), deleteUserLimiter, deleteuser);
+  .delete(deleteUserLimiter, authenticate(["admin"]), deleteuser);
 
 export default router;

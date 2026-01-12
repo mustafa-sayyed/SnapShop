@@ -25,8 +25,9 @@ app.use(
   })
 );
 app.use(globalRateLimiter);
-app.use((req, res) => {
+app.use((req, _, next) => {
   console.log(`Request recieved from ${req.ip} for ${req.path}`);
+  next();
 });
 
 // Database connection

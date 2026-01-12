@@ -50,7 +50,9 @@ function App() {
         }
         console.error(error);
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
     })();
   }, []);
