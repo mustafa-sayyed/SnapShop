@@ -25,10 +25,9 @@ app.use(
   })
 );
 app.use(globalRateLimiter);
-app.use((req, _, next) => {
-  console.log(`Request recieved from ${req.ip} for ${req.path}`);
-  next();
-});
+
+// Settign this because this Server is deployed on Azure Container Apps which uses Ingress as Load Balancer and Reverse Proxy
+app.set("trust proxy", 1);
 
 // Database connection
 connectDB()
