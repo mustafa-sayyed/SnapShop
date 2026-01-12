@@ -18,8 +18,8 @@ router
   .route("/")
   .get(getAllProducts)
   .post(
-    authenticate(["admin"]),
     addProductLimiter,
+    authenticate(["admin"]),
     upload.fields([
       { name: "image1", maxCount: 1 },
       { name: "image2", maxCount: 1 },
@@ -32,6 +32,6 @@ router
 router
   .route("/:id")
   .get(getProduct)
-  .delete(authenticate(["admin"]), deleteProductLimiter, deleteProduct);
+  .delete(deleteProductLimiter, authenticate(["admin"]), deleteProduct);
 
 export default router;

@@ -12,16 +12,17 @@ import {
   subscribeLimiter,
   unsubscribeLimiter,
 } from "../middlewares/rateLimit/subscribe.limiter.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 router
   .route("/")
   .get(getAllSubscribers)
-  .post(validate(subscriberSchema), subscribeLimiter, subscribe);
+  .post(subscribeLimiter, validate(subscriberSchema), subscribe);
 
 router.route("/unsubscribe/:unsubscribeToken").patch(unsubscribeLimiter, unsubscribe);
 
-router.route("/:subscriberId").delete(deleteSubscriberLimiter, deleteSubscriber);
+router.route("/:subscriberId").delete(deleteSubscriberLimiter, authenticate(["admin"]), deleteSubscriber);
 
 export default router;

@@ -33,10 +33,9 @@ router.route("/active").get(getAllActiveBanners);
 
 router
   .route("/:bannerId/toggle")
-  .patch(authenticate(["admin"]), toggleFeaturedBannerLimiter, toggleFeaturedBanner);
+  .patch(toggleFeaturedBannerLimiter, authenticate(["admin"]), toggleFeaturedBanner);
 
 router
   .route("/:bannerId")
-  .delete(authenticate(["admin"]), deleteFeaturedBannerLimiter, deleteFeaturedBanner);
-
+  .delete(deleteFeaturedBannerLimiter, authenticate(["admin"]), deleteFeaturedBanner);
 export default router;

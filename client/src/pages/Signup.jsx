@@ -80,7 +80,6 @@ function Signup() {
       className="flex flex-col items-center justify-center w-full h-[85vh] m-auto gap-4 text-gray-800 p-2"
     >
       <div className="border rounded-md px-4 py-3 md:px-10 md:py-6 w-full flex flex-col items-center justify-center max-w-md m-auto gap-4 text-gray-800">
-      
         <div className="inline-flex items-center mb-3 mt-10 gap-2">
           <p className="text-4xl">Create Account</p>
         </div>
@@ -97,7 +96,6 @@ function Signup() {
         />
 
         <Input
-          id="email"
           id="email"
           className="w-full px-3 py-2 border border-gray-800 rounded-md outline-black"
           placeholder="Email"

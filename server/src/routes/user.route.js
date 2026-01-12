@@ -17,14 +17,12 @@ import {
   signupLimiter,
 } from "../middlewares/rateLimit/auth.limiter.js";
 
-
-
 const router = Router();
 
 router.route("/").get(authenticate(), getCurrentUser);
-router.route("/signin").post(validate(loginSchema), loginLimiter, loginUser);
-router.route("/signup").post(validate(signupSchema), signupLimiter, signupUser);
-router.route("/google").post(validate(token), googleLoginLimiter, handleGoogleLogin);
+router.route("/signin").post(loginLimiter, validate(loginSchema), loginUser);
+router.route("/signup").post(signupLimiter, validate(signupSchema), signupUser);
+router.route("/google").post(googleLoginLimiter, validate(token), handleGoogleLogin);
 router.route("/admin/signin").post(validate(loginSchema), loginAdmin);
 router.route("/all").get(authenticate(["admin"]), getAllUsers);
 router

@@ -27,7 +27,7 @@ app.use(
 app.use(globalRateLimiter);
 app.use((req, res) => {
   console.log(`Request recieved from ${req.ip} for ${req.path}`);
-})
+});
 
 // Database connection
 connectDB()
@@ -59,4 +59,11 @@ app.use("/api/v1/subscribers", subscriberRouter);
 // Health API
 app.get("/health", (req, res) => {
   res.json({ Message: "This is Backend of SnapShop is working fine..." });
+});
+
+app.get("/debug-ip", (req, res) => {
+  res.json({
+    ip: req.ip,
+    forwardedFor: req.headers["x-forwarded-for"],
+  });
 });
