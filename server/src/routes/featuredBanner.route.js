@@ -38,4 +38,6 @@ router
 router
   .route("/:bannerId")
   .delete(deleteFeaturedBannerLimiter, authenticate(["admin"]), deleteFeaturedBanner);
+
+  
 export default router;

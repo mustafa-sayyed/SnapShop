@@ -39,7 +39,10 @@ function Signup() {
     } catch (error) {
       console.error(error);
       if (error.response) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data?.message);
+        Object.values(error.response.data?.errors).forEach((value) => {
+          toast.error(value[0]);
+        });
       } else {
         if (!navigator.onLine) toast.error(`Error while Login: ${error.message}`);
         else toast.error("Error while Login: Internal server Error");
@@ -143,7 +146,7 @@ function Signup() {
           )}
         </Button>
 
-        <div>
+        <div className="w-full">
           <div className="flex items-center justify-center mb-4 w-full">
             <div className="h-[1.5px] w-20 bg-gray-400 mr-2"></div>
             <p className="text-gray-600">or continue with</p>

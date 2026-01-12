@@ -11,6 +11,8 @@ import Orders from "./Orders";
 import Search from "./Search";
 import Forgotpassword from "./Forgotpassword";
 import Unsubscribe from "./Unsubscribe";
+import ResetPassword from "./ResetPassword";
+import NotFound from "./NotFound";
 
 export {
   About,
@@ -25,5 +27,7 @@ export {
   Signup,
   Search,
   Forgotpassword,
-  Unsubscribe
+  Unsubscribe,
+  ResetPassword,
+  NotFound,
 };

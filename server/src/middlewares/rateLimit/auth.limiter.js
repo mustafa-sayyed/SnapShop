@@ -44,3 +44,21 @@ export const deleteUserLimiter = createLimiter({
     message: "Too many requests to delete user, please try again after 10 minutes",
   },
 });
+
+export const forgotPasswordLimiter = createLimiter({
+  windowMs: timeWindow.TEN_MINUTES,
+  limit: 5,
+  message: {
+    success: false,
+    message: "Too many requests for password reset, please try again after 10 minutes",
+  },
+});
+
+export const resetPasswordLimiter = createLimiter({
+  windowMs: timeWindow.TEN_MINUTES,
+  limit: 5,
+  message: {
+    success: false,
+    message: "Too many requests to reset password, please try again after 10 minutes",
+  },
+});

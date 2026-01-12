@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { Orders } from "../models/order.model.js";
 import { User } from "../models/user.model.js";
 import razorpay from "razorpay";
-import { sendOrderPlaceEmail } from "../emails/orderPlaceEmail.js";
+import { sendOrderPlaceEmail } from "../emails/orderPlace.email.js";
 
 const razorpayInstance = new razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,

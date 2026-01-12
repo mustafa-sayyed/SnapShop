@@ -1,8 +1,10 @@
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { sendWelcomeEmail } from "../emails/welcomeEmail.js";
+import { sendWelcomeEmail } from "../emails/welcome.email.js";
 import verifyGoogleLogin from "../utils/verifyGoogleLogin.js";
+import crypto from "node:crypto";
+import { sendResetPasswordEmail } from "../emails/resetPassword.email.js";
 
 const loginUser = async (req, res) => {
   try {
@@ -21,7 +23,7 @@ const loginUser = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Please use Google to login",
-      })
+      });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -246,6 +248,101 @@ const handleGoogleLogin = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (user) {
+      const resetToken = crypto.randomBytes(32).toString("hex");
+      const hashedResetToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
+
+      user.resetPasswordToken = hashedResetToken;
+      user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
+      await user.save();
+      
+      await sendResetPasswordEmail(email, resetToken);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "If an account with that email exists, a reset link has been sent.",
+    });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { resetToken, newPassword } = req.body;
+
+    const hashedResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+    const user = await User.findOne({ resetPasswordToken: hashedResetToken });
+
+    if (user && user.resetPasswordExpires > Date.now()) {
+      user.password = await bcrypt.hash(newPassword, 12);
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+      await user.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Password updated successfully",
+      });
+    }
+
+    res.status(400).json({
+      success: false,
+      message: "Invalid or expired reset token",
+    });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
+    });
+  }
+};
+
+const validateResetToken = async (req, res) => {
+  try {
+    const { resetToken } = req.body;
+    const hashedResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+    const user = await User.findOne({ resetPasswordToken: hashedResetToken });
+
+    if (user && user.resetPasswordExpires > Date.now()) {
+      return res.status(200).json({
+        success: true,
+        message: "Token is valid",
+      });
+    }
+
+    res.status(400).json({
+      success: false,
+      message: "Invalid or expired reset token",
+    });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
+    res.status(500).json({
+      message: `Internal Server error`,
+      errorStack,
+    });
+  }
+};
+
 export {
   loginUser,
   signupUser,
@@ -254,4 +351,7 @@ export {
   getAllUsers,
   deleteuser,
   handleGoogleLogin,
+  forgotPassword,
+  resetPassword,
+  validateResetToken,
 };

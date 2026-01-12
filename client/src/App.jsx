@@ -8,9 +8,11 @@ import {
   Forgotpassword,
   Home,
   Login,
+  NotFound,
   Orders,
   PlaceOrder,
   Product,
+  ResetPassword,
   Search,
   Signup,
   Unsubscribe,
@@ -46,13 +48,11 @@ function App() {
         if (error.response) {
           toast.error(error.response.data.message);
         } else {
-          toast.error(" Internal server Error");
+          toast.error("Internal server Error");
         }
         console.error(error);
       } finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        setLoading(false);
       }
     })();
   }, []);
@@ -73,6 +73,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<Forgotpassword />} />
+        <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/product/:productId" element={<Product />} />
@@ -97,6 +98,7 @@ function App() {
             </AuthLayout>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
       <ToastContainer

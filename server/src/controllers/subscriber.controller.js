@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { sendSubscribeEmail } from "../emails/subscriberEmail.js";
+import { sendSubscribeEmail } from "../emails/subscriber.email.js";
 import { Subscriber } from "../models/subscribe.model.js";
 
 const subscribe = async (req, res) => {

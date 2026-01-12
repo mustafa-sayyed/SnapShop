@@ -146,7 +146,7 @@ function Navbar() {
 
         {/* Sidebar Menu for Mobiles */}
         <div
-          className={`absolute top-0 bottom-0 right-0 overflow-hidden bg-white transition-all ${
+          className={`absolute z-50 top-0 bottom-0 right-0 overflow-hidden bg-white transition-all ${
             visible ? "w-full" : "w-0"
           } sm:hidden`}
         >
