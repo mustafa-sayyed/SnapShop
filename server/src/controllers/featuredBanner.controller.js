@@ -33,7 +33,7 @@ const createFeaturedBanner = async (req, res, next) => {
   }
 };
 
-const toggleActiveFeaturedBanner = async (req, res, next) => {
+const toggleFeaturedBanner = async (req, res, next) => {
   try {
     const _id = req.params.bannerId;
     const banner = await featuredBanner.findById(_id);
@@ -133,7 +133,7 @@ const getAllActiveBanners = async (req, res, next) => {
 
 export {
   createFeaturedBanner,
-  toggleActiveFeaturedBanner,
+  toggleFeaturedBanner,
   deleteFeaturedBanner,
   getAllBanners,
   getAllActiveBanners

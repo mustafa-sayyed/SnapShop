@@ -11,6 +11,7 @@ import addressRouter from "./src/routes/address.route.js";
 import featuredBannerRouter from "./src/routes/featuredBanner.route.js";
 import seedAdmin from "./src/utils/seedAdmin.js";
 import subscriberRouter from "./src/routes/subscriber.route.js";
+import globalRateLimiter from "./src/middlewares/globalRatelimit.middleware.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,7 +24,10 @@ app.use(
     credentials: true,
   })
 );
-
+app.use(globalRateLimiter);
+app.use((req, res) => {
+  console.log(`Request recieved from ${req.ip} for ${req.path}`);
+})
 
 // Database connection
 connectDB()
@@ -49,8 +53,8 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/addresses", addressRouter);
-app.use("/api/v1/featured-banners", featuredBannerRouter)
-app.use("/api/v1/subscribers", subscriberRouter)
+app.use("/api/v1/featured-banners", featuredBannerRouter);
+app.use("/api/v1/subscribers", subscriberRouter);
 
 // Health API
 app.get("/health", (req, res) => {
