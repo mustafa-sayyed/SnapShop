@@ -12,6 +12,7 @@ import { authenticate } from "../middlewares/auth.middleware.js";
 import validate from "../middlewares/validation.middleware.js";
 import { loginSchema, signupSchema, token } from "../schema/auth.schema.js";
 import {
+  deleteUserLimiter,
   googleLoginLimiter,
   loginLimiter,
   signupLimiter,
