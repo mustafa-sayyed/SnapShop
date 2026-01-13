@@ -153,13 +153,15 @@ function Signup() {
             <div className="h-[1.5px] w-20 bg-gray-400 ml-2"></div>
           </div>
 
-          <GoogleLogin
-            onSuccess={handleGoogleLoginSuccess}
-            onError={handleGoogleLoginError}
-            ux_mode="popup"
-            logo_alignment="center"
-            shape="rectangular"
-          />
+          <div className="flex items-center justify-center w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginError}
+              ux_mode="popup"
+              logo_alignment="center"
+              shape="rectangular"
+            />
+          </div>
         </div>
       </div>
     </form>

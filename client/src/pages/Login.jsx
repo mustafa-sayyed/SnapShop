@@ -38,9 +38,9 @@ function Login() {
       console.error(error);
       if (error.response) {
         toast.error(error.response?.data?.message);
-        Object.values( error.response.data?.errors).forEach((value) => {
+        Object.values(error.response.data?.errors).forEach((value) => {
           toast.error(value[0]);
-        })
+        });
       } else {
         if (!navigator.onLine) toast.error(`Error while Login: ${error.message}`);
         else toast.error("Error while Login: Internal server Error");
@@ -140,13 +140,15 @@ function Login() {
             <div className="h-[1.5px] w-20 bg-gray-400 ml-2"></div>
           </div>
 
-          <GoogleLogin
-            onSuccess={handleGoogleLoginSuccess}
-            onError={handleGoogleLoginError}
-            ux_mode="popup"
-            logo_alignment="center"
-            shape="rectangular"
-          />
+          <div className="flex items-center justify-center w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginError}
+              ux_mode="popup"
+              logo_alignment="center"
+              shape="rectangular"
+            />
+          </div>
         </div>
       </div>
     </form>
