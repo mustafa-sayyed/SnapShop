@@ -37,18 +37,20 @@ function Banners() {
   const [addBanner, setAddBanner] = useState(false);
   const [isDeletingBanner, setIsDeletingBanner] = useState(false);
   const [deleteBannerId, setDeleteBannerId] = useState("");
-  
 
   const token = localStorage.getItem("token");
 
   const fetchBanners = async () => {
     try {
       setIsBannersLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/featured-banners`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/featured-banners`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log(res);
 
       setBanners(res.data.banners);
@@ -62,6 +64,7 @@ function Banners() {
   const deleteBanner = async (id) => {
     try {
       setDeleteBannerId(id);
+      setIsDeletingBanner(true);
       const res = await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/featured-banners/${id}`,
         {
@@ -80,6 +83,7 @@ function Banners() {
       console.log("Error while fetching banners: ", error);
     } finally {
       setDeleteBannerId("");
+      setIsDeletingBanner(false);
     }
   };
 
@@ -143,9 +147,8 @@ function Banners() {
     }
   };
 
-  const handleDeleteBanner = (id) => {
-    setIsDeletingBanner(true);
-    deleteBanner(id).finally(() => setIsDeletingBanner(false));
+  const handleDeleteBanner = async (id) => {
+    await deleteBanner(id);
     setBanners((banners) => banners.filter((banner) => banner._id !== id));
   };
 

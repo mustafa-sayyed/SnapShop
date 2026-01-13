@@ -28,6 +28,7 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [isUsersLoading, setIsUsersLoading] = useState(false);
   const [isDeletingUser, setIsDeletingUser] = useState(false);
+  const [deletingUserId, setDeletingUserId] = useState("");
   const [totalUsers, setTotalUsers] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
@@ -40,6 +41,7 @@ function Users() {
   const handleUserDelete = async (id) => {
     try {
       setIsDeletingUser(true);
+      setDeletingUserId(id);
       const res = await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/users/${id}/admin`,
         {
@@ -51,7 +53,7 @@ function Users() {
 
       if (res.data.success) {
         toast.success("User deleted successfully");
-        setUsers((users) => users.filter((user) => user._id != id));
+        setUsers((users) => users.filter((user) => user._id !== id));
       }
     } catch (error) {
       const message = error.response?.data?.message ?? "Failed to delete user";
@@ -59,6 +61,7 @@ function Users() {
       console.log("Error while deleting user: ", error);
     } finally {
       setIsDeletingUser(false);
+      setDeletingUserId("");
     }
   };
 
@@ -117,9 +120,9 @@ function Users() {
             variant="outline"
             onClick={() => handleUserDelete(row.original._id)}
             className="hover:text-red-500 cursor-pointer"
-            disabled={isDeletingUser}
+            disabled={isDeletingUser && deletingUserId === row.original._id}
           >
-            {isDeletingUser ? <Spinner /> : <Trash2 />}
+            {isDeletingUser && deletingUserId === row.original._id ? <Spinner /> : <Trash2 />}
           </Button>
         );
       },

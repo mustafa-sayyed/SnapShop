@@ -32,6 +32,7 @@ function List() {
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(null);
   const [isProductsLoading, setIsProductsLoading] = useState(false);
+  const [deletingProductId, setDeletingProductId] = useState("");
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -74,6 +75,7 @@ function List() {
     const token = localStorage.getItem("token");
 
     try {
+      setDeletingProductId(id);
       const response = await axios.delete(`${backendUrl}/products/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -93,6 +95,8 @@ function List() {
         console.log(error.message);
         toast.error(`Error while Deleting Product: ${error.message}`);
       }
+    } finally {
+      setDeletingProductId("");
     }
   };
 
@@ -138,8 +142,9 @@ function List() {
             variant="outline"
             className="cursor-pointer hover:text-red-600"
             onClick={() => deleteProduct(_id)}
+            disabled={deletingProductId === _id}
           >
-            <Trash2 />
+            {deletingProductId === _id ? <Spinner /> : <Trash2 />}
           </Button>
         );
       },

@@ -28,6 +28,7 @@ function Subscribers() {
   const [subscribers, setSubscribers] = useState([]);
   const [isSubscriberLoading, setIsSubscriberLoading] = useState(false);
   const [isDeletingSubscriber, setIsDeletingSubscriber] = useState(false);
+  const [deletingSubscriberId, setDeletingSubscriberId] = useState("");
   const [totalSubscribers, setTotalSubscribers] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
@@ -39,6 +40,7 @@ function Subscribers() {
   const handleSubscriberDelete = async (id) => {
     try {
       setIsDeletingSubscriber(true);
+      setDeletingSubscriberId(id);
       const res = await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/subscribers/${id}`,
         {
@@ -58,6 +60,7 @@ function Subscribers() {
       console.log("Error while deleting subscriber: ", error);
     } finally {
       setIsDeletingSubscriber(false);
+      setDeletingSubscriberId("");
     }
   };
 
@@ -126,9 +129,9 @@ function Subscribers() {
             variant="outline"
             onClick={() => handleSubscriberDelete(row.original._id)}
             className="hover:text-red-500 cursor-pointer"
-            disabled={isDeletingSubscriber}
+            disabled={isDeletingSubscriber && deletingSubscriberId === row.original._id}
           >
-            {isDeletingSubscriber ? <Spinner /> : <Trash2 />}
+            {isDeletingSubscriber && deletingSubscriberId === row.original._id ? <Spinner /> : <Trash2 />}
           </Button>
         );
       },
