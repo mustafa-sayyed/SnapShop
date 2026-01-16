@@ -4,13 +4,16 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import UserContextProvider from "./context/userContext.jsx";
 import { SidebarProvider } from "./components/ui/sidebar";
+import { ThemeContextProvider } from "./context/themeContext";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <UserContextProvider>
-      <SidebarProvider>
-        <App />
-      </SidebarProvider>
+      <ThemeContextProvider>
+        <SidebarProvider>
+          <App />
+        </SidebarProvider>
+      </ThemeContextProvider>
     </UserContextProvider>
   </BrowserRouter>
 );
