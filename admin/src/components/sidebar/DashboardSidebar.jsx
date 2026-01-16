@@ -93,7 +93,7 @@ const dashboardRoutes = [
     id: "send-email",
     title: "Send Email",
     icon: <MailPlus className="size-4" />,
-    link: "#",
+    link: "send-email",
   },
   {
     id: "sales",
