@@ -8,6 +8,7 @@ import productRouter from "./src/routes/product.route.js";
 import cartRouter from "./src/routes/cart.route.js";
 import orderRouter from "./src/routes/order.route.js";
 import addressRouter from "./src/routes/address.route.js";
+import emailRouter from "./src/routes/email.route.js";
 import featuredBannerRouter from "./src/routes/featuredBanner.route.js";
 import seedAdmin from "./src/utils/seedAdmin.js";
 import subscriberRouter from "./src/routes/subscriber.route.js";
@@ -55,6 +56,7 @@ app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/addresses", addressRouter);
 app.use("/api/v1/featured-banners", featuredBannerRouter);
 app.use("/api/v1/subscribers", subscriberRouter);
+app.use("/api/v1/emails", emailRouter);
 
 // Health API
 app.get("/health", (req, res) => {
