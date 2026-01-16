@@ -212,7 +212,7 @@ function Users() {
           )}
         </TableBody>
       </Table>
-      <div className="flex flex-col gap-3 p-2 items-start sm:flex-row sm:items-center justify-between w-full">
+      <div className="flex flex-col gap-3 p-2 items-start sm:flex-row sm:items-center justify-between w-full mt-5">
         {totalUsers && <p className="text-xl font-bold">Total Users: {totalUsers}</p>}
         <p>
           Showing {table.getState().pagination.pageIndex + 1} of {pageCount} Pages

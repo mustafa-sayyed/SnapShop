@@ -15,6 +15,7 @@ import {
   LinkIcon,
   LogOut,
   Mail,
+  MailCheck,
   MailPlus,
   Package2,
   Percent,
@@ -94,6 +95,12 @@ const dashboardRoutes = [
     title: "Send Email",
     icon: <MailPlus className="size-4" />,
     link: "send-email",
+  },
+  {
+    id: "email-history",
+    title: "Email History",
+    icon: <MailCheck className="size-4" />,
+    link: "email-history",
   },
   {
     id: "sales",

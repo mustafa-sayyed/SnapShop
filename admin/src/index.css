@@ -82,7 +82,7 @@
   --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
-  --editor: oklch(1 0 0);
+  --editor: oklch(1 0.009 264.531);
 }
 
 .dark {
@@ -137,6 +137,12 @@
   border-color: var(--sidebar-border) !important;
   font-size: 1rem;
   border-radius: 5px;
+}
+
+.ql-container.ql-snow {
+  border-radius: 5px;
+  background-color: var(--editor);
+  border-color: var(--sidebar-border) !important;
 }
 
 .ql-toolbar.ql-snow {

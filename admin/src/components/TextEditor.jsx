@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
-function TextEditor() {
-  const [value, setValue] = useState("Write your email here...");
+function TextEditor({ value, onChange }) {
   const toolbarOptions = [
     [{ header: [1, 2, 3, 4, 5, false] }],
     [{ align: [] }],
-    
+
     ["bold", "italic", "underline", "strike"],
     ["blockquote", "code-block"],
     ["link", "image", "video", "formula"],
@@ -29,7 +28,7 @@ function TextEditor() {
         modules={{ toolbar: toolbarOptions }}
         theme="snow"
         value={value}
-        onChange={setValue}
+        onChange={onChange}
       />
   );
 }
