@@ -9,7 +9,7 @@ const emailSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  userCount: {
+  recipientCount: {
     type: Number,
     required: true,
   },
@@ -17,9 +17,14 @@ const emailSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  status: {
+    type: String,
+    enum: ["pending", "sent", "failed"],
+    default: "pending",
+  },
   audience: {
     type: String,
-    enum: ["all", "subscribers", "unsubsscribed"],
+    enum: ["all", "subscribers", "unsubscribers"],
     required: true,
   }
 }, {timestamps: true});

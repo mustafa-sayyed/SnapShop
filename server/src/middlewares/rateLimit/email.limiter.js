@@ -1,8 +1,8 @@
-import { createLimiter, timeWindow } from "./baseLimiter";
+import { createLimiter, timeWindow } from "./baseLimiter.js";
 
-export const sendEmailLimiter = createLimiter({
+export const emailCampaignLimiter = createLimiter({
   windowMs: timeWindow.ONE_HOUR,
-  limit: 2,
+  limit: 5,
   message: {
     success: false,
     message: "Too many email requests, please try again after an hour",

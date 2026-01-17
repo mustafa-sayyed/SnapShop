@@ -1,4 +1,4 @@
-import { Email } from "../models/emails.model";
+import { Email } from "../models/email.model.js";
 
 const getAllEmails = async (req, res) => {
   try {
@@ -7,6 +7,13 @@ const getAllEmails = async (req, res) => {
     const search = req.query.search || "";
     const filter = search ? { subject: { $regex: search, $options: "i" } } : {};
     const totalEmails = await Email.countDocuments();
+
+    if (page <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Page number must be greater than 0",
+      });
+    }
 
     const emails = await Email.find(filter)
       .skip((page - 1) * limit)
@@ -52,7 +59,7 @@ const sendEmail = async (req, res) => {
     // logic to implement to send email campaign at scale
     // maybe using Batch Processing with a queue system like Bull
 
-    await Email.create({ subject, content, audience, userCount: 0 });
+    await Email.create({ subject, content, audience, recipientCount: 0 });
 
     res.json({ success: true, message: `Emails are being sent to ${audience}` });
   } catch (error) {
