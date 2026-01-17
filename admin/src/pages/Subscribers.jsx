@@ -32,7 +32,7 @@ function Subscribers() {
   const [totalSubscribers, setTotalSubscribers] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
+    pageIndex: 1,
     pageSize: 10,
   });
   const token = localStorage.getItem("token");
@@ -88,10 +88,6 @@ function Subscribers() {
       setIsSubscriberLoading(false);
     }
   };
-
-  useEffect(() => {
-    getAllSubscribers();
-  }, [pagination.pageIndex, pagination.pageSize]);
 
   const subscriberTableColumns = [
     {
@@ -149,8 +145,12 @@ function Subscribers() {
   });
 
   useEffect(() => {
-    setPagination((prev) => ({...prev, pageIndex: 0}));
     getAllSubscribers();
+  }, [pagination.pageIndex, pagination.pageSize, table.getColumn("email")?.getFilterValue()]);
+
+
+  useEffect(() => {
+    setPagination((prev) => ({...prev, pageIndex: 1}));
   }, [table.getColumn("email")?.getFilterValue()]);
 
 
@@ -159,14 +159,14 @@ function Subscribers() {
       <p className="mb-4 text-2xl">All Subscribers</p>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 w-full">
               <Input
-                placeholder="Search Products..."
+                placeholder="Search Subscribers..."
                 className="max-w-md"
                 value={table.getColumn("email")?.getFilterValue() ?? ""}
                 onChange={(e) => table.getColumn("email")?.setFilterValue(e.target.value)}
               />
               <Select onValueChange={(size) => table.setPageSize(Number(size))}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select No. of Product to be Displayed" />
+                <SelectTrigger className="w-45">
+                  <SelectValue placeholder="Select No. of Subscribers to be Displayed" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -224,7 +224,7 @@ function Subscribers() {
       </Table>
       <div className="flex flex-col gap-3 p-2 items-start sm:flex-row sm:items-center justify-between w-full">
         {totalSubscribers && (
-          <p className="text-xl font-bold">Total Products: {totalSubscribers}</p>
+          <p className="text-xl font-bold">Total Subscribers: {totalSubscribers}</p>
         )}
         <p>
           Showing {table.getState().pagination.pageIndex + 1} of {pageCount} Pages

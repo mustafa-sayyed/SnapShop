@@ -32,7 +32,7 @@ function Users() {
   const [totalUsers, setTotalUsers] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
+    pageIndex: 1,
     pageSize: 10,
   });
 
@@ -90,10 +90,6 @@ function Users() {
     }
   };
 
-  useEffect(() => {
-    getAllUsers();
-  }, [pagination.pageIndex, pagination.pageSize]);
-
   const subscriberTableColumns = [
     {
       accessorKey: "name",
@@ -140,8 +136,12 @@ function Users() {
   });
 
   useEffect(() => {
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
     getAllUsers();
+  }, [pagination.pageIndex, pagination.pageSize, table.getColumn("name")?.getFilterValue()]);
+
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 1 }));
   }, [table.getColumn("name")?.getFilterValue()]);
 
   return (

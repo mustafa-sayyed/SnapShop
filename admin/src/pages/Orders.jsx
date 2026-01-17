@@ -39,7 +39,7 @@ function Orders() {
   
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
+    pageIndex: 1,
     pageSize: 10,
   });
 

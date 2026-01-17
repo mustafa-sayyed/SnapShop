@@ -35,7 +35,7 @@ function List() {
   const [deletingProductId, setDeletingProductId] = useState("");
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
+    pageIndex: 1,
     pageSize: 10,
   });
 
@@ -151,10 +151,6 @@ function List() {
     },
   ];
 
-  useEffect(() => {
-    fetchProducts();
-  }, [pagination.pageIndex, pagination.pageSize]);
-
   const table = useReactTable({
     data: products,
     columns: productListColumns,
@@ -169,7 +165,11 @@ function List() {
 
   useEffect(() => {
     fetchProducts();
-    setPagination((prev) => ({...prev, pageIndex: 0}))
+  }, [pagination.pageIndex, pagination.pageSize, table.getColumn("name")?.getFilterValue()]);
+
+
+  useEffect(() => {
+    setPagination((prev) => ({...prev, pageIndex: 1}))
   }, [table.getColumn("name")?.getFilterValue()])
 
   return (

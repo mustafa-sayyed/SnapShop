@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -31,6 +32,8 @@ import axios from "axios";
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import parse from "html-react-parser";
+import "react-quill-new/dist/quill.snow.css";
 
 function EmailHistory() {
   const [emails, setEmails] = useState([]);
@@ -38,29 +41,25 @@ function EmailHistory() {
   const [totalEmails, setTotalEmails] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
+    pageIndex: 1,
     pageSize: 10,
   });
-  const [selectedEmail, setSelectedEmail] = useState(null);
 
   const token = localStorage.getItem("token");
 
   const getAllEmails = async () => {
     try {
       setIsEmailsLoading(true);
-      const result = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/emails`,
-        {
-          params: {
-            page: pagination.pageIndex,
-            limit: pagination.pageSize,
-            search: table.getColumn("subject")?.getFilterValue() ?? "",
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const result = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/emails`, {
+        params: {
+          page: pagination.pageIndex,
+          limit: pagination.pageSize,
+          search: table.getColumn("subject")?.getFilterValue() ?? "",
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (result.data.success) {
         setEmails(result.data.emails);
         setPageCount(result.data.totalPages);
@@ -74,10 +73,6 @@ function EmailHistory() {
       setIsEmailsLoading(false);
     }
   };
-
-  useEffect(() => {
-    getAllEmails();
-  }, [pagination.pageIndex, pagination.pageSize]);
 
   const emailTableColumns = [
     {
@@ -142,36 +137,26 @@ function EmailHistory() {
       },
     },
     {
-      accessorKey: "createdAt",
-      header: "Created At",
-      cell: ({ getValue }) => {
-        return new Date(getValue()).toLocaleString();
-      },
-    },
-    {
       accessorKey: "action",
       header: "Action",
       cell: ({ row }) => {
         return (
           <Dialog>
             <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="cursor-pointer"
-                onClick={() => setSelectedEmail(row.original)}
-              >
+              <Button variant="outline" className="cursor-pointer">
                 <Eye />
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
+            <DialogContent className="sm:max-w-6xl w-full max-h-[80vh] overflow-x-hidden p-6 wrap-break-word">
+              <DialogHeader className="text-start mt-8">
                 <DialogTitle>{row.original.subject}</DialogTitle>
                 <DialogDescription>
-                  Sent to {row.original.audience} • {row.original.recipientCount ?? 0} recipients
+                  Sent to {row.original.audience} • {row.original.recipientCount ?? 0}{" "}
+                  recipients
                 </DialogDescription>
               </DialogHeader>
               <div className="mt-4">
-                <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                <div className="text-sm py-2">
                   <div>
                     <span className="font-semibold">Status:</span>{" "}
                     <span className="capitalize">{row.original.status}</span>
@@ -185,10 +170,7 @@ function EmailHistory() {
                 </div>
                 <div className="border rounded-md p-4">
                   <p className="font-semibold mb-2">Email Content:</p>
-                  <div
-                    className="prose dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: row.original.content }}
-                  />
+                  <div className="wrap-break-word break-all whitespace-normal">{parse(row.original.content)}</div>
                 </div>
               </div>
             </DialogContent>
@@ -209,8 +191,15 @@ function EmailHistory() {
   });
 
   useEffect(() => {
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
     getAllEmails();
+  }, [
+    pagination.pageIndex,
+    pagination.pageSize,
+    table.getColumn("subject")?.getFilterValue(),
+  ]);
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 1 }));
   }, [table.getColumn("subject")?.getFilterValue()]);
 
   return (
@@ -264,10 +253,7 @@ function EmailHistory() {
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={emailTableColumns.length}
-                className="h-36 text-center"
-              >
+              <TableCell colSpan={emailTableColumns.length} className="h-36 text-center">
                 {isEmailsLoading ? (
                   <div className="flex items-center justify-center gap-2">
                     <Spinner />
@@ -282,9 +268,7 @@ function EmailHistory() {
         </TableBody>
       </Table>
       <div className="flex flex-col gap-3 p-2 items-start sm:flex-row sm:items-center justify-between w-full">
-        {totalEmails && (
-          <p className="text-xl font-bold">Total Emails: {totalEmails}</p>
-        )}
+        {totalEmails && <p className="text-xl font-bold">Total Emails: {totalEmails}</p>}
         <p>
           Showing {table.getState().pagination.pageIndex + 1} of {pageCount} Pages
         </p>
