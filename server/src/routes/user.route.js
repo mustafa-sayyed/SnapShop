@@ -5,7 +5,7 @@ import {
   loginAdmin,
   getCurrentUser,
   getAllUsers,
-  deleteuser,
+  deleteUser,
   handleGoogleLogin,
   forgotPassword,
   validateResetToken,
@@ -52,6 +52,6 @@ router.route("/admin/signin").post(validate(loginSchema), loginAdmin);
 router.route("/all").get(authenticate(["admin"]), getAllUsers);
 router
   .route("/:userId/admin")
-  .delete(deleteUserLimiter, authenticate(["admin"]), deleteuser);
+  .delete(deleteUserLimiter, authenticate(["admin"]), deleteUser);
 
 export default router;

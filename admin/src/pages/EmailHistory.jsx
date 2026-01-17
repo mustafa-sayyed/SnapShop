@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import axios from "axios";
-import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import parse from "html-react-parser";
@@ -38,10 +38,11 @@ import "react-quill-new/dist/quill.snow.css";
 function EmailHistory() {
   const [emails, setEmails] = useState([]);
   const [isEmailsLoading, setIsEmailsLoading] = useState(false);
+  const [deletingEmailId, setDeletingEmailId] = useState("");
   const [totalEmails, setTotalEmails] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
-    pageIndex: 1,
+    pageIndex: 0,
     pageSize: 10,
   });
 
@@ -71,6 +72,31 @@ function EmailHistory() {
       console.log("Error while fetching emails: ", error);
     } finally {
       setIsEmailsLoading(false);
+    }
+  };
+
+  const handleDeleteEmail = async (emailId) => {
+    try {
+      setDeletingEmailId(emailId);
+      const response = await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/emails/${emailId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        toast.success("Email deleted successfully");
+        getAllEmails();
+      } else {
+        toast.error(response.data.message || "Failed to delete email.");
+      }
+    } catch (error) {
+      console.log(error);
+      const messaage = error.response?.data?.message || "Failed to delete email.";
+      toast.error(messaage);
     }
   };
 
@@ -141,40 +167,52 @@ function EmailHistory() {
       header: "Action",
       cell: ({ row }) => {
         return (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer">
-                <Eye />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-6xl w-full max-h-[80vh] overflow-x-hidden p-6 wrap-break-word">
-              <DialogHeader className="text-start mt-8">
-                <DialogTitle>{row.original.subject}</DialogTitle>
-                <DialogDescription>
-                  Sent to {row.original.audience} • {row.original.recipientCount ?? 0}{" "}
-                  recipients
-                </DialogDescription>
-              </DialogHeader>
-              <div className="mt-4">
-                <div className="text-sm py-2">
-                  <div>
-                    <span className="font-semibold">Status:</span>{" "}
-                    <span className="capitalize">{row.original.status}</span>
+          <div className="flex items-center gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="cursor-pointer">
+                  <Eye />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-6xl w-full max-h-[80vh] overflow-x-hidden p-6 wrap-break-word">
+                <DialogHeader className="text-start mt-8">
+                  <DialogTitle>{row.original.subject}</DialogTitle>
+                  <DialogDescription>
+                    Sent to {row.original.audience} • {row.original.recipientCount ?? 0}{" "}
+                    recipients
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-4">
+                  <div className="text-sm py-2">
+                    <div>
+                      <span className="font-semibold">Status:</span>{" "}
+                      <span className="capitalize">{row.original.status}</span>
+                    </div>
+                    <div>
+                      <span className="font-semibold">Sent At:</span>{" "}
+                      {row.original.sentAt
+                        ? new Date(row.original.sentAt).toLocaleString()
+                        : "N/A"}
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-semibold">Sent At:</span>{" "}
-                    {row.original.sentAt
-                      ? new Date(row.original.sentAt).toLocaleString()
-                      : "N/A"}
+                  <div className="border rounded-md p-4">
+                    <p className="font-semibold mb-2">Email Content:</p>
+                    <div className="wrap-break-word break-all whitespace-normal">
+                      {parse(row.original.content)}
+                    </div>
                   </div>
                 </div>
-                <div className="border rounded-md p-4">
-                  <p className="font-semibold mb-2">Email Content:</p>
-                  <div className="wrap-break-word break-all whitespace-normal">{parse(row.original.content)}</div>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
+            <Button
+              variant="outline"
+              className="cursor-pointer hover:text-red-600"
+              onClick={() => handleDeleteEmail(row.original._id)}
+              disabled={deletingEmailId === row.original._id}
+            >
+              {deletingEmailId === row.original._id ? <Spinner /> : <Trash2 />}
+            </Button>
+          </div>
         );
       },
     },
@@ -199,7 +237,7 @@ function EmailHistory() {
   ]);
 
   useEffect(() => {
-    setPagination((prev) => ({ ...prev, pageIndex: 1 }));
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, [table.getColumn("subject")?.getFilterValue()]);
 
   return (
@@ -283,7 +321,7 @@ function EmailHistory() {
           <Button>{table.getState().pagination.pageIndex + 1}</Button>
           <Button
             className="cursor-pointer"
-            disabled={pagination.pageIndex === pageCount - 1}
+            disabled={pagination.pageIndex >= pageCount - 1}
             onClick={() => table.nextPage()}
           >
             <ChevronRight />

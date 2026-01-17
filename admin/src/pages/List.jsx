@@ -35,7 +35,7 @@ function List() {
   const [deletingProductId, setDeletingProductId] = useState("");
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
-    pageIndex: 1,
+    pageIndex: 0,
     pageSize: 10,
   });
 
@@ -169,7 +169,7 @@ function List() {
 
 
   useEffect(() => {
-    setPagination((prev) => ({...prev, pageIndex: 1}))
+    setPagination((prev) => ({...prev, pageIndex: 0}))
   }, [table.getColumn("name")?.getFilterValue()])
 
   return (

@@ -37,13 +37,20 @@ const placeOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
+    const page = Number(req.query.page) || 0;
     const limit = Number(req.query.limit) || 10;
     const totalOrders = await Orders.countDocuments();
     const totalPages = Math.ceil(totalOrders / limit);
 
+    if (page < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Page number must be greater than or equal to 0",
+      });
+    }
+
     const orders = await Orders.find({}, {}, { populate: "address" })
-      .skip((page - 1) * limit)
+      .skip(page * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
 

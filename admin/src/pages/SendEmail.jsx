@@ -21,6 +21,7 @@ function SendEmail() {
   const [emailSubject, setEmailSubject] = useState("");
   const [selectedAudience, setSelectedAudience] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const token = localStorage.getItem("token");
 
   const handleSendEmail = async (e) => {
     e.preventDefault();
@@ -37,6 +38,10 @@ function SendEmail() {
           subject: emailSubject,
           content: emailContent,
           audience: selectedAudience,
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
         }
       );
       if (response.data.success) {

@@ -113,11 +113,6 @@ const dashboardRoutes = [
         link: "orders",
         icon: <ShoppingBag className="size-4" />,
       },
-      {
-        title: "Sales Analytics",
-        link: "#",
-        icon: <TrendingUp className="size-4" />,
-      },
     ],
   },
   {
