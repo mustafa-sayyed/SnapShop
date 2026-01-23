@@ -137,7 +137,7 @@ const getCurrentUser = async (req, res) => {
     const user = req.user;
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User does not exist" });
+      return res.status(400).json({ success: false, message: "User does not exist" });
     }
 
     res.status(200).json({

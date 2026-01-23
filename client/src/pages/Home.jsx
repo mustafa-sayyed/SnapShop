@@ -10,7 +10,8 @@ import {
 
 function Home() {
   return (
-    <div>
+    <div className="min-h-screen">
+      {/* Hero Section - Full Width */}
       <Hero />
       <Container>
         <LatestCollection />

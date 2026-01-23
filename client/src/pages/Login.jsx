@@ -8,6 +8,7 @@ import { Spinner } from "@/components/ui/spinner.jsx";
 import { Input } from "@/components/ui/input.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { GoogleLogin } from "@react-oauth/google";
+import { useShop } from "@/contexts/ShopContext.js";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ function Login() {
   const [isLogining, setIsLogining] = useState(false);
 
   const { login } = useAuth();
+  const {updateLocalySavedCartItems} = useShop()
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -28,8 +30,9 @@ function Login() {
       });
 
       if (response.data.success) {
-        toast.success(response.data.message);
         login(response.data);
+        await updateLocalySavedCartItems();
+        toast.success(response.data.message);
         navigate("/");
       } else {
         toast.error(response.data?.message);
@@ -59,8 +62,9 @@ function Login() {
       console.log(response);
 
       if (response.data.success) {
-        toast.success(response.data.message);
         login(response.data);
+        await updateLocalySavedCartItems();
+        toast.success(response.data.message);
         navigate("/");
       }
     } catch (error) {

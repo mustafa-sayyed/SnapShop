@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { Spinner } from "@/components/ui/spinner.jsx";
 import { GoogleLogin } from "@react-oauth/google";
+import { useShop } from "@/contexts/ShopContext.js";
 
 function Signup() {
   const [name, setName] = useState("");
@@ -16,6 +17,7 @@ function Signup() {
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
   const { login } = useAuth();
+  const {updateLocalySavedCartItems} = useShop()
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -30,8 +32,9 @@ function Signup() {
       });
 
       if (response.data.success) {
-        toast.success(response.data.message);
         login(response.data);
+        await updateLocalySavedCartItems();
+        toast.success(response.data.message);
         navigate("/");
       } else {
         toast.error(response.data?.message);
@@ -44,8 +47,8 @@ function Signup() {
           toast.error(value[0]);
         });
       } else {
-        if (!navigator.onLine) toast.error(`Error while Login: ${error.message}`);
-        else toast.error("Error while Login: Internal server Error");
+        if (!navigator.onLine) toast.error(`Error while Signup: ${error.message}`);
+        else toast.error("Error while Signup: Internal server Error");
       }
     } finally {
       setIsCreatingAccount(false);
@@ -58,11 +61,10 @@ function Signup() {
         token: credentials.credential,
       });
 
-      console.log(response);
-
       if (response.data.success) {
-        toast.success(response.data.message);
         login(response.data);
+        await updateLocalySavedCartItems();
+        toast.success(response.data.message);
         navigate("/");
       }
     } catch (error) {

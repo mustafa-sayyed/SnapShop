@@ -50,7 +50,7 @@ const orderPlaceEmail = (username, orderDetails) => {
     `;
 };
 
-export const sendOrderPlaceEmail = async (email, name, orderDetails) => {
+export const sendOrderPlaceEmail = async ({email, name, orderDetails}) => {
   try {
     await resend.emails.send({
       from: "SnapShop <no-reply-snapshop@mustafasayyed.dev>",

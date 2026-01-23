@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
+import { MongooseError } from "mongoose";
 
 const authenticate = (role = []) => async (req, res, next) => {
   const token = req.headers.authorization?.replace("Bearer ", "")?.trim();
@@ -14,6 +15,9 @@ const authenticate = (role = []) => async (req, res, next) => {
     user = await User.findById(decodedUser.id);
   } catch (error) {
     console.log(error);
+    if (error instanceof MongooseError) {
+      return res.status(500).json({sucsess: false, message: "Internal Server Error"})
+    }
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 

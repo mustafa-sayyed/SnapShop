@@ -17,7 +17,7 @@ const signupSchema = z.object({
 
 const loginSchema = z.object({
   email: emailSchema,
-  password: passwordSchema,
+  password: z.string().min(1, "Password is required"),
 });
 
 const resetTokenSchema = z.object({

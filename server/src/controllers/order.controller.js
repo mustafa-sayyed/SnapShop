@@ -26,7 +26,17 @@ const placeOrder = async (req, res) => {
 
     await User.findByIdAndUpdate(userId, { cartData: {} });
 
-    await sendOrderPlaceEmail();
+    const emailData = {
+      email: req.user.email,
+      name: req.user.name,
+      orderDetails: {
+        name: items.map((item) => item.name).join(", "),
+        price: amount,
+        quantity: items.reduce((total, item) => total + item.quantity, 0),
+      },
+    };
+
+    await sendOrderPlaceEmail(emailData);
 
     res.status(200).json({ success: true, message: "Order Placed" });
   } catch (error) {
@@ -110,11 +120,17 @@ const placeOrderRazorpay = async (req, res) => {
         return res.status(401).json({ success: false, message: error });
       }
 
-      res.json({ success: true, order });
+      console.log(`Razorpay Order: ${order}, error: ${error}`);
+      
+
+      res.status(200).json({ success: true, order });
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res
+      .status(500)
+      .json({ success: false, message: "Internal server error", errorStack });
   }
 };
 
@@ -125,16 +141,22 @@ const verifyRazorpay = async (req, res) => {
 
     const payment = await razorpayInstance.orders.fetch(razorpay_order_id);
 
+    console.log(`Razorpat Payment Verification: ${payment}`);
+    
+
     if (payment.status === "paid") {
       await Orders.findByIdAndUpdate(payment.receipt, { payment: true });
       await User.findByIdAndUpdate(userId, { cartData: {} });
       return res.status(200).json({ success: true, message: "Payment Successfull" });
     } else {
+      await Orders.findByIdAndUpdate(payment.receipt, { status: "failed" });
+      await User.findByIdAndUpdate(userId, { cartData: {} });
       return res.status(400).json({ success: false, message: "Payment Failed" });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res.status(500).json({ success: false, message: "Internal Server Error", errorStack });
   }
 };
 

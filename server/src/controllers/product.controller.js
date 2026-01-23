@@ -89,7 +89,7 @@ const deleteProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
   try {
     const page = Number(req.query.page) || 0;
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 50;
     const search = req.query.search || "";
     const filter = search ? { name: { $regex: search, $options: "i" } } : {};
     const totalProducts = await Product.countDocuments(filter);
@@ -140,4 +140,65 @@ const getProduct = async (req, res) => {
   }
 };
 
-export { createProduct, deleteProduct, getAllProducts, getProduct };
+const getBestSellerProducts = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 0;
+    const limit = Number(req.query.limit) || 10;
+    const totalBestSellerProducts = await Product.find({ bestSeller: true });
+
+    const products = await Product.find({ bestSeller: true })
+      .lean()
+      .skip(page * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      products,
+      totalBestSellerProducts,
+      limit,
+      page,
+      totalPages: Math.ceil(totalBestSellerProducts / limit),
+    });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res.status(500).json({ message: `Internal Server error`, errorStack });
+  }
+};
+
+const getLatestProducts = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 0;
+    const limit = Number(req.query.limit) || 10;
+    const totalProducts = await Product.countDocuments();
+
+    const products = await Product.find()
+      .lean()
+      .skip(page * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      products,
+      totalProducts,
+      limit,
+      page,
+      totalPages: Math.ceil(totalProducts / limit),
+    });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res.status(500).json({ message: `Internal Server error`, errorStack });
+  }
+};
+
+export {
+  createProduct,
+  deleteProduct,
+  getAllProducts,
+  getProduct,
+  getBestSellerProducts,
+  getLatestProducts,
+};

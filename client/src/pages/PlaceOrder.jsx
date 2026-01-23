@@ -20,6 +20,42 @@ function PlaceOrder() {
   const { products, cartItems, deliveryFee, getCartAmount, setCartItems } = useShop();
   const navigate = useNavigate();
 
+  const handleRazorpayPaymentVerification = async (response) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/orders/razorpay/verify`,
+        {
+          razorpay_order_id: response.razorpay_order_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setCartItems({});
+        navigate("/orders");
+      } else {
+        toast.error(data.message);
+        setCartItems({});
+        navigate("/orders");
+      }
+    } catch (error) {
+      console.log(error);
+      if (error?.response?.data?.errors) {
+        Object.values(error.response.data.errors).forEach((err) => {
+          toast.error(err[0]);
+        });
+        return;
+      }
+      const messsage = error?.response?.data?.message || "Payment Verification Failed";
+      toast.error(messsage);
+    }
+  };
+
   const initPay = (order) => {
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -29,30 +65,22 @@ function PlaceOrder() {
       description: "pay for your order",
       order_id: order.id,
       receipt: order.receipt,
-      handler: async (response) => {
-        const { data } = await axios.post(
-          `${backendUrl}/orders/razorpay/verify`,
-          {
-            razorpay_order_id: response.razorpay_order_id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (data.success) {
-          toast.success(data.message);
-          setCartItems({});
-          navigate("/orders");
-        } else {
-          toast.error(data.message);
-        }
-      },
+      handler: handleRazorpayPaymentVerification,
+      prefill: {
+        name: userData?.defaultAddress?.name || "",
+        email: userData?.defaultAddress?.email || "",
+        contact: userData?.defaultAddress?.phone || "",
+      }
     };
     const razorpay = new window.Razorpay(options);
     razorpay.open();
+
+    razorpay.on("payment.failed", function (response) {
+      toast.error("Payment Failed. Please try again.");
+      console.log(response);
+      
+      razorpay.close();
+    });
   };
 
   const handleCheckout = async (e) => {
@@ -150,7 +178,6 @@ function PlaceOrder() {
         onSubmit={handleCheckout}
         className="flex flex-col sm:flex-row gap-4 justify-between pt-5 sm:pt-14 min-h-[90vh] border-t"
       >
-        {/* left Side */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3 ">
             <Button
@@ -197,7 +224,6 @@ function PlaceOrder() {
           </div>
         </div>
 
-        {/* Right Side */}
         <div className="mt-8">
           <div className="mt-8 min-w-80">
             <CartTotal />
@@ -220,7 +246,7 @@ function PlaceOrder() {
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                   )}
                 </p>
-                <img src={assets.razorpay_logo} alt="Strpe" className="h-4 mx-4" />
+                <img src={assets.razorpay_logo} alt="Razorpay" className="h-4 mx-4" />
               </div>
 
               <div

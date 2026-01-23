@@ -4,10 +4,12 @@ import { Button } from "./ui/button";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Spinner } from "./ui/spinner";
+import { Mail, Sparkles, ArrowRight, Check } from "lucide-react";
 
 function NewsLetterBox() {
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -24,6 +26,8 @@ function NewsLetterBox() {
         const message = response.data?.message || "Subscribed to email successfully";
         toast.success(message);
         setEmail("");
+        setIsSubscribed(true);
+        setTimeout(() => setIsSubscribed(false), 3000);
       }
     } catch (error) {
       console.log(error);
@@ -51,26 +55,42 @@ function NewsLetterBox() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="p-5 outline-none bg-gray-100 rounded-md"
+          className="p-5"
           placeholder="Enter your Email"
           disabled={isSubscribing}
           required
         />
 
         <Button
-          disabled={isSubscribing}
-          className="sm:flex-1 bg-black text-white text-sm p-5 px-8 rounded-md cursor-pointer active:bg-gray-900"
+          disabled={isSubscribing || isSubscribed}
+          className={`w-full cursor-pointer sm:w-auto px-8 py-5 font-semibold transition-all duration-300 ${
+            isSubscribed
+              ? "bg-green-500 hover:bg-green-500"
+              : "hover:shadow-lg hover:shadow-white/25"
+          }`}
         >
           {isSubscribing ? (
             <div className="flex items-center gap-2">
-              <Spinner />
-              subscribing...
+              <Spinner className="w-4 h-4" />
+              Subscribing...
+            </div>
+          ) : isSubscribed ? (
+            <div className="flex items-center gap-2 text-white">
+              <Check className="w-4 h-4" />
+              Subscribed!
             </div>
           ) : (
-            "Subscribe"
+            <div className="flex items-center gap-2">
+              Subscribe
+              <ArrowRight className="w-4 h-4" />
+            </div>
           )}
         </Button>
       </form>
+
+      <p className="text-gray-500 text-xs mt-4">
+        By subscribing, you agree to receive marketing emails. Unsubscribe anytime.
+      </p>
     </div>
   );
 }

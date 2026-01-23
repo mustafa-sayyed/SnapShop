@@ -6,9 +6,20 @@ export const ShopContext = createContext({
   products: [],
   search: "",
   showSearch: false,
+  cartItems: {},
+  setCartItems: () => {},
   fetchProducts: () => {},
   updateCurrency: () => {},
   updateDeliveryFee: () => {},
+  bestSellerProducts: [], 
+  setBestSellerProducts: () => {},
+  updateLocalySavedCartItems: async () => {},
+  addToCart: async () => {},
+  getCartData: async () => {},
+  getCartDetailsFromLocal: () => [],
+  getCartCount: () => 0,
+  getCartAmount: () => 0,
+  updateCart: async () => {},
 });
 
 export function useShop() {

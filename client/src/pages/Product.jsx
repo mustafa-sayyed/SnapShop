@@ -4,15 +4,21 @@ import { assets } from "../assets/frontend_assets";
 import { useShop } from "../contexts/ShopContext";
 import { Container, RelatedProducts } from "../components";
 import { toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 function Product() {
   const { productId } = useParams();
-  const { products, currency, addToCart } = useShop();
+  const { products, currency, addToCart, cartItems } = useShop();
   const [product, setProduct] = useState(null);
   const [currentImg, setCurrentImg] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [size, setSize] = useState(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isBuyingNow, setIsBuyingNow] = useState(false);
+  
+  
 
   useEffect(() => {
     setLoading(true);
@@ -20,14 +26,11 @@ function Product() {
       try {
         setLoading(false);
         const currentProduct = products.find((p) => p._id === productId);
-        console.log(currentProduct);
-
         setProduct(currentProduct);
         setCurrentImg(currentProduct.image[0]);
         setSize(currentProduct.sizes[0]);
       } catch (error) {
         console.log("Error in Product: ", error);
-
         setLoading(false);
         setError("Product Not Found");
       }
@@ -53,15 +56,36 @@ function Product() {
     );
   }
 
-  const handleAddToCart = () => {
-    if (size) {
-      addToCart(product._id, size);
-    } else {
-      toast("Select the size first.", {
-        type: "error",
-      });
+  const handleAddToCart = async () => {
+    try {
+      setIsAddingToCart(true);
+      if (size) {
+        await addToCart(product._id, size);
+      } else {
+        toast("Select the size first.", {
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      const message = error?.response?.data?.message || "Internal Server Error";
+      toast.error(message);
+    } finally {
+      setIsAddingToCart(false);
     }
   };
+
+  const handleBuyNow = async () => {
+    try {
+      // Logic for Buy Now
+    } catch (error) {
+      console.log(error);
+      const message = error?.response?.data?.message || "Internal Server Error";
+      toast.error(message);
+    } finally {
+      setIsBuyingNow(false);
+    }
+  }
 
   return (
     <Container>
@@ -118,15 +142,24 @@ function Product() {
                 </div>
               </div>
               <div className="flex gap-4 w-fit">
-                <button
+                <Button
                   onClick={handleAddToCart}
-                  className="bg-black text-white px-8 py-3 text-sm active:bg-gray-900 rounded-lg cursor-pointer "
+                  disabled={isAddingToCart}
+                  className="cursor-pointer py-6 px-10"
                 >
-                  Add to Cart
-                </button>
-                <button className="bg-red-500 text-white px-8 py-3 text-sm active:bg-red-400 rounded-lg cursor-pointer">
+                  {isAddingToCart ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner />
+                      Adding...
+                    </div>
+                  ) : "Add to Cart"}
+                </Button>
+                <Button className="cursor-pointer py-6 px-10 rounded-lg bg-red-500 hover:bg-red-500/90 active:bg-red-400"
+                disabled={isBuyingNow}
+                onClick={handleBuyNow}
+                >
                   Buy Now
-                </button>
+                </Button>
               </div>
               <hr className="mt-8 sm:w-4/5" />
               <div className="text-sm mt-5 flex flex-col gap-1 text-gray-500">

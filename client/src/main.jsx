@@ -8,12 +8,12 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <ShopContextProvider>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <UserContextProvider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <UserContextProvider>
+        <ShopContextProvider>
           <App />
-        </UserContextProvider>
-      </GoogleOAuthProvider>
-    </ShopContextProvider>
+        </ShopContextProvider>
+      </UserContextProvider>
+    </GoogleOAuthProvider>
   </BrowserRouter>
 );

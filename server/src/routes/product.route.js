@@ -3,6 +3,8 @@ import {
   createProduct,
   deleteProduct,
   getAllProducts,
+  getBestSellerProducts,
+  getLatestProducts,
   getProduct,
 } from "../controllers/product.controller.js";
 import upload from "../middlewares/multer.middleware.js";
@@ -29,9 +31,14 @@ router
     createProduct
   );
 
+router.route("/best-sellers").get(getBestSellerProducts);
+router.route("/latest").get(getLatestProducts);
+
 router
   .route("/:id")
   .get(getProduct)
   .delete(deleteProductLimiter, authenticate(["admin"]), deleteProduct);
+
+
 
 export default router;
