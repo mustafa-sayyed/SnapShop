@@ -113,7 +113,7 @@ const getAllProducts = async (req, res) => {
       page,
       limit,
       totalProducts,
-      totalPages: Math.ceil(totalProducts / limit),
+      totalPages: Math.ceil(totalProducts / limit) - 1,
     });
   } catch (error) {
     console.log(error);
@@ -144,7 +144,7 @@ const getBestSellerProducts = async (req, res) => {
   try {
     const page = Number(req.query.page) || 0;
     const limit = Number(req.query.limit) || 10;
-    const totalBestSellerProducts = await Product.find({ bestSeller: true });
+    const totalBestSellerProducts = await Product.countDocuments({ bestSeller: true });
 
     const products = await Product.find({ bestSeller: true })
       .lean()
@@ -158,7 +158,7 @@ const getBestSellerProducts = async (req, res) => {
       totalBestSellerProducts,
       limit,
       page,
-      totalPages: Math.ceil(totalBestSellerProducts / limit),
+      totalPages: Math.ceil(totalBestSellerProducts / limit) - 1,
     });
   } catch (error) {
     console.log(error);
@@ -185,7 +185,7 @@ const getLatestProducts = async (req, res) => {
       totalProducts,
       limit,
       page,
-      totalPages: Math.ceil(totalProducts / limit),
+      totalPages: Math.ceil(totalProducts / limit) - 1,
     });
   } catch (error) {
     console.log(error);
