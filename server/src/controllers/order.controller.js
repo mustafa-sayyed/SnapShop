@@ -120,7 +120,7 @@ const placeOrderRazorpay = async (req, res) => {
         return res.status(401).json({ success: false, message: error });
       }
 
-      console.log(`Razorpay Order: ${order}, error: ${error}`);
+      console.log(`Razorpay Order: `, order, error);
       
 
       res.status(200).json({ success: true, order });

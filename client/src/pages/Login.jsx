@@ -55,6 +55,7 @@ function Login() {
 
   const handleGoogleLoginSuccess = async (credentials) => {
     try {
+      setIsLogining(true);
       const response = await axios.post(`${config.backendUrl}/users/google`, {
         token: credentials.credential,
       });
@@ -71,6 +72,8 @@ function Login() {
       console.log(error);
       const errorMessage = error.response?.data?.message || "Internal Server Error";
       toast.error(errorMessage);
+    } finally {
+      setIsLogining(false);
     }
   };
 

@@ -40,7 +40,7 @@ function ShopContextProvider({ children }) {
     if (!token) {
       return [];
     }
-    
+
     try {
       const response = await axios.get(`${backendUrl}/cart`, {
         headers: {
@@ -60,10 +60,10 @@ function ShopContextProvider({ children }) {
 
   const getCartDetailsFromLocal = useCallback(() => {
     if (!products.length) return [];
-    
+
     const localCart = JSON.parse(localStorage.getItem("snapshopCart")) || {};
     const cartDetails = [];
-    
+
     for (const productId in localCart) {
       const product = products.find((p) => p._id === productId);
       if (product) {
@@ -79,16 +79,52 @@ function ShopContextProvider({ children }) {
         }
       }
     }
-    
+
     return cartDetails;
   }, [products]);
 
   useEffect(() => {
     fetchProducts();
+    getCartData().then((data) => {
+      const cartItems = {};
+      data.forEach((cartProduct) => {
+        if (cartItems[cartProduct._id]) {
+          if (cartItems[cartProduct._id][cartProduct.size]) {
+            cartItems[cartProduct._id][cartProduct.size] = cartProduct.quantity;
+          } else {
+            cartItems[cartProduct._id] = {
+              ...cartItems[cartProduct._id],
+              [cartProduct.size]: cartProduct.quantity,
+            };
+          }
+        } else {
+          cartItems[cartProduct._id] = { [cartProduct.size]: cartProduct.quantity };
+        }
+      });
+
+      setCartItems(cartItems)
+      
+    });
+
+    // Cart Structure
+    // {
+    //   productId: {
+    //     size: quantity,
+    //   }
+    // }
+
+    // Actual Cart Data after fetching cart
+    // [
+    //   {
+    //     _id: "",
+    //     size: "",
+    //     quantity: 0,
+    //   }
+    // ]
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
-  // Load cart when products are loaded for non authenticated user 
+
+  // Load cart when products are loaded for non authenticated user
   useEffect(() => {
     if (!authStatus && products.length) {
       const localCart = JSON.parse(localStorage.getItem("snapshopCart")) || {};
@@ -111,7 +147,7 @@ function ShopContextProvider({ children }) {
     }
 
     setCartItems(cartData);
-    
+
     if (authStatus) {
       const token = getToken();
       try {
@@ -122,7 +158,7 @@ function ShopContextProvider({ children }) {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         if (res.data.success) {
           toast.success(res.data.message);
@@ -142,7 +178,7 @@ function ShopContextProvider({ children }) {
   const updateLocalySavedCartItems = async () => {
     const token = getToken();
     if (!token) return;
-    
+
     try {
       const localCartItems = JSON.parse(localStorage.getItem("snapshopCart")) || {};
 
@@ -161,7 +197,7 @@ function ShopContextProvider({ children }) {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
-              }
+              },
             );
           }
         }
@@ -188,7 +224,7 @@ function ShopContextProvider({ children }) {
 
   const updateCart = async (itemId, size, quantity) => {
     const cartData = structuredClone(cartItems);
-    
+
     // Handle deletion (quantity <= 0)
     if (quantity <= 0) {
       if (cartData[itemId]) {
@@ -205,9 +241,9 @@ function ShopContextProvider({ children }) {
       }
       cartData[itemId][size] = quantity;
     }
-    
+
     setCartItems(cartData);
-    
+
     if (authStatus) {
       const token = getToken();
       try {
@@ -222,7 +258,7 @@ function ShopContextProvider({ children }) {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (res.data.success) {

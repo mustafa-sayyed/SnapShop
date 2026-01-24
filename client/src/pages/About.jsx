@@ -83,7 +83,7 @@ function About() {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl p-8 border border-gray-200 "
+                className="bg-white rounded-xl p-8 border border-gray-200 hover:border-gray-300"
               >
                 <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center mb-6">
                   <feature.icon className="w-7 h-7" />

@@ -131,7 +131,7 @@ function Contact() {
           {contactInfo.map((item, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl p-6 border border-gray-200 text-center"
+              className="bg-white rounded-xl p-6 border border-gray-200 text-center hover:border-gray-300"
             >
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 bg-slate-100">
                 <item.icon className="w-6 h-6" />

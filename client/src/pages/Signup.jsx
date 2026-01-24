@@ -57,6 +57,7 @@ function Signup() {
 
   const handleGoogleLoginSuccess = async (credentials) => {
     try {
+      setIsCreatingAccount(true);
       const response = await axios.post(`${config.backendUrl}/users/google`, {
         token: credentials.credential,
       });
@@ -71,6 +72,8 @@ function Signup() {
       console.log(error);
       const errorMessage = error.response?.data?.message || "Internal Server Error";
       toast.error(errorMessage);
+    } finally {
+      setIsCreatingAccount(false);
     }
   };
 

@@ -9,7 +9,7 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 function Cart() {
-  const { currency, cartItems, updateCart, getCartData, getCartDetailsFromLocal, products } = useShop();
+  const { currency, cartItems, updateCart, getCartData, getCartDetailsFromLocal } = useShop();
   const [cartProductDetails, setCartProductDetails] = useState([]);
   const { authStatus } = useAuth();
   const [isCartLoading, setIsCartLoading] = useState(true);
@@ -17,16 +17,14 @@ function Cart() {
   const navigate = useNavigate();
 
   const loadCartDetails = useCallback(async () => {
-    setIsCartLoading(true);
-    
     if (authStatus) {
       // Authenticated user - fetch from backend
       const data = await getCartData();
       setCartProductDetails(data || []);
     } else {
-      // Non-authenticated user - get from local storage
+      // Nonauthenticated user - get from local storage
       const localCartDetails = getCartDetailsFromLocal();
-      setCartProductDetails(localCartDetails);
+      setCartProductDetails(localCartDetails || []);
     }
     
     setIsCartLoading(false);
@@ -34,7 +32,7 @@ function Cart() {
 
   useEffect(() => {
     loadCartDetails();
-  }, [cartItems, authStatus, products, loadCartDetails]);
+  }, [cartItems]);
 
   if (isCartLoading) {
     return (
@@ -105,7 +103,7 @@ function Cart() {
 
                   <Button
                     variant="outline"
-                    className="ml-auto cursor-pointer"
+                    className="ml-auto cursor-pointer hover:text-red-500"
                     onClick={() => updateCart(item._id, item.size, 0)}
                   >
                     <Trash2 />

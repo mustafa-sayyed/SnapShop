@@ -8,20 +8,22 @@ import { useShop } from "../contexts/ShopContext";
 import { useAuth } from "../contexts/UserContext";
 import { Phone, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 function PlaceOrder() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false);
+  const { getCartData } = useShop();
   const { userData } = useAuth();
-  const [selectedAddress, setSelectedAddress] = useState(
-    userData?.defaultAddress ?? null
-  );
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("token");
-  const { products, cartItems, deliveryFee, getCartAmount, setCartItems } = useShop();
+  const { deliveryFee, getCartAmount, setCartItems } = useShop();
   const navigate = useNavigate();
 
   const handleRazorpayPaymentVerification = async (response) => {
     try {
+      setIsVerifyingPayment(true);
       const { data } = await axios.post(
         `${backendUrl}/orders/razorpay/verify`,
         {
@@ -31,7 +33,7 @@ function PlaceOrder() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (data.success) {
@@ -53,6 +55,8 @@ function PlaceOrder() {
       }
       const messsage = error?.response?.data?.message || "Payment Verification Failed";
       toast.error(messsage);
+    } finally {
+      setIsVerifyingPayment(false);
     }
   };
 
@@ -61,8 +65,8 @@ function PlaceOrder() {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: order.amount,
       currency: order.currency,
-      name: "Order Payment",
-      description: "pay for your order",
+      name: "SnapShop",
+      description: `Pay ${order.amount / 100} of your order`,
       order_id: order.id,
       receipt: order.receipt,
       handler: handleRazorpayPaymentVerification,
@@ -70,48 +74,50 @@ function PlaceOrder() {
         name: userData?.defaultAddress?.name || "",
         email: userData?.defaultAddress?.email || "",
         contact: userData?.defaultAddress?.phone || "",
-      }
+      },
+      modal: {
+        ondismiss: function () {
+          toast.error("Payment Failed, You closed the payment window.", {
+            position: "top-right",
+            autoClose: 5000,
+            style: {
+              border: "1px solid #ccc",
+              padding: "15px",
+            },
+          });
+        },
+      },
     };
     const razorpay = new window.Razorpay(options);
     razorpay.open();
 
     razorpay.on("payment.failed", function (response) {
-      toast.error("Payment Failed. Please try again.");
-      console.log(response);
-      
+      toast.error("Payment Failed. Please try again.", {
+        style: { zIndex: 9999 },
+      });
       razorpay.close();
     });
   };
 
   const handleCheckout = async (e) => {
     e.preventDefault();
+    setIsPaymentProcessing(true);
 
-    if (!selectedAddress) {
-      return toast.error("Please, Select an Address.");
+    const address = userData?.defaultAddress;
+
+    if (!address) {
+      return toast.error("Please, Add an Address.");
     }
 
-    const orderItems = [];
-
-    for (const product in cartItems) {
-      for (const item in cartItems[product]) {
-        if (cartItems[product][item] > 0) {
-          const productInfo = structuredClone(products.find((p) => p._id === product));
-
-          if (productInfo) {
-            productInfo.size = item;
-            productInfo.quantity = cartItems[product][item];
-            orderItems.push(productInfo);
-          }
-        }
-      }
-    }
+    const orderItems = await getCartData();
 
     async function handleCashOnDelivery() {
       try {
+        setIsPaymentProcessing(true);
         const response = await axios.post(
           `${backendUrl}/orders`,
           {
-            address: selectedAddress,
+            address: address,
             items: orderItems,
             amount: getCartAmount() + deliveryFee,
           },
@@ -119,7 +125,7 @@ function PlaceOrder() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (response.data.success) {
@@ -131,15 +137,18 @@ function PlaceOrder() {
         console.log(error);
         const messsage = error?.response?.data?.message || "Internal Server Error";
         toast.error(messsage);
+      } finally {
+        setIsPaymentProcessing(false);
       }
     }
 
     async function handleRazorpay() {
       try {
+        setIsPaymentProcessing(true);
         const razorpayResponse = await axios.post(
           `${backendUrl}/orders/razorpay`,
           {
-            address: selectedAddress,
+            address: address,
             items: orderItems,
             amount: getCartAmount() + deliveryFee,
           },
@@ -147,7 +156,7 @@ function PlaceOrder() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (razorpayResponse.data.success) {
@@ -159,6 +168,8 @@ function PlaceOrder() {
         console.log(error);
         const messsage = error?.response?.data?.message || "Internal Server Error";
         toast.error(messsage);
+      } finally {
+        setIsPaymentProcessing(false);
       }
     }
 
@@ -169,6 +180,12 @@ function PlaceOrder() {
       case "razorpay":
         handleRazorpay();
         break;
+    }
+  };
+
+  const handlePaymentOptionClick = (method) => {
+    if (!isPaymentProcessing || !isVerifyingPayment) {
+      setPaymentMethod(method);
     }
   };
 
@@ -197,7 +214,7 @@ function PlaceOrder() {
           </div>
           <div className="mb-4">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Default Address:</h2>
-            {userData?.defaultAddress ? (
+            {userData?.defaultAddress ?
               <div className="card border px-4 sm:px-6 py-5 rounded-lg bg-slate-50 max-w-md">
                 <div className="space-y-2 text-sm sm:text-base">
                   <p className="font-semibold text-gray-900">
@@ -216,11 +233,10 @@ function PlaceOrder() {
                   </p>
                 </div>
               </div>
-            ) : (
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 text-center">
+            : <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 text-center">
                 <p className="text-gray-500">No Default Address Found</p>
               </div>
-            )}
+            }
           </div>
         </div>
 
@@ -236,42 +252,60 @@ function PlaceOrder() {
             <div className="flex flex-col sm:flex-row gap-3">
               <div
                 className="flex gap-3 border items-center p-2 px-3 cursor-pointer rounded-md border-gray-400"
-                onClick={() => setPaymentMethod("razorpay")}
+                onClick={() => handlePaymentOptionClick("razorpay")}
               >
                 <p
-                  className={`w-4 h-4 border-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center 
-              ${paymentMethod === "razorpay" ? "border-green-500" : "border-gray-400"}`}
+                  className={`w-4 h-4 border-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center ${paymentMethod === "razorpay" ? "border-green-500" : "border-gray-400"}`}
                 >
                   {paymentMethod === "razorpay" && (
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                   )}
                 </p>
-                <img src={assets.razorpay_logo} alt="Razorpay" className="h-4 mx-4" />
+                <img src={assets.razorpay_logo} alt="Razorpay" className="h-4" />
               </div>
 
               <div
                 className="flex gap-3 border items-center p-2 px-3 cursor-pointer rounded-md border-gray-400"
-                onClick={() => setPaymentMethod("cod")}
+                onClick={() => handlePaymentOptionClick("cod")}
               >
                 <p
-                  className={`w-4 h-4 border-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center 
-              ${paymentMethod === "cod" ? "border-green-500" : "border-gray-400"}`}
+                  className={`w-4 h-4 border-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center ${paymentMethod === "cod" ? "border-green-500" : "border-gray-400"}`}
                 >
                   {paymentMethod === "cod" && (
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                   )}
                 </p>
-                <p className="text-gray-500 text-sm font-medium mx-4">Cash on Delivery</p>
+                <p className="text-gray-500 text-sm font-medium">Cash on Delivery</p>
               </div>
             </div>
 
             <div className="w-full mt-8 text-end">
-              <button
-                type="submit"
-                className="bg-black text-white px-16 py-3 rounded-md cursor-pointer active:bg-gray-900"
-              >
-                Place Order
-              </button>
+              {getCartAmount() <= 0 ?
+                <Button
+                  className="px-16 py-6 rounded-md cursor-pointer"
+                  onClick={() => navigate("/collection")}
+                  type="button"
+                >
+                  Add Items in Cart to Place Order
+                </Button>
+              : <Button
+                  type="submit"
+                  className=" px-16 py-6 rounded-md cursor-pointer"
+                  disabled={isPaymentProcessing || isVerifyingPayment}
+                >
+                  {isPaymentProcessing ?
+                    <div className="flex items-center gap-2">
+                      <Spinner />
+                      <span>Processing Payment...</span>
+                    </div>
+                  : isVerifyingPayment ?
+                    <div className="flex items-center gap-2">
+                      <Spinner />
+                      <span>Verifying Payment...</span>
+                    </div>
+                  : "Place Order"}
+                </Button>
+              }
             </div>
           </div>
         </div>
