@@ -10,6 +10,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../components/ui/pagination";
+import { config } from "@/Config/config";
 
 function Collection() {
   const [products, setProducts] = useState([]);
@@ -17,13 +18,13 @@ function Collection() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
-  const limit = 5;
+  const limit = 30;
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products`, {
+        const response = await axios.get(`${config.backendUrl}/products`, {
           params: {
             page: currentPage,
             limit: limit,
@@ -88,7 +89,7 @@ function Collection() {
       }
 
       const start = Math.max(1, currentPage - 1);
-      const end = Math.min(totalPages - 2, currentPage + 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
 
       for (let i = start; i <= end; i++) {
         pages.push(
@@ -103,7 +104,7 @@ function Collection() {
         );
       }
 
-      if (currentPage < totalPages - 3) {
+      if (currentPage < totalPages - 2) {
         pages.push(
           <PaginationItem key="ellipsis-2">
             <PaginationEllipsis />
@@ -143,10 +144,6 @@ function Collection() {
           <Title children1={"All"} children2={"Collection"} />
         </div>
 
-        <div className="mb-6 text-center text-gray-600">
-          Showing {products.length} of {totalProducts} products
-        </div>
-
         {products.length ?
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
@@ -161,7 +158,7 @@ function Collection() {
               ))}
             </div>
 
-            {totalPages > 1 && (
+            {totalPages > 0 && (
               <div className="mt-12">
                 <Pagination>
                   <PaginationContent>
