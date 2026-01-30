@@ -290,8 +290,8 @@ const getProductRatings = async (req, res) => {
     }
 
     const ratings = product.ratings
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(page * limit, (page + 1) * limit);
+      ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      ?.slice(page * limit, (page + 1) * limit);
 
     res.status(200).json({
       success: true,
@@ -300,7 +300,7 @@ const getProductRatings = async (req, res) => {
       totalRatings: product.totalRatings,
       page,
       limit,
-      totalPages: Math.ceil(product.ratings.length / limit),
+      totalPages: Math.ceil(product.ratings?.length / limit),
     });
   } catch (error) {
     console.log(error);

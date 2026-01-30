@@ -136,6 +136,9 @@ function Banners() {
 
       if (res.data.success) {
         toast.success(res.data.message);
+        setBannerDescription("");
+        setBannerTitle("");
+        setBannerImage(null);
       }
 
       setAddBanner(false);

@@ -14,6 +14,7 @@ import seedAdmin from "./src/utils/seedAdmin.js";
 import subscriberRouter from "./src/routes/subscriber.route.js";
 import globalRateLimiter from "./src/middlewares/globalRatelimit.middleware.js";
 import webhookRouter from "./src/routes/webhook.route.js";
+import { compressAllImages } from "./src/utils/optimzeImages.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -48,6 +49,7 @@ connectDB()
 
 // Cloudinary Connection
 connectCloudinary();
+// compressAllImages();
 
 // Routes
 app.use("/api/v1/users", userRouter);
