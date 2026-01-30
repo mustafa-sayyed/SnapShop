@@ -160,6 +160,8 @@ function Search() {
                     image={product.image}
                     name={product.name}
                     price={product.price}
+                    averageRating={product.averageRating}
+                    totalRatings={product.totalRatings}
                   />
                 ))}
               </div>

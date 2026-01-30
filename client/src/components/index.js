@@ -12,6 +12,8 @@ import CartTotal from "./CartTotal";
 import Profile from "./Profile";
 import AuthLayout from "./AuthLayout";
 import Container from "./Container";
+import { StarRating } from "./StarRating";
+import { ReviewModal } from "./ReviewModal";
 
 export {
   Hero,
@@ -28,4 +30,6 @@ export {
   Profile,
   AuthLayout,
   Container,
+  StarRating,
+  ReviewModal,
 };

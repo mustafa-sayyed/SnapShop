@@ -19,18 +19,11 @@ function UserContextProvider({ children }) {
   const [userData, setUserData] = useState({});
   const [address, setAddress] = useState([]);
   const { setCartItems } = useShop();
-
   const navigate = useNavigate();
 
-  console.log(`Auth Status: ${authStatus}`);
-  
-
   const login = (data) => {
-    console.log(`Request came to login the user`);
-    
     setAuthStatus(true);
     setUserData(data?.user);
-    // Set cart data from user, ensure it's an object not null/undefined
     setCartItems(data?.user?.cartData || {});
     setAddress(data?.addresses || []);
     if (data.token) {
@@ -42,9 +35,6 @@ function UserContextProvider({ children }) {
     setAuthStatus(false);
     setAddress([]);
     setUserData({});
-    // Clear cart items and reset to local storage cart if any
-    const localCart = JSON.parse(localStorage.getItem("snapshopCart")) || {};
-    setCartItems(localCart);
     localStorage.removeItem("token");
     toast.success("Logout successfull");
     navigate("/");

@@ -6,6 +6,7 @@ import {
   placeOrder,
   placeOrderRazorpay,
   updateStatus,
+  verifyOrderStatus,
   verifyRazorpay,
 } from "../controllers/order.controller.js";
 
@@ -16,6 +17,7 @@ router.post("/", authenticate(), placeOrder);
 router.get("/myorders", authenticate(), getUserOrders);
 router.post("/razorpay", authenticate(), placeOrderRazorpay)
 router.post("/razorpay/verify", authenticate(), verifyRazorpay)
+router.get("/verify/:orderId", authenticate(), verifyOrderStatus);
 
 
 // Admin Routes

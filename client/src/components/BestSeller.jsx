@@ -53,8 +53,8 @@ function BestSeller() {
               image={product.image}
               name={product.name}
               price={product.price}
-              isBestSeller={true}
-            />
+              isBestSeller={true}              averageRating={product.averageRating}
+              totalRatings={product.totalRatings}            />
           ))}
         </div>
       ) : isLoadingProducts ? (

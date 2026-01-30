@@ -58,6 +58,8 @@ function LatestCollection() {
                 name={product.name}
                 price={product.price}
                 isNew={true}
+                averageRating={product.averageRating}
+                totalRatings={product.totalRatings}
               />
             ))}
           </div>

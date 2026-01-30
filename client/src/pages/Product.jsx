@@ -2,25 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { assets } from "../assets/frontend_assets";
 import { useShop } from "../contexts/ShopContext";
-import { Container, RelatedProducts } from "../components";
+import { Container, RelatedProducts, StarRating } from "../components";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { Card } from "@/components/ui/card";
+import { User } from "lucide-react";
+import axios from "axios";
 
 function Product() {
   const { productId } = useParams();
-  const { products, currency, addToCart, cartItems } = useShop();
+  const { products, currency, addToCart } = useShop();
   const [product, setProduct] = useState(null);
   const [currentImg, setCurrentImg] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [size, setSize] = useState(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [isBuyingNow, setIsBuyingNow] = useState(false);
-  
-  
+  const [ratings, setRatings] = useState([]);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setLoading(true);
     if (products.length) {
       try {
@@ -29,6 +32,8 @@ function Product() {
         setProduct(currentProduct);
         setCurrentImg(currentProduct.image[0]);
         setSize(currentProduct.sizes[0]);
+
+        fetchRatings(productId);
       } catch (error) {
         console.log("Error in Product: ", error);
         setLoading(false);
@@ -37,7 +42,16 @@ function Product() {
     }
   }, [products, productId]);
 
-  window.scrollTo(0, 0);
+  const fetchRatings = async (productId) => {
+    try {
+      const response = await axios.get(`${backendUrl}/products/${productId}/ratings`);
+      if (response.data.success) {
+        setRatings(response.data.ratings || []);
+      }
+    } catch (error) {
+      console.log("Error fetching ratings:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -85,7 +99,7 @@ function Product() {
     } finally {
       setIsBuyingNow(false);
     }
-  }
+  };
 
   return (
     <Container>
@@ -112,13 +126,12 @@ function Product() {
             {/* Product Info */}
             <div className="flex-1">
               <h1 className="font-medium text-2xl mt-2">{product.name}</h1>
-              <div className="flex items-center gap-1 mt-2">
-                <img src={assets.star_icon} alt="" className="w-4" />
-                <img src={assets.star_icon} alt="" className="w-4" />
-                <img src={assets.star_icon} alt="" className="w-4" />
-                <img src={assets.star_icon} alt="" className="w-4" />
-                <img src={assets.star_dull_icon} alt="" className="w-4" />
-                <p className="pl-2">(122)</p>
+              <div className="flex items-center gap-3 mt-2">
+                <StarRating rating={product.averageRating || 0} />
+                <p className="text-gray-600">
+                  ({product.totalRatings || 0}{" "}
+                  {product.totalRatings === 1 ? "review" : "reviews"})
+                </p>
               </div>
               <p className="font-medium text-2xl mt-5">
                 {currency}
@@ -147,52 +160,96 @@ function Product() {
                   disabled={isAddingToCart}
                   className="cursor-pointer py-6 px-10"
                 >
-                  {isAddingToCart ? (
+                  {isAddingToCart ?
                     <div className="flex items-center gap-2">
                       <Spinner />
                       Adding...
                     </div>
-                  ) : "Add to Cart"}
-                </Button>
-                <Button className="cursor-pointer py-6 px-10 rounded-lg bg-red-500 hover:bg-red-500/90 active:bg-red-400"
-                disabled={isBuyingNow}
-                onClick={handleBuyNow}
-                >
-                  Buy Now
+                  : "Add to Cart"}
                 </Button>
               </div>
               <hr className="mt-8 sm:w-4/5" />
               <div className="text-sm mt-5 flex flex-col gap-1 text-gray-500">
                 <p>100% Original Product.</p>
                 <p>Cash on Delivery is available on this Product.</p>
-                <p>Easy Retrun and Exchange policy within 7 Days.</p>
+                <p>Secure Payment through Razorpay.</p>
               </div>
             </div>
           </div>
 
-          {/* Description and Reviews Section */}
+          {/* Reviews Section */}
           <div className="mt-20">
             <div className="flex">
-              <b className="border border-gray-300 text-sm px-5 py-3">Description</b>
-              <p className="border border-gray-300 text-sm px-5 py-3">Reviews (122)</p>
+              <button
+                className={`border text-sm px-5 py-3 border-gray-700 font-semibold`}
+               
+              >
+                Reviews ({product.totalRatings || 0})
+              </button>
             </div>
-            <div className="flex flex-col gap-4 border-gray-300 text-sm border p-6">
-              <p>
-                An e-commerce website is an online platform that facilitates the buying
-                and selling of products or services over the internet. It serves as a
-                virtual marketplace where businesses and individuals can showcase their
-                products, interact with customers, and conduct transactions without the
-                need for a physical presence. E-commerce websites have gained immense
-                popularity due to their convenience, accessibility, and the global reach
-                they offer.
-              </p>
-              <p>
-                E-commerce websites typically display products or services along with
-                detailed descriptions, images, prices, and any available variations (e.g.,
-                sizes, colors). Each product usually has its own dedicated page with
-                relevant information.
-              </p>
-            </div>
+
+            {<div className="border-gray-300 border p-6">
+                {ratings.length > 0 ?
+                  <div className="space-y-4">
+                    {/* Rating Summary */}
+                    <div className="pb-4 border-b">
+                      <div className="flex items-center gap-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold">
+                            Average Rating: {product.averageRating || 0}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <StarRating rating={product.averageRating || 0} size="sm" />
+                            <span className="text-sm text-gray-600">
+                              ({product.totalRatings}{" "}
+                              {product.totalRatings === 1 ? "review" : "reviews"})
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {ratings.map((rating, index) => (
+                        <Card key={index} className="p-4">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                              <User className="w-5 h-5 text-gray-600" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-medium">{rating.userName}</h4>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(rating.createdAt).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    },
+                                  )}
+                                </span>
+                              </div>
+                              <StarRating rating={rating.rating} size="sm" />
+                              {rating.review && (
+                                <p className="mt-2 text-sm text-gray-700">
+                                  {rating.review}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                : <div className="text-center py-8">
+                    <p className="text-gray-500">
+                      No reviews yet. Be the first to review this product!
+                    </p>
+                  </div>
+                }
+              </div>
+            }
           </div>
 
           <div>

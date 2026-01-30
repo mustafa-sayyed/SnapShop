@@ -13,6 +13,7 @@ import featuredBannerRouter from "./src/routes/featuredBanner.route.js";
 import seedAdmin from "./src/utils/seedAdmin.js";
 import subscriberRouter from "./src/routes/subscriber.route.js";
 import globalRateLimiter from "./src/middlewares/globalRatelimit.middleware.js";
+import webhookRouter from "./src/routes/webhook.route.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -57,6 +58,7 @@ app.use("/api/v1/addresses", addressRouter);
 app.use("/api/v1/featured-banners", featuredBannerRouter);
 app.use("/api/v1/subscribers", subscriberRouter);
 app.use("/api/v1/emails", emailRouter);
+app.use("/api/v1/webhook", webhookRouter);
 
 // Health API
 app.get("/health", (req, res) => {

@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import { Product } from "../models/product.model.js";
+import { Orders } from "../models/order.model.js";
 
 const createProduct = async (req, res) => {
   try {
@@ -19,7 +20,7 @@ const createProduct = async (req, res) => {
           resource_type: "image",
         });
         return result.secure_url;
-      })
+      }),
     ).catch((err) => {
       console.log(err);
       return null;
@@ -66,7 +67,7 @@ const deleteProduct = async (req, res) => {
           resource_type: "image",
         });
         console.log(deleted);
-      })
+      }),
     ).catch((err) => {
       console.error(err);
       return null;
@@ -194,6 +195,124 @@ const getLatestProducts = async (req, res) => {
   }
 };
 
+const addRating = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { productId, orderId, rating, review } = req.body;
+
+    const order = await Orders.findOne({
+      _id: orderId,
+      userId: userId,
+      status: "delivered",
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found or not delivered yet",
+      });
+    }
+
+    const productInOrder = order.items.find((item) => item._id.toString() === productId);
+
+    if (!productInOrder) {
+      return res.status(400).json({
+        success: false,
+        message: "Product not found in this order",
+      });
+    }
+
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    const existingRating = product.ratings.find(
+      (r) => r.userId === userId && r.orderId === orderId,
+    );
+
+    if (existingRating) {
+      existingRating.rating = rating;
+      existingRating.review = review || "";
+      existingRating.createdAt = new Date();
+    } else {
+      product.ratings.push({
+        userId,
+        orderId,
+        userName: req.user.name,
+        rating,
+        review: review || "",
+      });
+    }
+
+    const totalRatings = product.ratings.length;
+    const sumRatings = product.ratings.reduce((sum, r) => sum + r.rating, 0);
+    product.averageRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : 0;
+    product.totalRatings = totalRatings;
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message:
+        existingRating ? "Rating updated successfully" : "Rating added successfully",
+      averageRating: product.averageRating,
+      totalRatings: product.totalRatings,
+    });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res.status(500).json({
+      success: false,
+      message: "Internal Server error",
+      errorStack,
+    });
+  }
+};
+
+const getProductRatings = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const page = Number(req.query.page) || 0;
+    const limit = Number(req.query.limit) || 10;
+
+    const product = await Product.findById(productId).lean();
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    const ratings = product.ratings
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(page * limit, (page + 1) * limit);
+
+    res.status(200).json({
+      success: true,
+      ratings,
+      averageRating: product.averageRating,
+      totalRatings: product.totalRatings,
+      page,
+      limit,
+      totalPages: Math.ceil(product.ratings.length / limit),
+    });
+  } catch (error) {
+    console.log(error);
+    const errorStack = process.env.NODE_ENV === "development" ? error : undefined;
+    res.status(500).json({
+      success: false,
+      message: "Internal Server error",
+      errorStack,
+    });
+  }
+};
+
 export {
   createProduct,
   deleteProduct,
@@ -201,4 +320,6 @@ export {
   getProduct,
   getBestSellerProducts,
   getLatestProducts,
+  addRating,
+  getProductRatings,
 };

@@ -2,8 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useShop } from "../contexts/ShopContext";
 import { ShoppingBag, Heart, Eye } from "lucide-react";
+import { StarRating } from "./StarRating";
 
-function ProductItem({ id, image, price, name, className = "", isNew = false, isBestSeller = false }) {
+function ProductItem({ id, image, price, name, className = "", isNew = false, isBestSeller = false, averageRating = 0, totalRatings = 0 }) {
   const { currency } = useShop();
 
   return (
@@ -35,6 +36,14 @@ function ProductItem({ id, image, price, name, className = "", isNew = false, is
         <h3 className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-gray-700 transition-colors">
           {name}
         </h3>
+        {(averageRating > 0 || totalRatings > 0) && (
+          <div className="flex items-center gap-2">
+            <StarRating rating={averageRating} size="sm" />
+            {totalRatings > 0 && (
+              <span className="text-xs text-gray-500">({totalRatings})</span>
+            )}
+          </div>
+        )}
         <p className="text-base font-bold text-gray-900">
           <span className="text-sm font-normal text-gray-500 mr-0.5">{currency}</span>
           {price.toLocaleString()}

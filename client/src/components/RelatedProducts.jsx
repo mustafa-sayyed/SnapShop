@@ -27,8 +27,8 @@ const RelatedProducts = React.memo(({ category, subCategory }) => {
                 key={product._id}
                 image={product.image}
                 name={product.name}
-                price={product.price}
-              />
+                price={product.price}                averageRating={product.averageRating}
+                totalRatings={product.totalRatings}              />
             ))}
           </div>
 
