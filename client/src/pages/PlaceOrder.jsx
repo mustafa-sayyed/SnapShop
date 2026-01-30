@@ -20,47 +20,83 @@ function PlaceOrder() {
   const token = localStorage.getItem("token");
   const { deliveryFee, getCartAmount, setCartItems } = useShop();
   const navigate = useNavigate();
+  const POLL_INTERVAL = 3000;
+  const MAX_RETRIES = 20;
 
-  const handleRazorpayPaymentVerification = async (response) => {
+  const pollOrderStatus = async (orderId, pollAttempts = 0) => {
+    try {
+      if (pollAttempts >= MAX_RETRIES) {
+        setIsVerifyingPayment(false);
+        toast.info("Payment verification is taking longer than expected. Please check your orders page.");
+        navigate("/orders");
+        return;
+      }
+
+      const response = await axios.get(`${backendUrl}/orders/verify/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        const paymentStatus = response.data.paymentStatus;
+        
+        if (paymentStatus === "completed") {
+          setIsVerifyingPayment(false);
+          toast.success("Payment Successful! Your order has been placed.");
+          setCartItems({});
+          navigate("/orders");
+          return;
+        } else if (paymentStatus === "failed") {
+          setIsVerifyingPayment(false);
+          toast.error("Payment Failed! Please try placing the order again.");
+          navigate("/orders");
+          return;
+        } else {
+          setTimeout(() => pollOrderStatus(orderId, pollAttempts + 1), POLL_INTERVAL);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      setIsVerifyingPayment(false);
+      toast.error("Error verifying payment. Please check your orders page.");
+      navigate("/orders");
+    }
+  };
+
+  const handleRazorpayPaymentVerification = (orderId) => async (response) => {
     try {
       setIsVerifyingPayment(true);
-      const { data } = await axios.post(
+      
+      const verifyResponse = await axios.post(
         `${backendUrl}/orders/razorpay/verify`,
         {
           razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
-      if (data.success) {
-        toast.success(data.message);
-        setCartItems({});
-        navigate("/orders");
-      } else {
-        toast.error(data.message);
+      if (verifyResponse.data.success) {
+        setIsVerifyingPayment(false);
+        toast.success("Payment Successful! Your order has been placed.");
         setCartItems({});
         navigate("/orders");
       }
     } catch (error) {
-      console.log(error);
-      if (error?.response?.data?.errors) {
-        Object.values(error.response.data.errors).forEach((err) => {
-          toast.error(err[0]);
-        });
-        return;
-      }
-      const messsage = error?.response?.data?.message || "Payment Verification Failed";
-      toast.error(messsage);
-    } finally {
-      setIsVerifyingPayment(false);
+      console.log('Error while verifying payment:', error);
+      await pollOrderStatus(orderId);
     }
   };
 
   const initPay = (order) => {
+    console.log(order);
+    
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: order.amount,
@@ -68,8 +104,8 @@ function PlaceOrder() {
       name: "SnapShop",
       description: `Pay ${order.amount / 100} of your order`,
       order_id: order.id,
-      receipt: order.receipt,
-      handler: handleRazorpayPaymentVerification,
+      notes: { orderId: order.notes.orderId },
+      handler: handleRazorpayPaymentVerification(order.notes.orderId),
       prefill: {
         name: userData?.defaultAddress?.name || "",
         email: userData?.defaultAddress?.email || "",
