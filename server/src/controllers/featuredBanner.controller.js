@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 const createFeaturedBanner = async (req, res, next) => {
   try {
-    const { bannerTitle, isActive } = req.body;
+    const { bannerTitle, isActive, bannerDescription } = req.body;
 
     if (!req.file) {
       return res
@@ -16,6 +16,7 @@ const createFeaturedBanner = async (req, res, next) => {
     const banner = await featuredBanner.create({
       bannerImage: uploadResult.secure_url,
       bannerTitle,
+      bannerDescription,
       isActive,
     });
 
@@ -97,13 +98,14 @@ const getAllBanners = async (req, res, next) => {
     //   });
     // }
 
-    const banners = await featuredBanner.find({});
+    const banners = await featuredBanner.find({}).sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
       message: "Banners fetched",
       banners,
     });
+
   } catch (error) {
     console.log(error);
     const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
@@ -117,7 +119,7 @@ const getAllBanners = async (req, res, next) => {
 
 const getAllActiveBanners = async (req, res, next) => {
   try {
-    const activeBanners = await featuredBanner.find({ isActive: true });
+    const activeBanners = await featuredBanner.find({ isActive: true }).sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, banners: activeBanners });
   } catch (error) {

@@ -31,6 +31,7 @@ function Banners() {
   const [banners, setBanners] = useState([]);
   const [bannerImage, setBannerImage] = useState();
   const [bannerTitle, setBannerTitle] = useState("");
+  const [bannerDescription, setBannerDescription] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [isBannersLoading, setIsBannersLoading] = useState(false);
   const [isBannerAdding, setIsBannerAdding] = useState(false);
@@ -118,6 +119,7 @@ function Banners() {
     const formData = new FormData();
 
     formData.append("bannerImage", bannerImage);
+    formData.append("bannerDescription", bannerDescription);
     formData.append("bannerTitle", bannerTitle);
     formData.append("isActive", isActive);
     try {
@@ -158,7 +160,7 @@ function Banners() {
       header: "Banner Image",
       cell: ({ row }) => {
         const imageUrl = row.original.bannerImage;
-        return <img src={imageUrl} alt={row.original.title} className="h-28 w-48" />;
+        return <img src={imageUrl} alt={row.original.title} className="h-28 w-48 object-cover" />;
       },
     },
     {
@@ -167,6 +169,16 @@ function Banners() {
       cell: ({ getValue }) => {
         if (!getValue()) {
           return "No Title Given";
+        }
+        return getValue();
+      },
+    },
+    {
+      accessorKey: "bannerDescription",
+      header: "Description",
+      cell: ({ getValue }) => {
+        if (!getValue()) {
+          return "No Description Given";
         }
         return getValue();
       },
@@ -274,8 +286,19 @@ function Banners() {
                   <Input
                     id="title"
                     value={bannerTitle}
+                    placeholder="Enter banner title"
                     disabled={isBannerAdding}
                     onChange={(e) => setBannerTitle(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-3">
+                  <Label htmlFor="description">Description</Label>
+                  <Input
+                    id="description"
+                    value={bannerDescription}
+                    placeholder="Enter banner description"
+                    disabled={isBannerAdding}
+                    onChange={(e) => setBannerDescription(e.target.value)}
                   />
                 </div>
                 <div className="flex gap-2">

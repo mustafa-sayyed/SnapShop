@@ -10,13 +10,17 @@ const featuredBannerSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    bannerDescription: {
+      type: String,
+      required: false,
+    },
     isActive: {
       type: Boolean,
       required: true,
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const featuredBanner = mongoose.model("featuedBanner", featuredBannerSchema);

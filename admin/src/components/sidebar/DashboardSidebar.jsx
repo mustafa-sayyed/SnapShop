@@ -9,27 +9,16 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import {
-  Activity,
-  DollarSign,
   Home,
-  LinkIcon,
   LogOut,
   Mail,
   MailCheck,
   MailPlus,
   Package2,
-  Percent,
-  PieChart,
-  Settings,
   ShoppingBag,
-  Sparkles,
-  Store,
   Tag,
-  TagIcon,
-  TrendingUp,
   Users,
 } from "lucide-react";
-import { Logo } from "@/components/sidebar/logo";
 import DashboardNavigation from "@/components/sidebar/DashboardNavigation";
 import { Link } from "react-router-dom";
 import {
@@ -115,12 +104,6 @@ const dashboardRoutes = [
       },
     ],
   },
-  {
-    id: "settings",
-    title: "Settings",
-    icon: <Settings className="size-4" />,
-    link: "#",
-  },
 ];
 
 function DashboardSidebar() {
@@ -147,7 +130,7 @@ function DashboardSidebar() {
         )}
       >
         <Link to="#" className="flex items-center gap-2">
-          <Logo className="h-8 w-8" />
+          <img src="/favicon.ico" alt="SnapShop Logo" className="h-8 w-8" />
           {!isCollapsed && (
             <span className="font-semibold text-black dark:text-white">SnapShop</span>
           )}
