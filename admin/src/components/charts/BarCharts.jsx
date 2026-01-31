@@ -7,55 +7,70 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
-
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "#2563eb",
+const defaultChartConfig = {
+  pending: {
+    label: "Pending",
+    color: "#f59e0b",
   },
-  mobile: {
-    label: "Mobile",
-    color: "#60a5fa",
+  delivered: {
+    label: "Delivered",
+    color: "#22c55e",
+  },
+  cancelled: {
+    label: "Cancelled",
+    color: "#ef4444",
   },
 };
 
-export default function IndexBarChart() {
+export default function IndexBarChart({ 
+  data = [], 
+  config = defaultChartConfig,
+  xAxisKey = "day",
+  bars = ["pending", "delivered", "cancelled"],
+  title = "",
+  loading = false 
+}) {
+  if (loading) {
+    return (
+      <div className="h-[350px] w-full flex items-center justify-center">
+        <div className="animate-spin inline-block size-8 border-4 border-current border-t-transparent text-primary rounded-full" />
+      </div>
+    );
+  }
+
+  if (!data.length) {
+    return (
+      <div className="h-[350px] w-full flex items-center justify-center text-muted-foreground">
+        No data available
+      </div>
+    );
+  }
+
   return (
-    <ChartContainer config={chartConfig} className="h-[350px] w-full">
-      <BarChart accessibilityLayer data={chartData}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="month"
-          tickLine={false}
-          tickMargin={10}
-          axisLine={false}
-          tickFormatter={(value) => value.slice(0, 3)}
-        />
-        <ChartTooltip content={<ChartTooltipContent />} />
-        <ChartLegend content={<ChartLegendContent />} />
-        <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-        <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
-      </BarChart>
-    </ChartContainer>
+    <div className="w-full">
+      {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
+      <ChartContainer config={config} className="h-[350px] w-full">
+        <BarChart accessibilityLayer data={data} className="-ml-5">
+          <CartesianGrid vertical={false} strokeDasharray="3 3" />
+          <XAxis
+            dataKey={xAxisKey}
+            tickLine={false}
+            tickMargin={10}
+            axisLine={false}
+          />
+          <YAxis tickLine={false} axisLine={false} />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <ChartLegend content={<ChartLegendContent />} />
+          {bars.map((bar) => (
+            <Bar
+              key={bar}
+              dataKey={bar}
+              fill={`var(--color-${bar})`}
+              radius={4}
+            />
+          ))}
+        </BarChart>
+      </ChartContainer>
+    </div>
   );
 }

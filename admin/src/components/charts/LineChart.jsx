@@ -1,112 +1,81 @@
-import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
-import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../ui/chart";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "../ui/chart";
+import { Spinner } from "../ui/spinner";
 
-const data = [
-  {
-    name: "A",
-    uv: 400,
-    pv: 240,
-    amt: 2400,
-  },
-  {
-    name: "B",
-    uv: 300,
-    pv: 456,
-    amt: 2400,
-  },
-  {
-    name: "C",
-    uv: 300,
-    pv: 139,
-    amt: 2400,
-  },
-  {
-    name: "D",
-    uv: 200,
-    pv: 980,
-    amt: 2400,
-  },
-  {
-    name: "E",
-    uv: 278,
-    pv: 390,
-    amt: 2400,
-  },
-  {
-    name: "F",
-    uv: 189,
-    pv: 480,
-    amt: 2400,
-  },
-  {
-    name: "D",
-    uv: 200,
-    pv: 980,
-    amt: 2400,
-  },
-  {
-    name: "E",
-    uv: 278,
-    pv: 390,
-    amt: 2400,
-  },
-  {
-    name: "F",
-    uv: 189,
-    pv: 480,
-    amt: 2400,
-  },
-  {
-    name: "D",
-    uv: 200,
-    pv: 980,
-    amt: 2400,
-  },
-  {
-    name: "E",
-    uv: 278,
-    pv: 390,
-    amt: 2400,
-  },
-  {
-    name: "F",
-    uv: 189,
-    pv: 480,
-    amt: 2400,
-  },
-];
-
-const chartConfig = {
-  uv: {
-    label: "uv",
+const defaultChartConfig = {
+  revenue: {
+    label: "Revenue",
     color: "#2563eb",
   },
-  pv: {
-    label: "pv",
-    color: "#60a5fa",
-  },
-  name: {
-    label: "pv",
-    color: "#60a5fa",
-  },
-  amt: {
-    label: "pv",
-    color: "#60a5fa",
+  orders: {
+    label: "Orders",
+    color: "#22c55e",
   },
 };
 
-export default function IndexLineChart() {
+export default function IndexLineChart({
+  data = [],
+  config = defaultChartConfig,
+  xAxisKey = "month",
+  lines = ["revenue", "orders"],
+  title = "",
+  loading = false,
+  formatYAxis = (value) => value,
+}) {
+  if (loading) {
+    return (
+      <div className="min-h-60 max-h-[400px] w-full flex items-center justify-center">
+        <Spinner className='size-10' />
+      </div>
+    );
+  }
+
+  if (!data.length) {
+    return (
+      <div className="min-h-60 max-h-[400px] w-full flex items-center justify-center text-muted-foreground">
+        No data available
+      </div>
+    );
+  }
+
   return (
-    <ChartContainer config={chartConfig} className="min-h-60 max-h-[400px] w-full">
-      <LineChart responsive data={data} className="-ml-5" >
-        <CartesianGrid vertical={false} strokeDasharray="3"  />
-        <XAxis />
-        <YAxis axisLine={false} tickMargin={5} tickSize={0} />
-        <Line type="monotone" dot={false} dataKey="uv" stroke="#8884d8" />
-        <Line type="monotone" dot={false} dataKey="pv" stroke="#82ca9d" />
-        <ChartTooltip content={<ChartTooltipContent />} />
-        <ChartLegend content={<ChartLegendContent />} />
-      </LineChart>
-    </ChartContainer>
+    <div className="w-full">
+      {title && <h3 className="text-lg font-semibold mb-8">{title}</h3>}
+      <ChartContainer config={config} className="min-h-60 max-h-[400px] w-full">
+        <LineChart data={data} className="-ml-5">
+          <CartesianGrid vertical={false} strokeDasharray="3 3" />
+          <XAxis
+            dataKey={xAxisKey}
+            tickLine={false}
+            axisLine={false}
+            tickMargin={10}
+          />
+          <YAxis
+            axisLine={false}
+            tickMargin={5}
+            tickSize={0}
+            tickFormatter={formatYAxis}
+          />
+          {lines.map((line) => (
+            <Line
+              key={line}
+              type="monotone"
+              dot={false}
+              dataKey={line}
+              stroke={`var(--color-${line})`}
+              strokeWidth={2}
+            />
+          ))}
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <ChartLegend content={<ChartLegendContent />} />
+        </LineChart>
+      </ChartContainer>
+    </div>
   );
 }
