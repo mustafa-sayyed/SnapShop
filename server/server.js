@@ -14,7 +14,7 @@ import seedAdmin from "./src/utils/seedAdmin.js";
 import subscriberRouter from "./src/routes/subscriber.route.js";
 import globalRateLimiter from "./src/middlewares/globalRatelimit.middleware.js";
 import webhookRouter from "./src/routes/webhook.route.js";
-import { compressAllImages } from "./src/utils/optimzeImages.js";
+import dashboardRouter from "./src/routes/dashboard.route.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -49,7 +49,6 @@ connectDB()
 
 // Cloudinary Connection
 connectCloudinary();
-// compressAllImages();
 
 // Routes
 app.use("/api/v1/users", userRouter);
@@ -61,6 +60,7 @@ app.use("/api/v1/featured-banners", featuredBannerRouter);
 app.use("/api/v1/subscribers", subscriberRouter);
 app.use("/api/v1/emails", emailRouter);
 app.use("/api/v1/webhook", webhookRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 
 // Health API
 app.get("/health", (req, res) => {
