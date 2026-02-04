@@ -15,6 +15,7 @@ import subscriberRouter from "./src/routes/subscriber.route.js";
 import globalRateLimiter from "./src/middlewares/globalRatelimit.middleware.js";
 import webhookRouter from "./src/routes/webhook.route.js";
 import dashboardRouter from "./src/routes/dashboard.route.js";
+import errorHandler from "./src/middlewares/error.middleware.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -73,3 +74,6 @@ app.get("/debug-ip", (req, res) => {
     forwardedFor: req.headers["x-forwarded-for"],
   });
 });
+
+// Global Error Handler Middleware
+app.use(errorHandler);
