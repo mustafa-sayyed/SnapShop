@@ -26,6 +26,7 @@ import axios from "axios";
 import { Plus, Trash2, UploadCloud } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { tokenStorageKey } from "@/lib/config";
 
 function Banners() {
   const [banners, setBanners] = useState([]);
@@ -39,7 +40,7 @@ function Banners() {
   const [isDeletingBanner, setIsDeletingBanner] = useState(false);
   const [deleteBannerId, setDeleteBannerId] = useState("");
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem(tokenStorageKey);
 
   const fetchBanners = async () => {
     try {

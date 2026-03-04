@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/userContext";
+import { tokenStorageKey } from "../lib/config";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -38,7 +39,7 @@ function LoginForm() {
 
       const token = res.data.token;
 
-      localStorage.setItem("token", token);
+      localStorage.setItem(tokenStorageKey, token);
 
       login(res.data.user);
 

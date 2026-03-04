@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { currency } from "../App.jsx";
+import { currency } from "@/lib/config";
 import {
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -31,12 +29,13 @@ import { Spinner } from "@/components/ui/spinner.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { ChevronLeft, ChevronRight, ListMinus } from "lucide-react";
 import { Input } from "@/components/ui/input.jsx";
+import { tokenStorageKey } from "@/lib/config";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [isOrdersLoading, setIsOrdersLoading] = useState(false);
   const [totalOrders, setTotalOrders] = useState(null);
-  
+
   const [pageCount, setPageCount] = useState(0);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -44,9 +43,8 @@ function Orders() {
   });
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem(tokenStorageKey);
 
-  
   const orderTableColumns = [
     {
       header: "Order Details",
@@ -113,11 +111,9 @@ function Orders() {
       accessorKey: "status",
       cell: ({ getValue }) => {
         const badgeClass =
-          getValue() === "delivered"
-            ? "bg-green-500"
-            : getValue() === "cancelled"
-            ? "bg-red-500"
-            : "bg-amber-300";
+          getValue() === "delivered" ? "bg-green-500"
+          : getValue() === "cancelled" ? "bg-red-500"
+          : "bg-amber-300";
         return (
           <p
             className={`${badgeClass} text-white rounded-full flex items-center justify-center h-fit p-0.5`}
@@ -195,7 +191,6 @@ function Orders() {
     fetchOrders();
   }, [pagination.pageIndex, pagination.pageSize]);
 
-
   const handleStatusChange = async (status, id) => {
     try {
       const response = await axios.patch(
@@ -205,7 +200,7 @@ function Orders() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       if (response.data.success) {
         // toast.success(response.data.message);
@@ -217,7 +212,7 @@ function Orders() {
             }
 
             return order;
-          })
+          }),
         );
       }
     } catch (error) {
@@ -229,7 +224,6 @@ function Orders() {
       }
     }
   };
-
 
   return (
     <div>
@@ -265,7 +259,7 @@ function Orders() {
         </TableHeader>
 
         <TableBody>
-          {table.getRowModel().rows.length ? (
+          {table.getRowModel().rows.length ?
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
@@ -275,27 +269,23 @@ function Orders() {
                 ))}
               </TableRow>
             ))
-          ) : (
-            <TableRow>
+          : <TableRow>
               <TableCell colSpan={orderTableColumns.length} className="h-36 text-center">
-                {isOrdersLoading ? (
+                {isOrdersLoading ?
                   <div className="flex items-center justify-center gap-2">
                     <Spinner />
                     Loading...
                   </div>
-                ) : (
-                  "No Orders"
-                )}
+                : "No Orders"}
               </TableCell>
             </TableRow>
-          )}
+          }
         </TableBody>
       </Table>
       <div className="flex flex-col gap-3 p-2 items-start sm:flex-row sm:items-center justify-between w-full">
         {totalOrders && <p className="text-xl font-bold">Total Orders: {totalOrders}</p>}
         <p>
-          Showing {pagination.pageIndex + 1} of {pageCount}{" "}
-          Page
+          Showing {pagination.pageIndex + 1} of {pageCount} Page
         </p>
         <div className="flex items-center gap-2">
           <Button

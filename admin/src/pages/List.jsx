@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { tokenStorageKey } from "@/lib/config";
 
 function List() {
   const [products, setProducts] = useState([]);
@@ -72,7 +73,7 @@ function List() {
   };
 
   const deleteProduct = async (id) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(tokenStorageKey);
 
     try {
       setDeletingProductId(id);

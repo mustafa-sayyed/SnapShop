@@ -5,6 +5,7 @@ import { UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { tokenStorageKey } from "@/lib/config";
 
 function Add() {
   const [image1, setImage1] = useState("");
@@ -67,7 +68,7 @@ function Add() {
       image3 && formData.append("image3", image3);
       image4 && formData.append("image4", image4);
 
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem(tokenStorageKey);
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/products`,

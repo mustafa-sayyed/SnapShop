@@ -15,13 +15,14 @@ import {
 import axios from "axios";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { tokenStorageKey } from "@/lib/config";
 
 function SendEmail() {
   const [emailContent, setEmailContent] = useState("Write email content here...");
   const [emailSubject, setEmailSubject] = useState("");
   const [selectedAudience, setSelectedAudience] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem(tokenStorageKey);
 
   const handleSendEmail = async (e) => {
     e.preventDefault();

@@ -34,6 +34,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import parse from "html-react-parser";
 import "react-quill-new/dist/quill.snow.css";
+import { tokenStorageKey } from "@/lib/config";
 
 function EmailHistory() {
   const [emails, setEmails] = useState([]);
@@ -46,7 +47,7 @@ function EmailHistory() {
     pageSize: 10,
   });
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem(tokenStorageKey);
 
   const getAllEmails = async () => {
     try {

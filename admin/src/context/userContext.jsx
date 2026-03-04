@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { tokenStorageKey } from "../lib/config";
 
 const UserContext = createContext({
   user: {},
@@ -20,7 +21,7 @@ function UserContextProvider({ children }) {
   const logout = () => {
     setAuthStatus(false);
     setUser({});
-    localStorage.removeItem("token");
+    localStorage.removeItem(tokenStorageKey);
     navigate("/login");
   };
 

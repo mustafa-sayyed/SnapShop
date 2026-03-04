@@ -23,6 +23,7 @@ import axios from "axios";
 import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { tokenStorageKey } from "@/lib/config";
 
 function Subscribers() {
   const [subscribers, setSubscribers] = useState([]);
@@ -35,7 +36,7 @@ function Subscribers() {
     pageIndex: 0,
     pageSize: 10,
   });
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem(tokenStorageKey);
 
   const handleSubscriberDelete = async (id) => {
     try {

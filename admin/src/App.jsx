@@ -6,7 +6,7 @@ import { useAuth } from "./context/userContext";
 import axios from "axios";
 import DashboardLayout from "./layouts/DashboardLayout";
 import AuthLayout from "./layouts/AuthLayout";
-export const currency = "₹";
+import { tokenStorageKey } from "./lib/config";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -14,7 +14,7 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(tokenStorageKey);
 
     if (token) {
       axios
@@ -30,7 +30,7 @@ function App() {
           login({ name: user.name, email: user.email, role: user.role });
         })
         .catch((error) => {
-          localStorage.removeItem("token");
+          localStorage.removeItem(tokenStorageKey);
           toast("Error, Login Again.", {
             type: "warning",
           });

@@ -15,8 +15,9 @@ import {
   CheckCircle,
   Mail,
 } from "lucide-react";
-import { currency } from "@/App";
 import { Spinner } from "@/components/ui/spinner";
+import { tokenStorageKey, currency } from "@/lib/config";
+import { useAuth } from "@/context/userContext";
 
 function Home() {
   const [loading, setLoading] = useState(true);
@@ -27,11 +28,15 @@ function Home() {
   const [userGrowth, setUserGrowth] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [recentOrders, setRecentOrders] = useState([]);
+  const { authStatus } = useAuth();
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem(tokenStorageKey);
 
   const fetchDashboardData = async () => {
     try {
+      if (!token || !authStatus) {
+        return;
+      }
       setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
       const baseUrl = import.meta.env.VITE_BACKEND_URL;
@@ -266,7 +271,6 @@ function Home() {
 
       {/* Top Products & Recent Orders */}
       <div className="grid gap-4 grid-cols-1 xl:grid-cols-2">
-
         <div className="border rounded-xl px-4 py-6 sm:p-6">
           <h3 className="text-lg font-semibold mb-4">Top Selling Products</h3>
           <div className="space-y-3">
@@ -336,7 +340,6 @@ function Home() {
             : <p className="text-muted-foreground text-center py-4">No recent orders</p>}
           </div>
         </div>
-
       </div>
     </div>
   );
