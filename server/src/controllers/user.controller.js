@@ -108,22 +108,42 @@ const loginAdmin = async (req, res) => {
         .json({ success: false, message: "User with this email does not exists" });
     }
 
-    if (!(email === adminEmail && password === adminPassword)) {
+    // Check if user is admin or demo_admin
+    if (!["admin", "demo_admin"].includes(user.role)) {
       return res
-        .status(400)
-        .json({ success: false, message: "Invalid Credentials for Admin login" });
+        .status(403)
+        .json({ success: false, message: "Access denied. Admin privileges required." });
     }
 
-    const token = jwt.sign({ id: user._id, role: "admin" }, process.env.JWT_SECRET);
+    // For real admin, check against env credentials
+    if (user.role === "admin") {
+      if (!(email === adminEmail && password === adminPassword)) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid Credentials for Admin login" });
+      }
+    }
+
+    // For demo_admin, check against hashed password in DB
+    if (user.role === "demo_admin") {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid Credentials for Admin login" });
+      }
+    }
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
 
     res.status(200).json({
       success: true,
       token,
-      message: "Admin Login Successfull",
+      message: user.role === "demo_admin" ? "Demo Admin Login Successful" : "Admin Login Successful",
       user: { name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
-    console.log(err);
+    console.log(error);
     const errorStack = process.env.NODE_ENV == "development" ? error : undefined;
     res.status(500).json({
       message: `Internal Server error`,

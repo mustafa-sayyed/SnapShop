@@ -10,6 +10,7 @@ import validate from "../middlewares/validation.middleware.js";
 import featuredBannerSchema from "../schema/featuredBanner.schema.js";
 import upload from "../middlewares/multer.middleware.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
+import demoGuard from "../middlewares/demoGuard.middleware.js";
 import {
   addFeaturedBannerLimiter,
   deleteFeaturedBannerLimiter,
@@ -24,7 +25,8 @@ router
     addFeaturedBannerLimiter,
     upload.single("bannerImage"),
     validate(featuredBannerSchema),
-    authenticate(["admin"]),
+    authenticate(["admin", "demo_admin"]),
+    demoGuard,
     createFeaturedBanner
   );
   
@@ -33,11 +35,11 @@ router.route("/active").get(getAllActiveBanners);
 
 router
   .route("/:bannerId/toggle")
-  .patch(toggleFeaturedBannerLimiter, authenticate(["admin"]), toggleFeaturedBanner);
+  .patch(toggleFeaturedBannerLimiter, authenticate(["admin", "demo_admin"]), demoGuard, toggleFeaturedBanner);
 
 router
   .route("/:bannerId")
-  .delete(deleteFeaturedBannerLimiter, authenticate(["admin"]), deleteFeaturedBanner);
+  .delete(deleteFeaturedBannerLimiter, authenticate(["admin", "demo_admin"]), demoGuard, deleteFeaturedBanner);
 
   
 export default router;

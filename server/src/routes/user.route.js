@@ -12,6 +12,7 @@ import {
   resetPassword,
 } from "../controllers/user.controller.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
+import demoGuard from "../middlewares/demoGuard.middleware.js";
 import validate from "../middlewares/validation.middleware.js";
 import {
   forgotPasswordSchema,
@@ -49,9 +50,9 @@ router
 
 // Admin Auth Routes
 router.route("/admin/signin").post(validate(loginSchema), loginAdmin);
-router.route("/all").get(authenticate(["admin"]), getAllUsers);
+router.route("/all").get(authenticate(["admin", "demo_admin"]), getAllUsers);
 router
   .route("/:userId/admin")
-  .delete(deleteUserLimiter, authenticate(["admin"]), deleteUser);
+  .delete(deleteUserLimiter, authenticate(["admin", "demo_admin"]), demoGuard, deleteUser);
 
 export default router;

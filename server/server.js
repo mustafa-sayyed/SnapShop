@@ -10,7 +10,7 @@ import orderRouter from "./src/routes/order.route.js";
 import addressRouter from "./src/routes/address.route.js";
 import emailRouter from "./src/routes/email.route.js";
 import featuredBannerRouter from "./src/routes/featuredBanner.route.js";
-import seedAdmin from "./src/utils/seedAdmin.js";
+import { seedDemoAdmin, seedAdmin } from "./src/utils/seedAdmin.js";
 import subscriberRouter from "./src/routes/subscriber.route.js";
 import globalRateLimiter from "./src/middlewares/globalRatelimit.middleware.js";
 import webhookRouter from "./src/routes/webhook.route.js";
@@ -35,14 +35,17 @@ app.set("trust proxy", 1);
 
 // Database connection
 connectDB()
-  .then(() => {
+  .then(async () => {
     app.on("error", (error) => {
       console.log(`Server Error: ${error}`);
     });
     app.listen(PORT, () => {
       console.log(`Server is listening on PORT: ${PORT}`);
     });
-    seedAdmin();
+    
+    // Seed admin accounts
+    await seedAdmin();
+    await seedDemoAdmin();
   })
   .catch((error) => {
     console.log(`DB Connection Failed: ${error}`);

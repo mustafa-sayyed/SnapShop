@@ -14,7 +14,7 @@ import {
 const dashboardRouter = Router();
 
 // All routes require admin authentication
-dashboardRouter.use(authenticate(["admin"]));
+dashboardRouter.use(authenticate(["admin", "demo_admin"]));
 
 // Routes for Stats Card
 dashboardRouter.get("/stats", getDashboardStats);

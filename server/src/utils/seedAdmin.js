@@ -24,4 +24,28 @@ const seedAdmin = async () => {
   }
 };
 
+const seedDemoAdmin = async () => {
+  try {
+    const demoEmail = process.env.DEMO_ADMIN_EMAIL || "demo@admin.com";
+    const demoPassword = process.env.DEMO_ADMIN_PASSWORD || "demo123";
+    const exists = await User.findOne({ email: demoEmail });
+
+    if (!exists) {
+      const hashedPassword = await bcrypt.hash(demoPassword, 10);
+
+      await User.create({
+        name: "Demo Admin",
+        email: demoEmail,
+        password: hashedPassword,
+        role: "demo_admin",
+      });
+
+      console.log("Demo Admin Created.");
+    }
+  } catch (error) {
+    console.log(`Internal Server error while creating Demo Admin: ${error.message}`);
+  }
+};
+
+export { seedAdmin, seedDemoAdmin };
 export default seedAdmin;

@@ -13,6 +13,7 @@ import {
   unsubscribeLimiter,
 } from "../middlewares/rateLimit/subscribe.limiter.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
+import demoGuard from "../middlewares/demoGuard.middleware.js";
 
 const router = Router();
 
@@ -23,6 +24,6 @@ router
 
 router.route("/unsubscribe/:unsubscribeToken").patch(unsubscribeLimiter, unsubscribe);
 
-router.route("/:subscriberId").delete(deleteSubscriberLimiter, authenticate(["admin"]), deleteSubscriber);
+router.route("/:subscriberId").delete(deleteSubscriberLimiter, authenticate(["admin", "demo_admin"]), demoGuard, deleteSubscriber);
 
 export default router;

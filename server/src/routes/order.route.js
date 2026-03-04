@@ -1,5 +1,6 @@
 import express from "express";
 import { authenticate } from "../middlewares/auth.middleware.js";
+import demoGuard from "../middlewares/demoGuard.middleware.js";
 import {
   getAllOrders,
   getUserOrders,
@@ -21,8 +22,8 @@ router.get("/verify/:orderId", authenticate(), verifyOrderStatus);
 
 
 // Admin Routes
-router.get("/", authenticate(["admin"]), getAllOrders);
-router.patch("/:id/status", authenticate(["admin"]), updateStatus);
+router.get("/", authenticate(["admin", "demo_admin"]), getAllOrders);
+router.patch("/:id/status", authenticate(["admin", "demo_admin"]), demoGuard, updateStatus);
 
 
 

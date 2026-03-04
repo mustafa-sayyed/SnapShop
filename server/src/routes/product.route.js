@@ -11,6 +11,7 @@ import {
 } from "../controllers/product.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
+import demoGuard from "../middlewares/demoGuard.middleware.js";
 import {
   addProductLimiter,
   deleteProductLimiter,
@@ -25,7 +26,8 @@ router
   .get(getAllProducts)
   .post(
     addProductLimiter,
-    authenticate(["admin"]),
+    authenticate(["admin", "demo_admin"]),
+    demoGuard,
     upload.fields([
       { name: "image1", maxCount: 1 },
       { name: "image2", maxCount: 1 },
@@ -41,7 +43,7 @@ router.route("/latest").get(getLatestProducts);
 router
   .route("/:id")
   .get(getProduct)
-  .delete(deleteProductLimiter, authenticate(["admin"]), deleteProduct);
+  .delete(deleteProductLimiter, authenticate(["admin", "demo_admin"]), demoGuard, deleteProduct);
 
 
 // Products Ratings Routes  
