@@ -24,7 +24,7 @@ A full-stack e-commerce application featuring secure REST APIs, Dockerized backe
 ## Features
 
 ###  Client Application Features
-- 🔐 **Authentication** - JWT + Google OAuth with secure token-based password reset
+- 🔐 **Authentication** - JWT + Google OAuth with secure token-based password reset feature
 - 🛒 **Shopping Cart** - Add, update, remove items with persistent cart sync
 - 📦 **Order Management** - Track orders and view detailed order history
 - 💳 **Payments** - Razorpay integration with webhook verification + COD
@@ -56,7 +56,6 @@ A full-stack e-commerce application featuring secure REST APIs, Dockerized backe
 | Axios | HTTP Client |
 | Recharts | Analytics Charts (Admin) |
 | Quill.js | Rich Text Editor (Admin) |
-| Framer Motion | Animations (Admin) |
 
 ### Backend
 | Technology | Purpose |
@@ -79,7 +78,7 @@ A full-stack e-commerce application featuring secure REST APIs, Dockerized backe
 | Docker | Multi-stage containerization |
 | GitHub Actions | CI/CD Pipeline |
 | Azure App Service | Cloud Deployment |
-| Vercel | Frontend Hosting |
+| Cloudflare | Frontend Hosting |
 
 ## 📁 Project Structure
 
