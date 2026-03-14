@@ -9,6 +9,9 @@ function ShopContextProvider({ children }) {
   const [deliveryFee, setDeliveryFee] = useState(10);
   const [products, setProducts] = useState([]);
   const [bestSellerProducts, setBestSellerProducts] = useState([]);
+  const [latestProducts, setLatestProducts] = useState([]);
+  const [banners, setBanners] = useState([]);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [cartItems, setCartItems] = useState({});
   const { authStatus } = useAuth();
@@ -32,6 +35,32 @@ function ShopContextProvider({ children }) {
       }
     } catch (error) {
       console.log(`Error while  fetching products: ${error.message}`);
+    }
+  };
+
+  const fetchInitialData = async () => {
+    try {
+      setInitialLoading(true);
+
+      const [bannersRes, latestRes, bestSellersRes] = await Promise.all([
+        axios.get(`${backendUrl}/featured-banners/active`),
+        axios.get(`${backendUrl}/products/latest`),
+        axios.get(`${backendUrl}/products/best-sellers`),
+      ]);
+
+      if (bannersRes.data.success) {
+        setBanners(bannersRes.data.banners);
+      }
+      if (latestRes.data.success) {
+        setLatestProducts(latestRes.data.products);
+      }
+      if (bestSellersRes.data.success) {
+        setBestSellerProducts(bestSellersRes.data.products);
+      }
+    } catch (error) {
+      console.log("Error fetching initial data:", error.message);
+    } finally {
+      setInitialLoading(false);
     }
   };
 
@@ -84,6 +113,7 @@ function ShopContextProvider({ children }) {
   }, [products]);
 
   useEffect(() => {
+    fetchInitialData();
     fetchProducts();
     getCartData().then((data) => {
       const cartItems = {};
@@ -313,6 +343,9 @@ function ShopContextProvider({ children }) {
         updateDeliveryFee,
         bestSellerProducts,
         setBestSellerProducts,
+        latestProducts,
+        banners,
+        initialLoading,
         updateLocalySavedCartItems,
       }}
     >

@@ -1,33 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Title, ProductItem } from "./";
+import React from "react";
+import { ProductItem } from "./";
 import { useShop } from "../contexts/ShopContext";
-import { Spinner } from "./ui/spinner";
-import axios from "axios";
 import { Flame, TrendingUp } from "lucide-react";
 
 function BestSeller() {
-  const { bestSellerProducts, setBestSellerProducts } = useShop();
-  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
-
-  useEffect(() => {
-    try {
-      setIsLoadingProducts(true);
-      axios
-        .get(`${import.meta.env.VITE_BACKEND_URL}/products/best-sellers`)
-        .then((response) => {
-          if (response.data.success) {
-            setBestSellerProducts(response.data.products);
-          }
-        });
-    } catch (error) {
-      console.log(error);
-      const message =
-        error?.response?.data?.message || "Error while fetching best seller products";
-      console.log(message);
-    } finally {
-      setIsLoadingProducts(false);
-    }
-  }, [setBestSellerProducts]);
+  const { bestSellerProducts } = useShop();
 
   return (
     <section className="py-16 md:py-20">
@@ -53,14 +30,11 @@ function BestSeller() {
               image={product.image}
               name={product.name}
               price={product.price}
-              isBestSeller={true}              averageRating={product.averageRating}
-              totalRatings={product.totalRatings}            />
+              isBestSeller={true}
+              averageRating={product.averageRating}
+              totalRatings={product.totalRatings}
+            />
           ))}
-        </div>
-      ) : isLoadingProducts ? (
-        <div className="flex items-center justify-center gap-3 py-20">
-          <Spinner className="w-6 h-6" />
-          <span className="text-gray-600 font-medium">Loading best sellers...</span>
         </div>
       ) : (
         <div className="h-72 flex flex-col items-center justify-center w-full gap-4">

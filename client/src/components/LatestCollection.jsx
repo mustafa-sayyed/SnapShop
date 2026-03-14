@@ -1,36 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ProductItem } from "./";
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles } from "lucide-react";
-import axios from "axios";
-import { Spinner } from "./ui/spinner";
+import { useShop } from "../contexts/ShopContext";
 
 function LatestCollection() {
-  const [latestProducts, setLatestProducts] = useState([]);
-  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
-
-  useEffect(() => {
-    const fetchLatestProducts = async () => {
-      try {
-        setIsLoadingProducts(true);
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/products/latest`
-        );
-        if (response.data.success) {
-          setLatestProducts(response.data.products);
-        }
-      } catch (error) {
-        console.log(error);
-        const message =
-          error?.response?.data?.message || "Error while fetching latest products";
-        console.log(message);
-      } finally {
-        setIsLoadingProducts(false);
-      }
-    };
-
-    fetchLatestProducts();
-  }, []);
+  const { latestProducts } = useShop();
 
   return (
     <section className="py-16 md:py-20">
@@ -74,11 +49,6 @@ function LatestCollection() {
             </Link>
           </div>
         </>
-      ) : isLoadingProducts ? (
-        <div className="flex items-center justify-center gap-3 py-20">
-          <Spinner className="w-6 h-6" />
-          <span className="text-gray-600 font-medium">Loading latest products...</span>
-        </div>
       ) : (
         <div className="h-72 flex flex-col items-center justify-center w-full gap-4">
           <Sparkles className="w-12 h-12 text-gray-300" />
