@@ -35,7 +35,6 @@ import { Button } from "../ui/button";
 import { useAuth } from "@/context/userContext";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import logo from "admin/public/logo.png"
 
 const dashboardRoutes = [
   {
@@ -131,7 +130,7 @@ function DashboardSidebar() {
         )}
       >
         <Link to="#" className="flex items-center gap-2">
-          <img src={logo} alt="SnapShop Logo" className="h-8 w-8" />
+          <img src="/logo.png" alt="SnapShop Logo" className="h-8 w-8" />
           {!isCollapsed && (
             <span className="font-semibold text-black dark:text-white">SnapShop</span>
           )}
