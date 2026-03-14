@@ -95,6 +95,16 @@ function LoginForm() {
           )}
         </Button>
       </form>
+
+      <div className="mt-5 rounded-md border p-3 text-sm">
+        <p className="mb-1 font-semibold">Demo Credentials</p>
+        <p>
+          <span className="font-medium">Email:</span> demo@admin.com
+        </p>
+        <p>
+          <span className="font-medium">Password:</span> demo123
+        </p>
+      </div>
     </div>
   );
 }

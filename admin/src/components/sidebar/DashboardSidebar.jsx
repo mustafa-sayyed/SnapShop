@@ -130,7 +130,7 @@ function DashboardSidebar() {
         )}
       >
         <Link to="#" className="flex items-center gap-2">
-          <img src="/favicon.ico" alt="SnapShop Logo" className="h-8 w-8" />
+          <img src="admin/favicon.ico" alt="SnapShop Logo" className="h-8 w-8" />
           {!isCollapsed && (
             <span className="font-semibold text-black dark:text-white">SnapShop</span>
           )}
