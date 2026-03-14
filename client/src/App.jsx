@@ -1,5 +1,13 @@
-import React, { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pathname]);
+  return null;
+}
 import {
   About,
   Cart,
@@ -19,7 +27,7 @@ import {
 } from "./pages";
 import { AuthLayout, Footer, Navbar, Profile } from "./components";
 import { toast, ToastContainer } from "react-toastify";
-import { useEffect } from "react";
+
 import axios from "axios";
 import { useAuth } from "./contexts/UserContext";
 
@@ -67,6 +75,7 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
