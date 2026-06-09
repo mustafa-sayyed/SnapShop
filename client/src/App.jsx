@@ -25,15 +25,29 @@ import {
   Signup,
   Unsubscribe,
 } from "./pages";
-import { AuthLayout, Footer, Navbar, Profile } from "./components";
-import { toast, ToastContainer } from "react-toastify";
+import { AuthLayout, Footer, Navbar, Profile, StartupLoader } from "./components";
+import { ToastContainer } from "react-toastify";
 
 import axios from "axios";
+import { useShop } from "./contexts/ShopContext";
 import { useAuth } from "./contexts/UserContext";
+
+const startupMessages = [
+  "Waking up the server...",
+  "Opening the store for you...",
+  "Connecting to the database...",
+  "Stocking the shelves...",
+  "Bribing the database with coffee...",
+  "Almost ready...",
+  "Making SnapShop ready...",
+  "Loading Cloths for You...",
+  "Hang tight, almost there...",
+];
 
 function App() {
   const { login, clearUserDetails } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const { initialLoading } = useShop();
+  const [checkingSession, setCheckingSession] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -55,16 +69,18 @@ function App() {
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false);
+        setCheckingSession(false);
       }
     })();
   }, []);
 
-  if (loading) {
+  if (checkingSession || initialLoading) {
     return (
-      <div className="flex justify-center items-center h-screen w-full">
-        <div className="loading loading-spinner w-10 h-10"></div>
-      </div>
+      <StartupLoader
+        title="SnapShop is getting ready"
+        subtitle="The first request can take a few seconds while the backend wakes up."
+        messages={startupMessages}
+      />
     );
   }
 

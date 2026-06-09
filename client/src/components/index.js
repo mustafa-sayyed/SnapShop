@@ -12,24 +12,26 @@ import CartTotal from "./CartTotal";
 import Profile from "./Profile";
 import AuthLayout from "./AuthLayout";
 import Container from "./Container";
+import StartupLoader from "./StartupLoader";
 import { StarRating } from "./StarRating";
 import { ReviewModal } from "./ReviewModal";
 
 export {
-  Hero,
-  Navbar,
-  Footer,
-  Policy,
-  BestSeller,
-  LatestCollection,
-  ProductItem,
-  Title,
-  NewsLetterBox,
-  RelatedProducts,
-  CartTotal,
-  Profile,
-  AuthLayout,
-  Container,
-  StarRating,
-  ReviewModal,
+	Hero,
+	Navbar,
+	Footer,
+	Policy,
+	BestSeller,
+	LatestCollection,
+	ProductItem,
+	Title,
+	NewsLetterBox,
+	RelatedProducts,
+	CartTotal,
+	Profile,
+	AuthLayout,
+	Container,
+	StartupLoader,
+	StarRating,
+	ReviewModal,
 };
