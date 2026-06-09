@@ -18,9 +18,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --chown=node:node --from=build /build/package*.json .
+
+RUN npm ci --omit=dev
+
 COPY --chown=node:node --from=build /build/src /app/src
 COPY --chown=node:node --from=build /build/server.js .
-COPY --chown=node:node --from=build /build/node_modules /app/node_modules
 
 USER node
 

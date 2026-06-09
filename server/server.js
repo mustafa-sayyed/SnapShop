@@ -33,19 +33,25 @@ app.use(globalRateLimiter);
 // Settign this because this Server is deployed on Azure Container Apps which uses Ingress as Load Balancer and Reverse Proxy
 app.set("trust proxy", 1);
 
+// Starting server before DB connection to reduce cold start time.
+app.on("error", (error) => {
+  console.log(`Server Error: ${error}`);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is listening on PORT: ${PORT}`);
+});
+
+
 // Database connection
 connectDB()
   .then(async () => {
-    app.on("error", (error) => {
-      console.log(`Server Error: ${error}`);
-    });
-    app.listen(PORT, () => {
-      console.log(`Server is listening on PORT: ${PORT}`);
-    });
+    console.log("Database Connected Successfully");
     
     // Seed admin accounts
-    await seedAdmin();
-    await seedDemoAdmin();
+    // commented this admin seeding bcz, it is already done for this DB.
+    // await seedAdmin();
+    // await seedDemoAdmin();
   })
   .catch((error) => {
     console.log(`DB Connection Failed: ${error}`);
