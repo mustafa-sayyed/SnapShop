@@ -15,14 +15,12 @@ FROM node:22-alpine AS production
 
 WORKDIR /app
 
-COPY --chown=node:node --from=build /build/package*.json .
-
 ENV NODE_ENV=production
 
-RUN npm ci --omit=dev
-
+COPY --chown=node:node --from=build /build/package*.json .
 COPY --chown=node:node --from=build /build/src /app/src
 COPY --chown=node:node --from=build /build/server.js .
+COPY --chown=node:node --from=build /build/node_modules /app/node_modules
 
 USER node
 
